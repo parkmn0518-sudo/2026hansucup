@@ -302,7 +302,24 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div class="modal-bg" id="confirmModal"><div class="modal"><h2>삭제 확인</h2><p id="confirmMsg" style="font-size:13px;color:var(--text2);margin-bottom:16px;"></p><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('confirmModal')">취소</button><button class="btn-danger" id="confirmOkBtn">삭제</button></div></div></div>
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
+  authDomain: "hansucup-d154b.firebaseapp.com",
+  projectId: "hansucup-d154b",
+  storageBucket: "hansucup-d154b.firebasestorage.app",
+  messagingSenderId: "732633509551",
+  appId: "1:732633509551:web:a925fbe990ebb000b46e5a",
+  measurementId: "G-KT3SY3NGY5"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+
 const ADMIN_PASS='1234';
 let isAdmin=false;
 const gradeInfo={1:{name:'1학년',sport:'풋살',icon:'⚽',schedLabel:'1학년 풋살 경기 일정'},2:{name:'2학년',sport:'츄크볼',icon:'🤾',schedLabel:'2학년 츄크볼 경기 일정'},3:{name:'3학년',sport:'배구',icon:'🏐',schedLabel:'3학년 배구 경기 일정'}};
@@ -664,4 +681,14 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 renderHome();
 renderRulesCard();
 ['safety','award','emergency'].forEach(t=>renderInfoCard(t));
+
+function saveData(){
+  firebase.database().ref("hansuCup").set({
+    calEvents,
+    schedules,
+    tournaments,
+    rulesData,
+    infoData
+  });
+}
 </script>
