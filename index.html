@@ -1,229 +1,311 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>2026 한수컵</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Bebas+Neue&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --navy:#1a2a5e;--navy-dark:#0f1a3d;--navy-light:#2a3f8f;
   --gold:#c9952a;--gold-light:#f0c050;
   --white:#fff;--bg:#f4f5f8;--card:#fff;
   --text:#1a1a2e;--text2:#4a5580;--border:#d8dce8;
-  --win:#16a34a;--loss:#dc2626;--radius:10px;
+  --win:#16a34a;--radius:10px;
+
+  /* Sport colors — unified across all views */
+  --futsal-bg:#dbeafe;   --futsal-text:#1e3a8a;   --futsal-border:#93c5fd;
+  --tchouk-bg:#dcfce7;   --tchouk-text:#14532d;   --tchouk-border:#86efac;
+  --volley-bg:#fef9c3;   --volley-text:#713f12;   --volley-border:#fde047;
+  --special-bg:#f3e8ff;  --special-text:#6b21a8;  --special-border:#d8b4fe;
+  --general-bg:#e0e4f0;  --general-text:#1a2a5e;  --general-border:#a5b4fc;
 }
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-.top-nav{background:var(--navy);padding:0 14px;display:flex;align-items:center;gap:10px;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
-.logo-area{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.logo-badge{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--navy-dark);}
-.logo-text{color:var(--white);font-size:12px;font-weight:700;line-height:1.2;}
-.logo-text span{display:block;font-size:10px;font-weight:400;color:rgba(255,255,255,.6);}
-.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+html{font-size:16px;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── NAV ── */
+.top-nav{background:var(--navy);padding:0 12px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.logo-area{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.logo-badge{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--navy-dark);flex-shrink:0;}
+.logo-text{color:var(--white);font-size:13px;font-weight:700;line-height:1.1;white-space:nowrap;}
+.logo-text small{display:block;font-size:9px;font-weight:400;color:rgba(255,255,255,.55);letter-spacing:.5px;}
+.nav-tabs{display:flex;gap:1px;flex:1;overflow-x:auto;scrollbar-width:none;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{padding:7px 11px;border-radius:6px;color:rgba(255,255,255,.7);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border:none;background:none;transition:all .15s;}
+.nav-tab{padding:6px 10px;border-radius:5px;color:rgba(255,255,255,.65);font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;border:none;background:none;transition:all .15s;flex-shrink:0;}
 .nav-tab:hover{color:var(--white);background:rgba(255,255,255,.1);}
-.nav-tab.active{color:var(--gold-light);background:rgba(201,149,42,.2);font-weight:700;}
-.admin-btn{padding:6px 10px;border-radius:6px;border:1px solid var(--gold);color:var(--gold-light);font-size:11px;font-weight:700;background:none;cursor:pointer;white-space:nowrap;transition:all .15s;}
-.admin-btn:hover,.admin-btn.active-admin{background:var(--gold);color:var(--navy-dark);}
-.page{display:none;padding:14px;max-width:980px;margin:0 auto;}
+.nav-tab.active{color:var(--gold-light);background:rgba(201,149,42,.25);font-weight:700;}
+.admin-btn{padding:5px 9px;border-radius:5px;border:1px solid var(--gold);color:var(--gold-light);font-size:10px;font-weight:700;background:none;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.admin-btn.active-admin{background:var(--gold);color:var(--navy-dark);}
+
+/* ── PAGES ── */
+.page{display:none;padding:12px;max-width:780px;margin:0 auto;padding-bottom:32px;}
 .page.active{display:block;}
 
-/* HOME HERO */
-.hero{background:var(--navy);border-radius:var(--radius);padding:20px 22px;margin-bottom:14px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;right:-20px;top:-20px;width:160px;height:160px;border-radius:50%;background:rgba(201,149,42,.1);pointer-events:none;}
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold-light);letter-spacing:2px;}
-.hero-sub{color:rgba(255,255,255,.8);font-size:13px;margin-top:3px;}
-.hero-meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-.hero-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 10px;color:rgba(255,255,255,.9);font-size:11px;}
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
-.summary-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px;text-align:center;}
-.summary-card .num{font-size:26px;font-weight:700;color:var(--navy);font-family:'Bebas Neue',sans-serif;}
-.summary-card .lbl{font-size:11px;color:var(--text2);margin-top:1px;}
-.section-title{font-size:13px;font-weight:700;color:var(--navy);margin:16px 0 8px;padding-left:9px;border-left:3px solid var(--gold);}
+/* ── HOME HERO ── */
+.hero{background:var(--navy);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(201,149,42,.12);pointer-events:none;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,7vw,36px);color:var(--gold-light);letter-spacing:2px;line-height:1;}
+.hero-sub{color:rgba(255,255,255,.75);font-size:12px;margin-top:4px;line-height:1.5;}
+.hero-keywords{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.hero-kw{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:4px 10px;color:rgba(255,255,255,.88);font-size:11px;font-weight:500;}
+
+/* ── STATS GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.stat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:10px 8px;text-align:center;}
+.stat-card .num{font-size:clamp(20px,5vw,28px);font-weight:700;color:var(--navy);font-family:'Bebas Neue',sans-serif;line-height:1;}
+.stat-card .lbl{font-size:10px;color:var(--text2);margin-top:2px;}
+.stat-card.done-card{border-color:var(--win);}
+.stat-card.done-card .num{color:var(--win);}
+.stat-card.total-card{border-color:var(--navy);}
+
+/* ── SECTION TITLE ── */
+.section-title{font-size:13px;font-weight:700;color:var(--navy);margin:14px 0 8px;padding-left:8px;border-left:3px solid var(--gold);}
+
+/* ── SPORT CARDS ── */
+.sport-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+.sport-card{border-radius:var(--radius);border:2px solid;padding:10px 6px;text-align:center;cursor:pointer;transition:transform .12s;}
+.sport-card:active{transform:scale(.96);}
+.sport-card.futsal{background:var(--futsal-bg);border-color:var(--futsal-border);}
+.sport-card.tchouk{background:var(--tchouk-bg);border-color:var(--tchouk-border);}
+.sport-card.volleyball{background:var(--volley-bg);border-color:var(--volley-border);}
+.sport-card .s-icon{font-size:22px;}
+.sport-card .s-grade{font-size:12px;font-weight:700;margin-top:3px;}
+.sport-card.futsal .s-grade{color:var(--futsal-text);}
+.sport-card.tchouk .s-grade{color:var(--tchouk-text);}
+.sport-card.volleyball .s-grade{color:var(--volley-text);}
+.sport-card .s-sport{font-size:10px;margin-top:1px;}
+.sport-card.futsal .s-sport{color:var(--futsal-text);}
+.sport-card.tchouk .s-sport{color:var(--tchouk-text);}
+.sport-card.volleyball .s-sport{color:var(--volley-text);}
 
 /* ── CALENDAR ── */
-.cal-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
-.cal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--navy);}
-.cal-nav-btn{background:none;border:1px solid rgba(255,255,255,.3);color:var(--white);border-radius:5px;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.cal-nav-btn:hover{background:rgba(255,255,255,.15);}
-.cal-month-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold-light);letter-spacing:1px;}
+.cal-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--navy);}
+.cal-nav-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:var(--white);border-radius:5px;width:30px;height:30px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.cal-month-title{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--gold-light);letter-spacing:1px;}
 .cal-add-btn{padding:4px 10px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:none;}
 .cal-add-btn.show{display:block;}
-.cal-grid-header{display:grid;grid-template-columns:repeat(7,1fr);background:#f0f2f8;}
-.cal-day-name{text-align:center;padding:6px 0;font-size:11px;font-weight:700;color:var(--text2);}
-.cal-day-name:first-child{color:#e53e3e;}
-.cal-day-name:last-child{color:#3182ce;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--border);}
-.cal-cell{min-height:64px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px;position:relative;vertical-align:top;}
+.cal-day-names{display:grid;grid-template-columns:repeat(7,1fr);background:#f0f2f8;}
+.cal-dn{text-align:center;padding:5px 0;font-size:10px;font-weight:700;color:var(--text2);}
+.cal-dn:first-child{color:#dc2626;}.cal-dn:last-child{color:#2563eb;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{min-height:56px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:3px;position:relative;}
+@media(max-width:400px){.cal-cell{min-height:44px;}}
 .cal-cell:nth-child(7n){border-right:none;}
 .cal-cell.empty{background:#f9fafb;}
 .cal-cell.today{background:#fffbf0;}
-.cal-cell.today .cal-date{background:var(--navy);color:var(--white);border-radius:50%;}
-.cal-date{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;}
-.cal-cell.sunday .cal-date{color:#e53e3e;}
-.cal-cell.saturday .cal-date{color:#3182ce;}
-.cal-event{font-size:10px;line-height:1.3;padding:1px 4px;border-radius:3px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-.ev-futsal{background:#dbeafe;color:#1e40af;}
-.ev-tchouk{background:#dcfce7;color:#14532d;}
-.ev-volleyball{background:#fef3c7;color:#92400e;}
-.ev-special{background:#f3e8ff;color:#6b21a8;}
-.ev-general{background:#e0e4f0;color:var(--navy);}
-.cal-more{font-size:9px;color:var(--text2);padding-left:4px;}
-/* event delete btn */
-.ev-del{display:none;background:#fee2e2;color:#991b1b;border:none;border-radius:2px;font-size:9px;font-weight:700;cursor:pointer;padding:0 3px;margin-left:2px;vertical-align:middle;}
-.admin-mode .ev-del{display:inline;}
+.cal-date{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text);border-radius:50%;}
+.cal-cell.today .cal-date{background:var(--navy);color:var(--white);}
+.cal-cell.sun .cal-date{color:#dc2626;}
+.cal-cell.sat .cal-date{color:#2563eb;}
+.cal-event{font-size:9px;line-height:1.3;padding:1px 3px;border-radius:3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;cursor:pointer;}
+.ev-futsal{background:var(--futsal-bg);color:var(--futsal-text);}
+.ev-tchouk{background:var(--tchouk-bg);color:var(--tchouk-text);}
+.ev-volleyball{background:var(--volley-bg);color:var(--volley-text);}
+.ev-special{background:var(--special-bg);color:var(--special-text);}
+.ev-general{background:var(--general-bg);color:var(--general-text);}
+.cal-more{font-size:8px;color:var(--text2);padding-left:2px;}
+.ev-del{display:none;background:#fee2e2;color:#991b1b;border:none;border-radius:2px;font-size:8px;cursor:pointer;padding:0 2px;vertical-align:middle;}
+.admin-cal .ev-del{display:inline;}
+.cal-add-cell-btn{display:none;position:absolute;bottom:1px;right:1px;background:none;border:none;color:#c0c8e0;font-size:14px;cursor:pointer;line-height:1;padding:0;}
+.admin-cal .cal-add-cell-btn{display:block;}
+.cal-legend{display:flex;gap:8px;flex-wrap:wrap;padding:7px 12px;border-top:1px solid var(--border);background:#f9fafb;}
+.leg-item{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text2);}
+.leg-dot{width:9px;height:9px;border-radius:2px;}
 
-/* calendar legend */
-.cal-legend{display:flex;gap:10px;flex-wrap:wrap;padding:8px 14px;border-top:1px solid var(--border);background:#f9fafb;}
-.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);}
-.leg-dot{width:10px;height:10px;border-radius:2px;}
+/* ── BRACKET PAGE ── */
+.bracket-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.grade-badge{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;}
+.grade-badge.futsal{background:var(--futsal-bg);color:var(--futsal-text);border:1px solid var(--futsal-border);}
+.grade-badge.tchouk{background:var(--tchouk-bg);color:var(--tchouk-text);border:1px solid var(--tchouk-border);}
+.grade-badge.volleyball{background:var(--volley-bg);color:var(--volley-text);border:1px solid var(--volley-border);}
+.sport-badge{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;}
+.sport-badge.futsal{background:var(--futsal-text);color:#fff;}
+.sport-badge.tchouk{background:var(--tchouk-text);color:#fff;}
+.sport-badge.volleyball{background:var(--volley-text);color:#fff;}
+.bracket-wrap{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.round-col-grid{display:grid;grid-template-columns:repeat(5,minmax(155px,1fr));align-items:start;}
+.round-col-label{text-align:center;font-size:11px;font-weight:700;padding:5px 7px;border-radius:6px 6px 0 0;margin:0 4px;}
+.round-col-label.futsal{background:var(--futsal-text);color:#fff;}
+.round-col-label.tchouk{background:var(--tchouk-text);color:#fff;}
+.round-col-label.volleyball{background:var(--volley-text);color:#fff;}
+.round-col-label.final.futsal{background:var(--gold);color:var(--navy-dark);}
+.round-col-label.final.tchouk{background:var(--gold);color:var(--navy-dark);}
+.round-col-label.final.volleyball{background:var(--gold);color:var(--navy-dark);}
 
-/* BRACKET */
-.bracket-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-.grade-badge{padding:6px 16px;border-radius:20px;background:var(--navy);color:var(--white);font-size:13px;font-weight:700;}
-.sport-badge{padding:6px 14px;border-radius:20px;background:var(--gold);color:var(--navy-dark);font-size:13px;font-weight:700;}
-.bracket-wrap{overflow-x:auto;padding-bottom:8px;}
-.match-node{background:var(--card);border:1.5px solid var(--border);border-radius:8px;margin:5px;overflow:hidden;min-width:155px;}
-.match-node.current-game{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,149,42,.2);}
-.match-top{background:#f0f2f8;border-bottom:1px solid var(--border);padding:4px 8px;}
-.match-round-row{display:flex;align-items:center;justify-content:space-between;gap:4px;}
-.match-round-label{font-size:10px;font-weight:700;color:var(--navy);}
+/* Match node */
+.match-node{background:var(--card);border:1.5px solid var(--border);border-radius:7px;margin:4px;overflow:hidden;}
+.match-node.futsal-node{border-color:var(--futsal-border);}
+.match-node.tchouk-node{border-color:var(--tchouk-border);}
+.match-node.volleyball-node{border-color:var(--volley-border);}
+.match-top{border-bottom:1px solid var(--border);padding:4px 7px;}
+.match-top.futsal{background:var(--futsal-bg);}
+.match-top.tchouk{background:var(--tchouk-bg);}
+.match-top.volleyball{background:var(--volley-bg);}
+.match-round-row{display:flex;align-items:center;justify-content:space-between;}
+.match-round-label{font-size:10px;font-weight:700;}
+.match-round-label.futsal{color:var(--futsal-text);}
+.match-round-label.tchouk{color:var(--tchouk-text);}
+.match-round-label.volleyball{color:var(--volley-text);}
 .match-status-pill{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;}
 .pill-scheduled{background:#e0e4f0;color:var(--navy);}
-.pill-playing{background:#fef3c7;color:#92400e;animation:blink 1s infinite;}
 .pill-done{background:#dcfce7;color:#14532d;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 .match-date-row{font-size:9px;color:var(--text2);margin-top:2px;}
-.team-row{display:flex;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border);}
+.team-row{display:flex;align-items:center;padding:8px 9px;border-bottom:1px solid var(--border);}
 .team-row:last-of-type{border-bottom:none;}
 .team-row.winner{background:#f0fdf4;}
-.team-row.loser{opacity:.55;}
+.team-row.loser{opacity:.5;}
 .team-nm{font-size:13px;font-weight:700;color:var(--text);flex:1;}
-.team-sc{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);min-width:22px;text-align:right;line-height:1;}
+.team-sc{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);min-width:20px;text-align:right;line-height:1;}
 .team-sc.win-sc{color:var(--win);}
-.edit-panel{background:#f8f9fc;border-top:1px solid var(--border);padding:10px 12px;display:none;flex-direction:column;gap:7px;}
+.edit-panel{background:#f8f9fc;border-top:1px solid var(--border);padding:9px 10px;display:none;flex-direction:column;gap:6px;}
 .edit-panel.show{display:flex;}
 .edit-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.edit-label{font-size:11px;color:var(--text2);min-width:28px;}
-.team-inp{flex:1;min-width:80px;padding:5px 8px;border:1.5px solid var(--navy);border-radius:5px;font-size:12px;font-family:'Noto Sans KR',sans-serif;}
-.date-inp{flex:1;min-width:110px;padding:5px 8px;border:1.5px solid var(--navy);border-radius:5px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
-.sc-inp{width:50px;padding:5px 6px;border:1.5px solid var(--navy);border-radius:5px;font-size:14px;font-weight:700;text-align:center;}
-.st-sel{padding:5px 7px;border:1.5px solid var(--navy);border-radius:5px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
-.save-btn{padding:5px 14px;background:var(--navy);color:var(--white);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
-.edit-btn-small{padding:3px 8px;background:none;border:1px solid var(--navy);border-radius:4px;font-size:10px;color:var(--navy);cursor:pointer;}
-.edit-divider{font-size:10px;color:var(--text2);font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;}
+.edit-label{font-size:11px;color:var(--text2);min-width:26px;}
+.team-inp{flex:1;min-width:70px;padding:5px 7px;border:1.5px solid var(--navy);border-radius:5px;font-size:12px;font-family:'Noto Sans KR',sans-serif;}
+.date-inp{flex:1;min-width:100px;padding:5px 7px;border:1.5px solid var(--navy);border-radius:5px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
+.sc-inp{width:48px;padding:5px 5px;border:1.5px solid var(--navy);border-radius:5px;font-size:14px;font-weight:700;text-align:center;}
+.st-sel{padding:5px 6px;border:1.5px solid var(--navy);border-radius:5px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
+.save-btn{padding:6px 14px;background:var(--navy);color:var(--white);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
+.edit-btn-small{padding:3px 7px;background:none;border:1px solid var(--navy);border-radius:4px;font-size:10px;color:var(--navy);cursor:pointer;}
+.edit-divider{font-size:10px;color:var(--text2);font-weight:700;border-top:1px solid var(--border);padding-top:5px;}
 
-/* SCHEDULE */
-.sched-wrap{margin-top:4px;}
-.round-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
-.round-block-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;}
-.round-block-header:hover{background:#f8f9fc;}
-.round-block-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--navy);}
-.round-status-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;}
-.rsb-done{background:var(--win);color:#fff;}.rsb-ongoing{background:var(--gold);color:var(--navy-dark);}.rsb-scheduled{background:#e0e4f0;color:var(--navy);}
-.round-toggle{font-size:12px;color:var(--text2);transition:transform .2s;}
+/* Podium */
+.podium-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.podium-card{border-radius:var(--radius);border:2px solid var(--border);padding:10px 8px;text-align:center;}
+.podium-card.gold-border{border-color:var(--gold);}
+.podium-name{font-size:16px;font-weight:700;color:var(--navy);}
+.podium-lbl{font-size:10px;color:var(--text2);margin-top:2px;}
+
+/* ── SCHEDULE SECTION ── */
+.sched-section{margin-top:4px;}
+.sched-section-title{font-size:13px;font-weight:700;padding:8px 12px;border-radius:6px;margin-bottom:8px;}
+.sched-section-title.futsal{background:var(--futsal-bg);color:var(--futsal-text);}
+.sched-section-title.tchouk{background:var(--tchouk-bg);color:var(--tchouk-text);}
+.sched-section-title.volleyball{background:var(--volley-bg);color:var(--volley-text);}
+.round-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
+.round-block-header{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;user-select:none;}
+.round-block-header:active{background:#f0f2f8;}
+.round-block-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--navy);}
+.round-status-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;}
+.rsb-done{background:#dcfce7;color:#14532d;}
+.rsb-scheduled{background:#e0e4f0;color:var(--navy);}
+.round-toggle{font-size:11px;color:var(--text2);transition:transform .2s;}
 .round-toggle.open{transform:rotate(180deg);}
-.round-body{display:none;padding:10px 14px;}
+.round-body{display:none;padding:0 10px 10px;}
 .round-body.open{display:block;}
-.sched-table{width:100%;border-collapse:collapse;font-size:12px;}
-.sched-table th{background:var(--navy);color:var(--white);padding:7px 10px;text-align:center;font-weight:700;font-size:11px;}
-.sched-table td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);vertical-align:middle;}
+.sched-table{width:100%;border-collapse:collapse;font-size:11px;}
+.sched-table th{padding:6px 7px;text-align:center;font-weight:700;font-size:10px;color:var(--white);}
+.sched-table th.futsal-th{background:var(--futsal-text);}
+.sched-table th.tchouk-th{background:var(--tchouk-text);}
+.sched-table th.volleyball-th{background:var(--volley-text);}
+.sched-table td{padding:7px 7px;text-align:center;border-bottom:1px solid var(--border);vertical-align:middle;font-size:11px;}
 .sched-table tr:last-child td{border-bottom:none;}
-.sched-table tr:hover td{background:#f8f9fc;}
 .vs-cell{font-weight:700;color:var(--text);}
 .admin-game-bar{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;}
 .add-game-btn{padding:5px 12px;background:var(--navy);color:var(--white);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
-.del-round-btn{padding:5px 10px;background:#fee2e2;color:#991b1b;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;}
-.add-round-btn{padding:7px 16px;background:var(--gold);color:var(--navy-dark);border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;margin-top:6px;}
-.del-game-btn{padding:2px 7px;background:#fee2e2;color:#991b1b;border:none;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;}
-.edit-game-btn{padding:2px 7px;background:#e0e4f0;color:var(--navy);border:none;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;}
+.del-round-btn{padding:5px 9px;background:#fee2e2;color:#991b1b;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;}
+.add-round-btn{padding:6px 14px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;}
+.add-round-btn.futsal{background:var(--futsal-bg);color:var(--futsal-text);}
+.add-round-btn.tchouk{background:var(--tchouk-bg);color:var(--tchouk-text);}
+.add-round-btn.volleyball{background:var(--volley-bg);color:var(--volley-text);}
+.del-game-btn{padding:2px 6px;background:#fee2e2;color:#991b1b;border:none;border-radius:3px;font-size:9px;font-weight:700;cursor:pointer;}
+.edit-game-btn{padding:2px 6px;background:#e0e4f0;color:var(--navy);border:none;border-radius:3px;font-size:9px;font-weight:700;cursor:pointer;}
 
-/* RULES — editable */
-.rules-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-.rules-tab{padding:7px 16px;border-radius:var(--radius);border:1.5px solid var(--navy);color:var(--navy);font-size:12px;font-weight:700;background:none;cursor:pointer;transition:all .15s;}
+/* ── RULES ── */
+.rules-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+.rules-tab{padding:6px 13px;border-radius:var(--radius);border:1.5px solid var(--navy);color:var(--navy);font-size:12px;font-weight:700;background:none;cursor:pointer;transition:all .15s;}
 .rules-tab.active{background:var(--navy);color:var(--white);}
-.rules-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:none;}
+.rules-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:none;}
 .rules-card.active{display:block;}
-.rules-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.rules-card-title{font-size:15px;font-weight:700;color:var(--navy);}
-.rules-edit-btn{padding:4px 12px;background:#e0e4f0;color:var(--navy);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:none;}
+.rules-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.rules-card-title{font-size:14px;font-weight:700;color:var(--navy);}
+.rules-edit-btn{padding:4px 11px;background:#e0e4f0;color:var(--navy);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:none;}
 .rules-edit-btn.show{display:block;}
 .rules-content{font-size:13px;line-height:1.9;white-space:pre-wrap;color:var(--text);}
-.rules-edit-area{display:none;flex-direction:column;gap:8px;}
+.rules-edit-area{display:none;flex-direction:column;gap:7px;}
 .rules-edit-area.show{display:flex;}
-.rules-title-inp{width:100%;padding:7px 10px;border:1.5px solid var(--navy);border-radius:6px;font-size:14px;font-weight:700;font-family:'Noto Sans KR',sans-serif;}
-.rules-body-ta{width:100%;padding:8px 10px;border:1.5px solid var(--navy);border-radius:6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;resize:vertical;min-height:200px;line-height:1.9;}
+.rules-title-inp{width:100%;padding:7px 9px;border:1.5px solid var(--navy);border-radius:5px;font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;}
+.rules-body-ta{width:100%;padding:8px 9px;border:1.5px solid var(--navy);border-radius:5px;font-size:12px;font-family:'Noto Sans KR',sans-serif;resize:vertical;min-height:180px;line-height:1.9;}
 .rules-edit-actions{display:flex;gap:6px;justify-content:flex-end;}
 .rules-save-btn{padding:6px 14px;background:var(--navy);color:var(--white);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
-.rules-cancel-btn{padding:6px 10px;background:var(--bg);color:var(--text2);border:none;border-radius:5px;font-size:11px;cursor:pointer;}
+.rules-cancel-btn{padding:6px 9px;background:var(--bg);color:var(--text2);border:none;border-radius:5px;font-size:11px;cursor:pointer;}
 
-/* BOARD */
-.board-page{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:640px){.board-page{grid-template-columns:1fr;}}
+/* ── BOARD ── */
+.board-page{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.board-page{grid-template-columns:1fr;}}
 .board-col{display:flex;flex-direction:column;gap:10px;}
 .board-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.board-section-header{background:var(--navy);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.board-section-header{background:var(--navy);padding:9px 12px;display:flex;align-items:center;justify-content:space-between;}
 .board-section-header.gold{background:var(--gold);}
-.board-section-title{font-size:13px;font-weight:700;color:var(--white);}
+.board-section-title{font-size:12px;font-weight:700;color:var(--white);}
 .board-section-header.gold .board-section-title{color:var(--navy-dark);}
-.write-btn-sm{padding:4px 10px;background:rgba(255,255,255,.2);color:var(--white);border:1px solid rgba(255,255,255,.4);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
-.board-section-header.gold .write-btn-sm{background:rgba(26,42,94,.15);color:var(--navy-dark);border-color:rgba(26,42,94,.3);}
-.post-list-inner{padding:8px;}
-.post-item{padding:9px 10px;border-radius:7px;border:1px solid transparent;margin-bottom:4px;transition:all .15s;}
+.write-btn-sm{padding:4px 9px;background:rgba(255,255,255,.2);color:var(--white);border:1px solid rgba(255,255,255,.35);border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;}
+.board-section-header.gold .write-btn-sm{background:rgba(26,42,94,.12);color:var(--navy-dark);border-color:rgba(26,42,94,.25);}
+.post-list-inner{padding:7px;}
+.post-item{padding:8px 9px;border-radius:6px;border:1px solid transparent;margin-bottom:3px;transition:all .12s;}
 .post-item:hover{background:#f0f2f8;border-color:var(--border);}
 .post-title-sm{font-size:12px;font-weight:700;color:var(--text);cursor:pointer;}
-.post-meta-sm{font-size:10px;color:var(--text2);margin-top:2px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.post-badge{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;background:#e0e4f0;color:var(--navy);}
-.empty-msg{font-size:12px;color:var(--text2);padding:16px;text-align:center;}
-.post-actions{display:none;gap:4px;margin-left:auto;}
+.post-meta-sm{font-size:10px;color:var(--text2);margin-top:2px;display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.post-badge{font-size:9px;padding:1px 6px;border-radius:7px;font-weight:700;background:#e0e4f0;color:var(--navy);}
+.empty-msg{font-size:12px;color:var(--text2);padding:14px;text-align:center;}
+.post-actions{display:none;gap:3px;margin-left:auto;}
 .post-actions.show{display:flex;}
-.act-btn{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:none;}
+.act-btn{padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;cursor:pointer;border:none;}
 .act-edit{background:#e0e4f0;color:var(--navy);}.act-del{background:#fee2e2;color:#991b1b;}
 .info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.info-card-header{padding:10px 14px;display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.info-card-header{padding:9px 12px;display:flex;align-items:center;gap:7px;justify-content:space-between;}
 .info-card-header.safety{background:#fef3c7;}.info-card-header.award{background:#dcfce7;}.info-card-header.emergency{background:#fee2e2;}
-.info-header-left{display:flex;align-items:center;gap:8px;}
-.info-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.info-header-left{display:flex;align-items:center;gap:7px;}
+.info-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
 .info-icon.safety{background:#f59e0b;}.info-icon.award{background:#16a34a;}.info-icon.emergency{background:#dc2626;}
-.info-card-title{font-size:13px;font-weight:700;}
+.info-card-title{font-size:12px;font-weight:700;}
 .info-card-title.safety{color:#92400e;}.info-card-title.award{color:#14532d;}.info-card-title.emergency{color:#991b1b;}
-.info-edit-btn{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;border:none;display:none;}
+.info-edit-btn{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:none;display:none;}
 .info-edit-btn.safety{background:#fde68a;color:#92400e;}.info-edit-btn.award{background:#bbf7d0;color:#14532d;}.info-edit-btn.emergency{background:#fecaca;color:#991b1b;}
 .info-edit-btn.show{display:block;}
-.info-body{padding:12px 14px;}
-.info-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;line-height:1.7;}
+.info-body{padding:10px 12px;}
+.info-item{display:flex;gap:7px;margin-bottom:6px;font-size:12px;line-height:1.7;}
 .info-item:last-child{margin-bottom:0;}
-.info-bullet{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-top:1px;}
+.info-bullet{width:17px;height:17px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-top:1px;}
 .info-bullet.safety{background:#fde68a;color:#92400e;}.info-bullet.award{background:#bbf7d0;color:#14532d;}.info-bullet.emergency{background:#fecaca;color:#991b1b;}
-.award-table{width:100%;border-collapse:collapse;font-size:12px;}
-.award-table th{background:#f0f9f4;color:#14532d;padding:6px 10px;text-align:left;font-weight:700;border-bottom:1px solid #d1fae5;}
-.award-table td{padding:6px 10px;border-bottom:1px solid var(--border);}
+.award-table{width:100%;border-collapse:collapse;font-size:11px;}
+.award-table th{background:#f0f9f4;color:#14532d;padding:5px 8px;text-align:left;font-weight:700;border-bottom:1px solid #d1fae5;}
+.award-table td{padding:5px 8px;border-bottom:1px solid var(--border);}
 .award-table tr:last-child td{border-bottom:none;}
-.info-edit-area{display:none;padding:10px 14px;border-top:1px solid var(--border);background:#f8f9fc;}
+.info-edit-area{display:none;padding:9px 12px;border-top:1px solid var(--border);background:#f8f9fc;}
 .info-edit-area.show{display:block;}
-.info-edit-area textarea{width:100%;padding:8px 10px;border:1.5px solid var(--navy);border-radius:6px;font-size:12px;font-family:'Noto Sans KR',sans-serif;resize:vertical;min-height:100px;line-height:1.7;}
-.info-edit-area .edit-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:6px;}
-.info-edit-area .btn-save{padding:6px 14px;background:var(--navy);color:var(--white);border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
-.info-edit-area .btn-cancel-sm{padding:6px 10px;background:var(--bg);color:var(--text2);border:none;border-radius:5px;font-size:11px;cursor:pointer;}
-.info-edit-area .hint{font-size:10px;color:var(--text2);margin-bottom:6px;}
+.info-edit-area textarea{width:100%;padding:7px 9px;border:1.5px solid var(--navy);border-radius:5px;font-size:12px;font-family:'Noto Sans KR',sans-serif;resize:vertical;min-height:90px;line-height:1.7;}
+.info-edit-area .edit-actions{display:flex;gap:5px;justify-content:flex-end;margin-top:5px;}
+.info-edit-area .btn-save{padding:5px 12px;background:var(--navy);color:var(--white);border:none;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;}
+.info-edit-area .btn-cancel-sm{padding:5px 9px;background:var(--bg);color:var(--text2);border:none;border-radius:4px;font-size:11px;cursor:pointer;}
+.info-edit-area .hint{font-size:10px;color:var(--text2);margin-bottom:5px;}
 
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px;}
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-end;justify-content:center;padding:0;}
+@media(min-width:540px){.modal-bg{align-items:center;padding:16px;}}
 .modal-bg.show{display:flex;}
-.modal{background:var(--card);border-radius:12px;padding:22px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;}
+.modal{background:var(--card);border-radius:14px 14px 0 0;padding:20px 18px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;}
+@media(min-width:540px){.modal{border-radius:12px;}}
 .modal h2{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;}
-.modal input,.modal textarea,.modal select{width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;margin-bottom:9px;}
+.modal input,.modal textarea,.modal select{width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-family:'Noto Sans KR',sans-serif;margin-bottom:8px;-webkit-appearance:none;}
 .modal input:focus,.modal textarea:focus{outline:none;border-color:var(--navy);}
 .modal label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:600;}
-.modal-btns{display:flex;gap:7px;justify-content:flex-end;margin-top:4px;}
-.modal-btns button{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
+.modal-btns{display:flex;gap:7px;justify-content:flex-end;margin-top:6px;}
+.modal-btns button{padding:9px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
 .btn-cancel{background:var(--bg);color:var(--text);}
 .btn-confirm{background:var(--navy);color:var(--white);}
 .btn-danger{background:#fee2e2;color:#991b1b;}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:9px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:300;display:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;z-index:300;display:none;white-space:nowrap;}
 </style>
+</head>
+<body>
 
 <div class="top-nav">
   <div class="logo-area">
     <div class="logo-badge">HS</div>
-    <div class="logo-text">한수컵 2026<span>HANSU MIDDLE SCHOOL</span></div>
+    <div class="logo-text">한수컵 2026<small>HANSU MIDDLE SCHOOL</small></div>
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('home',this)">🏠 홈</button>
@@ -241,19 +323,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div class="page" id="page-bracket2"></div>
 <div class="page" id="page-bracket3"></div>
 
-<!-- RULES PAGE -->
+<!-- RULES -->
 <div class="page" id="page-rules">
   <div class="section-title" style="margin-top:0">경기 요강</div>
   <div class="rules-tabs">
-    <button class="rules-tab active" onclick="showRules(0,this)">⚽ 풋살 (1학년)</button>
-    <button class="rules-tab" onclick="showRules(1,this)">🤾 츄크볼 (2학년)</button>
-    <button class="rules-tab" onclick="showRules(2,this)">🏐 배구 (3학년)</button>
-    <button class="rules-tab" onclick="showRules(3,this)">📋 공통 규정</button>
+    <button class="rules-tab active" onclick="showRules(0,this)">⚽ 풋살</button>
+    <button class="rules-tab" onclick="showRules(1,this)">🤾 츄크볼</button>
+    <button class="rules-tab" onclick="showRules(2,this)">🏐 배구</button>
+    <button class="rules-tab" onclick="showRules(3,this)">📋 공통</button>
   </div>
   <div id="rulesCardContainer"></div>
 </div>
 
-<!-- BOARD PAGE -->
+<!-- BOARD -->
 <div class="page" id="page-board">
   <div class="board-page">
     <div class="board-col">
@@ -276,388 +358,307 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <!-- MODALS -->
 <div class="modal-bg" id="adminModal"><div class="modal"><h2>🔒 관리자 모드</h2><input type="password" id="adminPin" placeholder="비밀번호 입력" style="text-align:center;letter-spacing:4px;font-size:18px;" onkeydown="if(event.key==='Enter')checkAdmin()"><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('adminModal')">취소</button><button class="btn-confirm" onclick="checkAdmin()">확인</button></div></div></div>
-
-<div class="modal-bg" id="calEventModal"><div class="modal">
-  <h2 id="calEventModalTitle">📅 일정 추가</h2>
-  <input type="hidden" id="ceId">
-  <label>날짜</label><input type="date" id="ceDate">
-  <label>제목</label><input type="text" id="ceTitle" placeholder="예) 1학년 풋살 8강" maxlength="30">
-  <label>종류</label>
-  <select id="ceType">
-    <option value="ev-futsal">⚽ 풋살 (1학년)</option>
-    <option value="ev-tchouk">🤾 츄크볼 (2학년)</option>
-    <option value="ev-volleyball">🏐 배구 (3학년)</option>
-    <option value="ev-special">✨ 특별 행사</option>
-    <option value="ev-general">📋 일반</option>
-  </select>
-  <label>메모 (선택)</label><input type="text" id="ceNote" placeholder="추가 내용" maxlength="40">
-  <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('calEventModal')">취소</button><button class="btn-confirm" onclick="saveCalEvent()">저장</button></div>
-</div></div>
-
+<div class="modal-bg" id="calEventModal"><div class="modal"><h2 id="calEventModalTitle">📅 일정 추가</h2><input type="hidden" id="ceId"><label>날짜</label><input type="date" id="ceDate"><label>제목</label><input type="text" id="ceTitle" placeholder="예) 1학년 풋살 8강" maxlength="30"><label>종류</label><select id="ceType"><option value="ev-futsal">⚽ 풋살 (1학년)</option><option value="ev-tchouk">🤾 츄크볼 (2학년)</option><option value="ev-volleyball">🏐 배구 (3학년)</option><option value="ev-special">✨ 특별 행사</option><option value="ev-general">📋 일반</option></select><label>메모 (선택)</label><input type="text" id="ceNote" placeholder="추가 내용" maxlength="40"><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('calEventModal')">취소</button><button class="btn-confirm" onclick="saveCalEvent()">저장</button></div></div></div>
 <div class="modal-bg" id="writeModal"><div class="modal"><h2 id="writeModalTitle"></h2><label id="labelField1"></label><input type="text" id="postField1" maxlength="30"><label id="labelField2"></label><input type="text" id="postField2" maxlength="30"><label id="labelField3"></label><textarea id="postField3" rows="4" style="resize:none;"></textarea><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('writeModal')">취소</button><button class="btn-confirm" onclick="submitPost()">등록</button></div></div></div>
 <div class="modal-bg" id="editPostModal"><div class="modal"><h2>✏️ 게시글 수정</h2><input type="hidden" id="editPostId"><input type="hidden" id="editPostType"><label id="editLabelField1"></label><input type="text" id="editPostField1" maxlength="30"><label id="editLabelField2"></label><input type="text" id="editPostField2" maxlength="30"><label id="editLabelField3"></label><textarea id="editPostField3" rows="4" style="resize:none;"></textarea><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('editPostModal')">취소</button><button class="btn-confirm" onclick="saveEditPost()">저장</button></div></div></div>
-<div class="modal-bg" id="postViewModal"><div class="modal" style="max-width:460px;"><h2 id="pvTitle"></h2><p id="pvMeta" style="font-size:11px;color:var(--text2);margin-bottom:10px;"></p><p id="pvBody" style="font-size:13px;line-height:1.8;white-space:pre-wrap;"></p><div class="modal-btns" style="margin-top:14px;"><button class="btn-confirm" onclick="closeModal('postViewModal')">닫기</button></div></div></div>
-<div class="modal-bg" id="scheduleGameModal"><div class="modal"><h2 id="sgModalTitle">경기 추가</h2><input type="hidden" id="sgGrade"><input type="hidden" id="sgRoundIdx"><input type="hidden" id="sgGameIdx"><label>라운드</label><select id="sgRoundName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>날짜</label><input type="text" id="sgDate" placeholder="5월 20일 화요일"><label>시간</label><input type="text" id="sgTime" placeholder="10:00"><label>장소</label><input type="text" id="sgVenue" placeholder="운동장"><label>홈팀</label><input type="text" id="sgHome" placeholder="3반"><label>원정팀</label><input type="text" id="sgAway" placeholder="7반"><label>메모</label><input type="text" id="sgNote" placeholder="비고"><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div></div></div>
-<div class="modal-bg" id="addRoundModal"><div class="modal"><h2>📅 라운드 추가</h2><input type="hidden" id="arGrade"><label>라운드명</label><select id="arName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>상태</label><select id="arStatus"><option value="예정">예정</option><option value="진행중">진행중</option><option value="완료">완료</option></select><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('addRoundModal')">취소</button><button class="btn-confirm" onclick="saveNewRound()">추가</button></div></div></div>
-<div class="modal-bg" id="confirmModal"><div class="modal"><h2>삭제 확인</h2><p id="confirmMsg" style="font-size:13px;color:var(--text2);margin-bottom:16px;"></p><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('confirmModal')">취소</button><button class="btn-danger" id="confirmOkBtn">삭제</button></div></div></div>
+<div class="modal-bg" id="postViewModal"><div class="modal" style="max-width:460px;"><h2 id="pvTitle"></h2><p id="pvMeta" style="font-size:11px;color:var(--text2);margin-bottom:10px;"></p><p id="pvBody" style="font-size:13px;line-height:1.8;white-space:pre-wrap;"></p><div class="modal-btns" style="margin-top:12px;"><button class="btn-confirm" onclick="closeModal('postViewModal')">닫기</button></div></div></div>
+<div class="modal-bg" id="scheduleGameModal"><div class="modal"><h2 id="sgModalTitle">경기 추가</h2><input type="hidden" id="sgGrade"><input type="hidden" id="sgRoundIdx"><input type="hidden" id="sgGameIdx"><label>라운드</label><select id="sgRoundName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>날짜 (예: 5월 20일 화요일)</label><input type="text" id="sgDate" placeholder="5월 20일 화요일"><label>교시</label><select id="sgTime"><option value="">선택</option><option value="1교시 (09:00~09:45)">1교시 (09:00~09:45)</option><option value="2교시 (09:55~10:40)">2교시 (09:55~10:40)</option><option value="3교시 (10:50~11:35)">3교시 (10:50~11:35)</option><option value="4교시 (11:45~12:30)">4교시 (11:45~12:30)</option><option value="점심 (12:30~13:30)">점심 (12:30~13:30)</option><option value="5교시 (13:30~14:15)">5교시 (13:30~14:15)</option><option value="6교시 (14:25~15:10)">6교시 (14:25~15:10)</option><option value="7교시 (15:20~16:05)">7교시 (15:20~16:05)</option></select><label>장소</label><input type="text" id="sgVenue" placeholder="운동장"><label>홈팀</label><input type="text" id="sgHome" placeholder="3반"><label>원정팀</label><input type="text" id="sgAway" placeholder="7반"><label>메모</label><input type="text" id="sgNote" placeholder="비고"><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div></div></div>
+<div class="modal-bg" id="addRoundModal"><div class="modal"><h2>📅 라운드 추가</h2><input type="hidden" id="arGrade"><label>라운드명</label><select id="arName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>상태</label><select id="arStatus"><option value="예정">예정</option><option value="완료">완료</option></select><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('addRoundModal')">취소</button><button class="btn-confirm" onclick="saveNewRound()">추가</button></div></div></div>
+<div class="modal-bg" id="confirmModal"><div class="modal"><h2>삭제 확인</h2><p id="confirmMsg" style="font-size:13px;color:var(--text2);margin-bottom:14px;"></p><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('confirmModal')">취소</button><button class="btn-danger" id="confirmOkBtn">삭제</button></div></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
-  authDomain: "hansucup-d154b.firebaseapp.com",
-  projectId: "hansucup-d154b",
-  storageBucket: "hansucup-d154b.firebasestorage.app",
-  messagingSenderId: "732633509551",
-  appId: "1:732633509551:web:a925fbe990ebb000b46e5a",
-  measurementId: "G-KT3SY3NGY5"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.database();
-
 const ADMIN_PASS='1234';
 let isAdmin=false;
-const gradeInfo={1:{name:'1학년',sport:'풋살',icon:'⚽',schedLabel:'1학년 풋살 경기 일정'},2:{name:'2학년',sport:'츄크볼',icon:'🤾',schedLabel:'2학년 츄크볼 경기 일정'},3:{name:'3학년',sport:'배구',icon:'🏐',schedLabel:'3학년 배구 경기 일정'}};
+const gradeInfo={
+  1:{name:'1학년',sport:'풋살',icon:'⚽',cls:'futsal',evType:'ev-futsal',schedLabel:'1학년 풋살 경기 일정'},
+  2:{name:'2학년',sport:'츄크볼',icon:'🤾',cls:'tchouk',evType:'ev-tchouk',schedLabel:'2학년 츄크볼 경기 일정'},
+  3:{name:'3학년',sport:'배구',icon:'🏐',cls:'volleyball',evType:'ev-volleyball',schedLabel:'3학년 배구 경기 일정'}
+};
 
 /* ── CALENDAR ── */
-let calYear=2026, calMonth=4; // 0-indexed month, so 4 = May
-let calEvents = [
-  {id:1,date:'2026-05-19',title:'1학년 풋살 1라운드',type:'ev-futsal',note:'운동장'},
-  {id:2,date:'2026-05-19',title:'풋살 8강',type:'ev-futsal',note:''},
-  {id:3,date:'2026-05-20',title:'2학년 츄크볼 1라운드',type:'ev-tchouk',note:'체육관'},
-  {id:4,date:'2026-05-22',title:'3학년 배구 1라운드',type:'ev-volleyball',note:'체육관'},
-  {id:5,date:'2026-05-26',title:'풋살 8강',type:'ev-futsal',note:''},
-  {id:6,date:'2026-06-02',title:'풋살 4강',type:'ev-futsal',note:''},
-  {id:7,date:'2026-06-09',title:'풋살 결승전',type:'ev-futsal',note:''},
-  {id:8,date:'2026-06-09',title:'2학년 츄크볼 8강',type:'ev-tchouk',note:''},
-  {id:9,date:'2026-06-13',title:'한수컵 시상식',type:'ev-special',note:'강당'},
+let calYear=2026, calMonth=4;
+let calEvents=[
+  {id:1,date:'2026-05-19',title:'1학년 풋살 1라운드',type:'ev-futsal',note:'운동장',auto:false},
+  {id:2,date:'2026-05-20',title:'2학년 츄크볼 1라운드',type:'ev-tchouk',note:'체육관',auto:false},
+  {id:3,date:'2026-05-22',title:'3학년 배구 1라운드',type:'ev-volleyball',note:'체육관',auto:false},
+  {id:4,date:'2026-06-13',title:'한수컵 시상식',type:'ev-special',note:'강당',auto:false},
 ];
 let nextCalId=20;
+const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS=['일','월','화','수','목','금','토'];
 
-const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-const dayNames=['일','월','화','수','목','금','토'];
-const typeLabels={'ev-futsal':'⚽ 풋살','ev-tchouk':'🤾 츄크볼','ev-volleyball':'🏐 배구','ev-special':'✨ 특별','ev-general':'📋 일반'};
+/* Convert schedule entry to calendar event — auto-synced */
+function schedToCalKey(g,ri,gi){return `auto_${g}_${ri}_${gi}`;}
+
+function syncCalFromSchedules(){
+  // remove all auto events first
+  calEvents=calEvents.filter(e=>!e.auto);
+  // re-add from schedules
+  [1,2,3].forEach(g=>{
+    const info=gradeInfo[g];
+    (schedules[g]||[]).forEach((rnd,ri)=>{
+      rnd.games.forEach((gm,gi)=>{
+        if(!gm.date||gm.date==='미정') return;
+        // parse date string to YYYY-MM-DD
+        const d=parseDateStr(gm.date, calYear);
+        if(!d) return;
+        const label=`${gm.home} vs ${gm.away}`;
+        const timeLabel=gm.time?` ${gm.time.split(' ')[0]}`:'';
+        calEvents.push({
+          id:schedToCalKey(g,ri,gi),
+          date:d,
+          title:`${rnd.roundName} ${label}`,
+          type:info.evType,
+          note:`${info.sport}${timeLabel}${gm.venue?' '+gm.venue:''}`,
+          auto:true
+        });
+      });
+    });
+  });
+}
+
+function parseDateStr(str, year){
+  // handles "5월 20일 화요일", "5월 20일", "5/20" etc.
+  if(!str) return null;
+  const m1=str.match(/(\d+)월\s*(\d+)일/);
+  if(m1) return `${year}-${String(+m1[1]).padStart(2,'0')}-${String(+m1[2]).padStart(2,'0')}`;
+  const m2=str.match(/(\d+)\/(\d+)/);
+  if(m2) return `${year}-${String(+m2[1]).padStart(2,'0')}-${String(+m2[2]).padStart(2,'0')}`;
+  return null;
+}
 
 function renderCalendar(){
   const today=new Date();
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const fd=new Date(calYear,calMonth,1).getDay();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
   const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-  // group events by date
   const evMap={};
   calEvents.forEach(ev=>{if(!evMap[ev.date])evMap[ev.date]=[];evMap[ev.date].push(ev);});
-
   let cells='';
-  for(let i=0;i<firstDay;i++) cells+=`<div class="cal-cell empty"></div>`;
-  for(let d=1;d<=daysInMonth;d++){
-    const dow=(firstDay+d-1)%7;
-    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday=dateStr===todayStr;
-    const cls=['cal-cell',isToday?'today':'',dow===0?'sunday':dow===6?'saturday':''].filter(Boolean).join(' ');
-    const evs=evMap[dateStr]||[];
-    const maxShow=2;
-    const evHtml=evs.slice(0,maxShow).map(ev=>{
-      const delBtn=`<button class="ev-del" onclick="deleteCalEvent(${ev.id});event.stopPropagation()">✕</button>`;
-      return `<div class="cal-event ${ev.type}" title="${ev.title}${ev.note?' — '+ev.note:''}" onclick="${isAdmin?`openEditCalEvent(${ev.id})`:''}">
-        ${ev.title.length>8?ev.title.substring(0,8)+'…':ev.title}${delBtn}</div>`;
+  for(let i=0;i<fd;i++) cells+=`<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const dow=(fd+d-1)%7;
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=ds===todayStr;
+    const cls=['cal-cell',isToday?'today':'',dow===0?'sun':dow===6?'sat':''].filter(Boolean).join(' ');
+    const evs=evMap[ds]||[];
+    const evHtml=evs.slice(0,2).map(ev=>{
+      const del=isAdmin?`<button class="ev-del" onclick="deleteCalEvent('${ev.id}');event.stopPropagation()">✕</button>`:'';
+      const shortTitle=ev.title.length>9?ev.title.substring(0,9)+'…':ev.title;
+      return `<div class="cal-event ${ev.type}" onclick="${isAdmin?`openEditCalEvent('${ev.id}')`:''}; event.stopPropagation()" title="${ev.title}${ev.note?' ('+ev.note+')':''}">${shortTitle}${del}</div>`;
     }).join('');
-    const more=evs.length>maxShow?`<div class="cal-more">+${evs.length-maxShow}개 더</div>`:'';
-    const addBtn=isAdmin?`<div style="position:absolute;bottom:2px;right:2px;"><button style="background:none;border:none;color:#c0c8e0;font-size:14px;cursor:pointer;line-height:1;" onclick="openAddCalEvent('${dateStr}')" title="일정 추가">+</button></div>`:'';
+    const more=evs.length>2?`<div class="cal-more">+${evs.length-2}개</div>`:'';
+    const addBtn=`<button class="cal-add-cell-btn" onclick="openAddCalEvent('${ds}')" title="일정 추가">+</button>`;
     cells+=`<div class="${cls}">${addBtn}<div class="cal-date">${d}</div>${evHtml}${more}</div>`;
   }
-
-  const addBtnHeader=isAdmin?`<button class="cal-add-btn show" onclick="openAddCalEvent('')">+ 일정 추가</button>`:'';
-
-  return `<div class="cal-wrap ${isAdmin?'admin-mode':''}">
+  const addBtnHdr=isAdmin?`<button class="cal-add-btn show" onclick="openAddCalEvent('')">+ 추가</button>`:'';
+  return `<div class="cal-wrap ${isAdmin?'admin-cal':''}">
     <div class="cal-header">
       <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
-      <span class="cal-month-title">${calYear}년 ${monthNames[calMonth]}</span>
-      <div style="display:flex;gap:6px;align-items:center;">${addBtnHeader}<button class="cal-nav-btn" onclick="calNav(1)">›</button></div>
+      <span class="cal-month-title">${calYear}년 ${MONTHS[calMonth]}</span>
+      <div style="display:flex;gap:6px;align-items:center;">${addBtnHdr}<button class="cal-nav-btn" onclick="calNav(1)">›</button></div>
     </div>
-    <div class="cal-grid-header">${dayNames.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div>
+    <div class="cal-day-names">${DAYS.map(d=>`<div class="cal-dn">${d}</div>`).join('')}</div>
     <div class="cal-grid">${cells}</div>
     <div class="cal-legend">
       <div class="leg-item"><div class="leg-dot ev-futsal"></div>풋살</div>
       <div class="leg-item"><div class="leg-dot ev-tchouk"></div>츄크볼</div>
       <div class="leg-item"><div class="leg-dot ev-volleyball"></div>배구</div>
-      <div class="leg-item"><div class="leg-dot ev-special"></div>특별 행사</div>
+      <div class="leg-item"><div class="leg-dot ev-special"></div>특별</div>
       <div class="leg-item"><div class="leg-dot ev-general"></div>일반</div>
     </div>
   </div>`;
 }
-
-function calNav(dir){
-  calMonth+=dir;
-  if(calMonth<0){calMonth=11;calYear--;}
-  if(calMonth>11){calMonth=0;calYear++;}
-  renderHome();
-}
-function openAddCalEvent(dateStr){
-  document.getElementById('ceId').value='';
-  document.getElementById('ceDate').value=dateStr||'';
-  document.getElementById('ceTitle').value='';
-  document.getElementById('ceType').value='ev-futsal';
-  document.getElementById('ceNote').value='';
-  document.getElementById('calEventModalTitle').textContent='📅 일정 추가';
-  document.getElementById('calEventModal').classList.add('show');
-}
-function openEditCalEvent(id){
-  const ev=calEvents.find(e=>e.id===id);if(!ev)return;
-  document.getElementById('ceId').value=id;
-  document.getElementById('ceDate').value=ev.date;
-  document.getElementById('ceTitle').value=ev.title;
-  document.getElementById('ceType').value=ev.type;
-  document.getElementById('ceNote').value=ev.note;
-  document.getElementById('calEventModalTitle').textContent='📅 일정 수정';
-  document.getElementById('calEventModal').classList.add('show');
-}
-function saveCalEvent(){
-  const id=document.getElementById('ceId').value;
-  const ev={date:document.getElementById('ceDate').value,title:document.getElementById('ceTitle').value.trim(),type:document.getElementById('ceType').value,note:document.getElementById('ceNote').value.trim()};
-  if(!ev.date||!ev.title){showToast('날짜와 제목을 입력해 주세요.');return;}
-  if(id){const e=calEvents.find(x=>x.id===+id);if(e)Object.assign(e,ev);}
-  else{ev.id=nextCalId++;calEvents.push(ev);}
-  closeModal('calEventModal');renderHome();showToast(id?'일정이 수정되었습니다!':'일정이 추가되었습니다!');
-}
-function deleteCalEvent(id){
-  calEvents=calEvents.filter(e=>e.id!==id);renderHome();showToast('일정이 삭제되었습니다.');
-}
-
-/* ── RULES DATA ── */
-let rulesData=[
-  {title:'⚽ 풋살 경기 요강 (1학년)', body:`■ 경기 방식
-• 1학년 10반 토너먼트 — 총 9경기
-• 전·후반 각 10분, 하프타임 5분
-• 연장전 없음 — 동점 시 승부차기 (3명)
-
-■ 참가 인원
-• 5명 (골키퍼 포함) + 교체 3명
-
-■ 경기 규칙
-• 슬라이딩 태클 금지
-• 킥인 (아웃 시 발로 인플레이)
-• 골키퍼 패스백 4초 이내 처리
-
-■ 주의사항
-• 반 티셔츠 착용 필수
-• 심판 판정 이의 제기 금지
-• 경기 시작 5분 전 집합`},
-  {title:'🤾 츄크볼 경기 요강 (2학년)', body:`■ 경기 방식
-• 2학년 10반 토너먼트 — 총 9경기
-• 전·후반 각 8분
-• 동점 시 첫 득점팀 승
-
-■ 기본 규칙
-• 트램폴린 프레임에 공을 던져 튕겨 나온 공을 상대가 잡지 못하면 득점
-• 공을 잡은 후 3걸음 이내 이동 가능
-• 수비 불가 구역 (반원) 내 진입 금지
-• 상대 선수 신체 접촉 금지
-
-■ 참가 인원
-• 6명 + 교체 3명
-
-■ 주의사항
-• 반 티셔츠 착용 필수
-• 트램폴린 프레임 직접 타격 금지`},
-  {title:'🏐 배구 경기 요강 (3학년)', body:`■ 경기 방식
-• 3학년 10반 토너먼트 — 총 9경기
-• 25점 3세트 중 2세트 선취
-• 결정 세트 15점 / 듀스 적용 (2점 차 필요)
-
-■ 참가 인원
-• 6명 + 리베로 1명 (선택)
-• 교체 최대 6회
-
-■ 경기 규칙
-• 3번 이내 터치 후 상대 코트로
-• 블로킹은 터치 횟수 미포함
-• 서브 시 라인 밟기 금지
-
-■ 주의사항
-• 반 티셔츠 착용 필수
-• 리베로는 다른 색 티셔츠 착용`},
-  {title:'📋 공통 규정', body:`■ 토너먼트 진행
-• 시드 1~6: 직접 8강 진출
-• 시드 7~10: 1라운드 (7vs10, 8vs9) 후 진출
-• 패배팀 탈락 / 3위 결정전 있음
-
-■ 공통 규정
-• 경기 시작 5분 전까지 경기장 집합
-• 무단 불참 시 해당 경기 몰수패 처리
-• 부상 발생 시 즉시 교사에게 보고
-• 모든 학생 페어플레이 정신 준수
-
-■ 시상
-• 각 학년 우승·준우승·3위 시상
-• 페어플레이상: 각 학년 1팀
-• 종합 우승반 별도 시상`}
-];
-let activeRulesIdx=0;
-
-function renderRulesCard(){
-  const r=rulesData[activeRulesIdx];
-  const editBtn=isAdmin?`<button class="rules-edit-btn show" onclick="toggleRulesEdit()">✏️ 수정</button>`:`<button class="rules-edit-btn" style="display:none;"></button>`;
-  document.getElementById('rulesCardContainer').innerHTML=`
-  <div class="rules-card active">
-    <div class="rules-card-header">
-      <div class="rules-card-title">${r.title}</div>
-      ${editBtn}
-    </div>
-    <div class="rules-content" id="rulesContent">${r.body}</div>
-    <div class="rules-edit-area" id="rulesEditArea">
-      <input class="rules-title-inp" type="text" id="rulesTitleInp" value="${r.title.replace(/"/g,'&quot;')}">
-      <textarea class="rules-body-ta" id="rulesBodyTa">${r.body}</textarea>
-      <div class="rules-edit-actions">
-        <button class="rules-cancel-btn" onclick="cancelRulesEdit()">취소</button>
-        <button class="rules-save-btn" onclick="saveRulesEdit()">저장</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function showRules(idx,btn){
-  activeRulesIdx=idx;
-  document.querySelectorAll('.rules-tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  renderRulesCard();
-}
-function toggleRulesEdit(){
-  const area=document.getElementById('rulesEditArea');
-  area.classList.toggle('show');
-  if(area.classList.contains('show')){
-    document.getElementById('rulesTitleInp').value=rulesData[activeRulesIdx].title;
-    document.getElementById('rulesBodyTa').value=rulesData[activeRulesIdx].body;
-  }
-}
-function cancelRulesEdit(){document.getElementById('rulesEditArea').classList.remove('show');}
-function saveRulesEdit(){
-  rulesData[activeRulesIdx].title=document.getElementById('rulesTitleInp').value.trim()||rulesData[activeRulesIdx].title;
-  rulesData[activeRulesIdx].body=document.getElementById('rulesBodyTa').value;
-  renderRulesCard();showToast('요강이 저장되었습니다!');
-}
-
-/* ── INFO DATA ── */
-let infoData={
-  safety:['경기 전 반드시 준비운동(10분 이상)을 실시합니다.','운동화 끈을 단단히 매고, 슬리퍼·샌들 착용 금지합니다.','경기 중 상대 선수에게 고의적 신체 접촉을 금지합니다.','날씨가 더울 경우 충분한 수분 섭취 후 경기에 임합니다.','부상이 의심될 경우 즉시 경기를 중단하고 교사에게 알립니다.','관중석 난간 및 시설물에 올라가는 행위를 금지합니다.'],
-  award:['🥇 우승|우승 트로피 + 상장 + 상품|각 학년별 1팀','🥈 준우승|준우승 트로피 + 상장 + 상품|각 학년별 1팀','🥉 3위|3위 상장 + 상품|각 학년별 1팀','🤝 페어플레이상|페어플레이 상장|각 학년별 1팀','✨ 종합우승|종합우승 현판 + 특별 시상|3개 학년 통합 1팀'],
-  emergency:['골절·염좌|즉시 경기 중단 → 교사 호출 → 냉찜질 → 양호실 이송','머리 부상|즉시 안정 → 의식 확인 → 119 신고 (임의 이송 금지)','열사병·탈수|서늘한 곳 이동 → 옷 느슨하게 → 물 소량 제공 → 교사 호출','심정지 의심|즉시 119 신고 → 교사 호출 → AED: 교무실 옆 복도']
-};
-function renderInfoCard(type){
-  const bodyEl=document.getElementById('body-'+type);
-  if(type==='safety') bodyEl.innerHTML=infoData.safety.map((item,i)=>`<div class="info-item"><div class="info-bullet safety">${i+1}</div><div>${item}</div></div>`).join('');
-  else if(type==='award'){const rows=infoData.award.map(r=>{const[a,b,c]=r.split('|');return`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;}).join('');bodyEl.innerHTML=`<table class="award-table"><thead><tr><th>순위</th><th>시상 내용</th><th>대상</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:8px;font-size:11px;color:var(--text2);line-height:1.7;">※ 시상식은 모든 경기 종료 후 진행됩니다.</div>`;}
-  else if(type==='emergency'){bodyEl.innerHTML=infoData.emergency.map((row,i)=>{const idx=row.indexOf('|');return`<div class="info-item"><div class="info-bullet emergency">${['①','②','③','④'][i]}</div><div><b>${row.substring(0,idx)}</b>: ${row.substring(idx+1)}</div></div>`;}).join('')+`<div style="margin-top:10px;background:#fef2f2;border-radius:6px;padding:8px 10px;font-size:11px;color:#991b1b;font-weight:700;line-height:1.7;">🆘 비상연락: 담당 교사 → 보건 교사 → 관리자 → 119</div>`;}
-}
-function toggleInfoEdit(type){const a=document.getElementById('editArea-'+type);if(a.classList.contains('show')){a.classList.remove('show');return;}document.getElementById('editText-'+type).value=infoData[type].join('\n');a.classList.add('show');}
-function cancelInfoEdit(type){document.getElementById('editArea-'+type).classList.remove('show');}
-function saveInfoEdit(type){infoData[type]=document.getElementById('editText-'+type).value.trim().split('\n').map(s=>s.trim()).filter(s=>s);renderInfoCard(type);document.getElementById('editArea-'+type).classList.remove('show');showToast('저장됨!');}
-function updateAdminInfoBtns(){['safety','award','emergency'].forEach(t=>document.getElementById('editBtn-'+t)?.classList.toggle('show',isAdmin));}
+function calNav(d){calMonth+=d;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderHome();}
+function openAddCalEvent(ds){document.getElementById('ceId').value='';document.getElementById('ceDate').value=ds;document.getElementById('ceTitle').value='';document.getElementById('ceType').value='ev-futsal';document.getElementById('ceNote').value='';document.getElementById('calEventModalTitle').textContent='📅 일정 추가';document.getElementById('calEventModal').classList.add('show');}
+function openEditCalEvent(id){const ev=calEvents.find(e=>String(e.id)===String(id));if(!ev)return;document.getElementById('ceId').value=id;document.getElementById('ceDate').value=ev.date;document.getElementById('ceTitle').value=ev.title;document.getElementById('ceType').value=ev.type;document.getElementById('ceNote').value=ev.note;document.getElementById('calEventModalTitle').textContent='📅 일정 수정';document.getElementById('calEventModal').classList.add('show');}
+function saveCalEvent(){const id=document.getElementById('ceId').value;const ev={date:document.getElementById('ceDate').value,title:document.getElementById('ceTitle').value.trim(),type:document.getElementById('ceType').value,note:document.getElementById('ceNote').value.trim(),auto:false};if(!ev.date||!ev.title){showToast('날짜와 제목을 입력해 주세요.');return;}if(id){const e=calEvents.find(x=>String(x.id)===id);if(e)Object.assign(e,ev);}else{ev.id=nextCalId++;calEvents.push(ev);}closeModal('calEventModal');renderHome();showToast(id?'일정 수정됨!':'일정 추가됨!');}
+function deleteCalEvent(id){calEvents=calEvents.filter(e=>String(e.id)!==String(id));renderHome();showToast('삭제됨.');}
 
 /* ── SCHEDULE DATA ── */
 let schedules={
   1:[
-    {roundName:'1라운드',status:'진행중',games:[{date:'5월 19일 월요일',time:'10:00',venue:'운동장',home:'7반',away:'10반',note:''},{date:'5월 19일 월요일',time:'10:30',venue:'운동장',home:'8반',away:'9반',note:''}]},
-    {roundName:'8강',status:'예정',games:[{date:'5월 26일 월요일',time:'10:00',venue:'운동장',home:'1반',away:'TBD',note:'1R 승자'},{date:'5월 26일 월요일',time:'10:30',venue:'운동장',home:'2반',away:'TBD',note:'1R 승자'},{date:'5월 26일 월요일',time:'11:00',venue:'운동장',home:'3반',away:'6반',note:''},{date:'5월 26일 월요일',time:'11:30',venue:'운동장',home:'4반',away:'5반',note:''}]},
-    {roundName:'4강',status:'예정',games:[{date:'6월 2일 월요일',time:'10:00',venue:'운동장',home:'TBD',away:'TBD',note:'8강 승자'},{date:'6월 2일 월요일',time:'10:30',venue:'운동장',home:'TBD',away:'TBD',note:'8강 승자'}]},
-    {roundName:'3·4위전',status:'예정',games:[{date:'6월 9일 월요일',time:'10:00',venue:'운동장',home:'TBD',away:'TBD',note:'4강 패자'}]},
-    {roundName:'결승전',status:'예정',games:[{date:'6월 9일 월요일',time:'11:00',venue:'운동장',home:'TBD',away:'TBD',note:'4강 승자'}]},
+    {roundName:'1라운드',status:'예정',games:[
+      {date:'5월 19일 월요일',time:'2교시 (09:55~10:40)',venue:'운동장',home:'7반',away:'10반',note:''},
+      {date:'5월 19일 월요일',time:'3교시 (10:50~11:35)',venue:'운동장',home:'8반',away:'9반',note:''}
+    ]},
+    {roundName:'8강',status:'예정',games:[
+      {date:'5월 26일 월요일',time:'2교시 (09:55~10:40)',venue:'운동장',home:'1반',away:'TBD',note:'1R 승자'},
+      {date:'5월 26일 월요일',time:'3교시 (10:50~11:35)',venue:'운동장',home:'2반',away:'TBD',note:'1R 승자'},
+      {date:'5월 26일 월요일',time:'4교시 (11:45~12:30)',venue:'운동장',home:'3반',away:'6반',note:''},
+      {date:'5월 26일 월요일',time:'5교시 (13:30~14:15)',venue:'운동장',home:'4반',away:'5반',note:''}
+    ]},
+    {roundName:'4강',status:'예정',games:[{date:'6월 2일 월요일',time:'2교시 (09:55~10:40)',venue:'운동장',home:'TBD',away:'TBD',note:''},{date:'6월 2일 월요일',time:'3교시 (10:50~11:35)',venue:'운동장',home:'TBD',away:'TBD',note:''}]},
+    {roundName:'3·4위전',status:'예정',games:[{date:'6월 9일 월요일',time:'2교시 (09:55~10:40)',venue:'운동장',home:'TBD',away:'TBD',note:''}]},
+    {roundName:'결승전',status:'예정',games:[{date:'6월 9일 월요일',time:'3교시 (10:50~11:35)',venue:'운동장',home:'TBD',away:'TBD',note:''}]},
   ],
-  2:[{roundName:'1라운드',status:'예정',games:[{date:'5월 20일 화요일',time:'13:00',venue:'체육관',home:'7반',away:'10반',note:''},{date:'5월 20일 화요일',time:'13:30',venue:'체육관',home:'8반',away:'9반',note:''}]}],
-  3:[{roundName:'1라운드',status:'예정',games:[{date:'5월 22일 목요일',time:'14:00',venue:'체육관',home:'7반',away:'10반',note:''},{date:'5월 22일 목요일',time:'14:40',venue:'체육관',home:'8반',away:'9반',note:''}]}]
+  2:[{roundName:'1라운드',status:'예정',games:[{date:'5월 20일 화요일',time:'5교시 (13:30~14:15)',venue:'체육관',home:'7반',away:'10반',note:''},{date:'5월 20일 화요일',time:'6교시 (14:25~15:10)',venue:'체육관',home:'8반',away:'9반',note:''}]}],
+  3:[{roundName:'1라운드',status:'예정',games:[{date:'5월 22일 목요일',time:'5교시 (13:30~14:15)',venue:'체육관',home:'7반',away:'10반',note:''},{date:'5월 22일 목요일',time:'6교시 (14:25~15:10)',venue:'체육관',home:'8반',away:'9반',note:''}]}]
 };
-const roundStatusClass={완료:'rsb-done',진행중:'rsb-ongoing',예정:'rsb-scheduled'};
+const roundStatusClass={완료:'rsb-done',예정:'rsb-scheduled'};
+
 function renderSchedule(g){
   const rounds=schedules[g]||[];
-  if(!rounds.length)return`<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.${isAdmin?' 라운드를 추가하세요.':''}</p>`;
-  let html='<div class="sched-wrap">';
+  const cls=gradeInfo[g].cls;
+  if(!rounds.length) return`<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.${isAdmin?' 라운드를 추가하세요.':''}</p>`;
+  let html='<div class="sched-section">';
   rounds.forEach((rnd,ri)=>{
     const sc=roundStatusClass[rnd.status]||'rsb-scheduled';
-    const rows=rnd.games.map((gm,gi)=>{const adm=isAdmin?`<td><button class="edit-game-btn" onclick="openEditGame(${g},${ri},${gi});event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame(${g},${ri},${gi});event.stopPropagation()">삭제</button></td>`:''
-      ;return`<tr><td>${gm.date}</td><td>${gm.time}</td><td>${gm.venue}</td><td class="vs-cell">${gm.home} vs ${gm.away}</td><td style="font-size:11px;color:var(--text2);">${gm.note}</td>${adm}</tr>`;}).join('');
-    const adminBar=isAdmin?`<div class="admin-game-bar"><button class="add-game-btn" onclick="openAddGame(${g},${ri})">+ 경기 추가</button><button class="del-round-btn" onclick="deleteRound(${g},${ri})">라운드 삭제</button></div>`:'';
-    html+=`<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>${rnd.roundName}</span><span class="round-status-badge ${sc}">${rnd.status}</span><span style="font-size:11px;color:var(--text2);font-weight:400;">${rnd.games.length}경기</span></div><span class="round-toggle ${ri===0?'open':''}">▼</span></div><div class="round-body ${ri===0?'open':''}"><div style="overflow-x:auto;"><table class="sched-table"><thead><tr><th>날짜</th><th>시간</th><th>장소</th><th>대전</th><th>메모</th>${isAdmin?'<th>관리</th>':''}</tr></thead><tbody>${rows}</tbody></table></div>${adminBar}</div></div>`;
+    const rows=rnd.games.map((gm,gi)=>{
+      const adm=isAdmin?`<td><button class="edit-game-btn" onclick="openEditGame(${g},${ri},${gi});event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame(${g},${ri},${gi});event.stopPropagation()">삭제</button></td>`:'';
+      return`<tr><td>${gm.date||'-'}</td><td style="white-space:nowrap;">${gm.time||'-'}</td><td>${gm.venue||'-'}</td><td class="vs-cell">${gm.home} vs ${gm.away}</td><td style="font-size:10px;color:var(--text2);">${gm.note}</td>${adm}</tr>`;
+    }).join('');
+    const adminBar=isAdmin?`<div class="admin-game-bar"><button class="add-game-btn" onclick="openAddGame(${g},${ri})">+ 경기</button><button class="del-round-btn" onclick="deleteRound(${g},${ri})">라운드 삭제</button></div>`:'';
+    html+=`<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>${rnd.roundName}</span><span class="round-status-badge ${sc}">${rnd.status}</span><span style="font-size:10px;color:var(--text2);font-weight:400;">${rnd.games.length}경기</span></div><span class="round-toggle ${ri===0?'open':''}">▼</span></div><div class="round-body ${ri===0?'open':''}"><div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="sched-table"><thead><tr><th class="${cls}-th">날짜</th><th class="${cls}-th">교시</th><th class="${cls}-th">장소</th><th class="${cls}-th">대전</th><th class="${cls}-th">메모</th>${isAdmin?`<th class="${cls}-th">관리</th>`:''}</tr></thead><tbody>${rows}</tbody></table></div>${adminBar}</div></div>`;
   });
-  if(isAdmin)html+=`<button class="add-round-btn" onclick="openAddRound(${g})">📅 라운드 추가</button>`;
+  if(isAdmin) html+=`<button class="add-round-btn ${cls}" onclick="openAddRound(${g})">📅 라운드 추가</button>`;
   html+='</div>';return html;
 }
 function toggleRound(h){const b=h.nextElementSibling,a=h.querySelector('.round-toggle');b.classList.toggle('open');a.classList.toggle('open');}
+
 let _sgMode='add';
-function openAddGame(g,ri){_sgMode='add';document.getElementById('sgModalTitle').textContent='경기 추가';document.getElementById('sgGrade').value=g;document.getElementById('sgRoundIdx').value=ri;document.getElementById('sgGameIdx').value=-1;['sgDate','sgTime','sgVenue','sgHome','sgAway','sgNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('sgRoundName').value=schedules[g][ri].roundName;document.getElementById('scheduleGameModal').classList.add('show');}
+function openAddGame(g,ri){_sgMode='add';document.getElementById('sgModalTitle').textContent='경기 추가';document.getElementById('sgGrade').value=g;document.getElementById('sgRoundIdx').value=ri;document.getElementById('sgGameIdx').value=-1;['sgDate','sgVenue','sgHome','sgAway','sgNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('sgTime').value='';document.getElementById('sgRoundName').value=schedules[g][ri].roundName;document.getElementById('scheduleGameModal').classList.add('show');}
 function openEditGame(g,ri,gi){_sgMode='edit';const gm=schedules[g][ri].games[gi];document.getElementById('sgModalTitle').textContent='경기 수정';document.getElementById('sgGrade').value=g;document.getElementById('sgRoundIdx').value=ri;document.getElementById('sgGameIdx').value=gi;document.getElementById('sgRoundName').value=schedules[g][ri].roundName;document.getElementById('sgDate').value=gm.date;document.getElementById('sgTime').value=gm.time;document.getElementById('sgVenue').value=gm.venue;document.getElementById('sgHome').value=gm.home;document.getElementById('sgAway').value=gm.away;document.getElementById('sgNote').value=gm.note;document.getElementById('scheduleGameModal').classList.add('show');}
-function saveScheduleGame(){const g=+document.getElementById('sgGrade').value,ri=+document.getElementById('sgRoundIdx').value,gi=+document.getElementById('sgGameIdx').value;const gm={date:document.getElementById('sgDate').value.trim()||'미정',time:document.getElementById('sgTime').value.trim()||'미정',venue:document.getElementById('sgVenue').value.trim()||'미정',home:document.getElementById('sgHome').value.trim()||'TBD',away:document.getElementById('sgAway').value.trim()||'TBD',note:document.getElementById('sgNote').value.trim()};if(_sgMode==='add')schedules[g][ri].games.push(gm);else schedules[g][ri].games[gi]=gm;closeModal('scheduleGameModal');renderBracket(g);showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');}
-function deleteGame(g,ri,gi){schedules[g][ri].games.splice(gi,1);renderBracket(g);showToast('삭제됨.');}
+function saveScheduleGame(){
+  const g=+document.getElementById('sgGrade').value,ri=+document.getElementById('sgRoundIdx').value,gi=+document.getElementById('sgGameIdx').value;
+  const gm={date:document.getElementById('sgDate').value.trim()||'미정',time:document.getElementById('sgTime').value||'미정',venue:document.getElementById('sgVenue').value.trim()||'미정',home:document.getElementById('sgHome').value.trim()||'TBD',away:document.getElementById('sgAway').value.trim()||'TBD',note:document.getElementById('sgNote').value.trim()};
+  if(_sgMode==='add') schedules[g][ri].games.push(gm);else schedules[g][ri].games[gi]=gm;
+  syncCalFromSchedules();
+  closeModal('scheduleGameModal');renderBracket(g);renderHome();showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
+}
+function deleteGame(g,ri,gi){schedules[g][ri].games.splice(gi,1);syncCalFromSchedules();renderBracket(g);renderHome();showToast('삭제됨.');}
 function openAddRound(g){document.getElementById('arGrade').value=g;document.getElementById('addRoundModal').classList.add('show');}
 function saveNewRound(){const g=+document.getElementById('arGrade').value;schedules[g].push({roundName:document.getElementById('arName').value,status:document.getElementById('arStatus').value,games:[]});closeModal('addRoundModal');renderBracket(g);showToast('라운드 추가됨!');}
-function deleteRound(g,ri){document.getElementById('confirmMsg').textContent=`"${schedules[g][ri].roundName}" 라운드를 삭제하시겠습니까?`;document.getElementById('confirmOkBtn').onclick=()=>{schedules[g].splice(ri,1);closeModal('confirmModal');renderBracket(g);showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
+function deleteRound(g,ri){document.getElementById('confirmMsg').textContent=`"${schedules[g][ri].roundName}" 라운드를 삭제하시겠습니까?`;document.getElementById('confirmOkBtn').onclick=()=>{schedules[g].splice(ri,1);syncCalFromSchedules();closeModal('confirmModal');renderBracket(g);renderHome();showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
+
+/* ── RULES DATA ── */
+let rulesData=[
+  {title:'⚽ 풋살 경기 요강 (1학년)',body:`■ 경기 방식\n• 1학년 10반 토너먼트 — 총 9경기\n• 전·후반 각 10분, 하프타임 5분\n• 연장전 없음 — 동점 시 승부차기 (3명)\n\n■ 참가 인원\n• 5명 (골키퍼 포함) + 교체 3명\n\n■ 경기 규칙\n• 슬라이딩 태클 금지\n• 킥인 (아웃 시 발로 인플레이)\n• 골키퍼 패스백 4초 이내 처리\n\n■ 주의사항\n• 반 티셔츠 착용 필수\n• 심판 판정 이의 제기 금지`},
+  {title:'🤾 츄크볼 경기 요강 (2학년)',body:`■ 경기 방식\n• 2학년 10반 토너먼트 — 총 9경기\n• 전·후반 각 8분\n• 동점 시 첫 득점팀 승\n\n■ 기본 규칙\n• 트램폴린 프레임에 공을 던져 튕겨 나온 공을 상대가 잡지 못하면 득점\n• 공을 잡은 후 3걸음 이내 이동 가능\n• 수비 불가 구역 (반원) 내 진입 금지\n• 상대 선수 신체 접촉 금지\n\n■ 참가 인원\n• 6명 + 교체 3명`},
+  {title:'🏐 배구 경기 요강 (3학년)',body:`■ 경기 방식\n• 3학년 10반 토너먼트 — 총 9경기\n• 25점 3세트 중 2세트 선취\n• 결정 세트 15점 / 듀스 적용 (2점 차 필요)\n\n■ 참가 인원\n• 6명 + 리베로 1명 (선택)\n• 교체 최대 6회\n\n■ 경기 규칙\n• 3번 이내 터치 후 상대 코트로\n• 블로킹은 터치 횟수 미포함\n• 서브 시 라인 밟기 금지`},
+  {title:'📋 공통 규정',body:`■ 토너먼트 진행\n• 시드 1~6: 직접 8강 진출\n• 시드 7~10: 1라운드 (7vs10, 8vs9) 후 진출\n• 패배팀 탈락 / 3위 결정전 있음\n\n■ 공통 규정\n• 경기 시작 5분 전까지 경기장 집합\n• 무단 불참 시 해당 경기 몰수패 처리\n• 부상 발생 시 즉시 교사에게 보고\n• 모든 학생 페어플레이 정신 준수\n\n■ 시상\n• 각 학년 우승·준우승·3위 시상\n• 페어플레이상: 각 학년 1팀`}
+];
+let activeRulesIdx=0;
+function renderRulesCard(){
+  const r=rulesData[activeRulesIdx];
+  const editBtn=isAdmin?`<button class="rules-edit-btn show" onclick="toggleRulesEdit()">✏️ 수정</button>`:``; 
+  document.getElementById('rulesCardContainer').innerHTML=`<div class="rules-card active"><div class="rules-card-header"><div class="rules-card-title">${r.title}</div>${editBtn}</div><div class="rules-content" id="rulesContent">${r.body}</div><div class="rules-edit-area" id="rulesEditArea"><input class="rules-title-inp" type="text" id="rulesTitleInp" value="${r.title.replace(/"/g,'&quot;')}"><textarea class="rules-body-ta" id="rulesBodyTa">${r.body}</textarea><div class="rules-edit-actions"><button class="rules-cancel-btn" onclick="cancelRulesEdit()">취소</button><button class="rules-save-btn" onclick="saveRulesEdit()">저장</button></div></div></div>`;
+}
+function showRules(idx,btn){activeRulesIdx=idx;document.querySelectorAll('.rules-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRulesCard();}
+function toggleRulesEdit(){const a=document.getElementById('rulesEditArea');a.classList.toggle('show');if(a.classList.contains('show')){document.getElementById('rulesTitleInp').value=rulesData[activeRulesIdx].title;document.getElementById('rulesBodyTa').value=rulesData[activeRulesIdx].body;}}
+function cancelRulesEdit(){document.getElementById('rulesEditArea').classList.remove('show');}
+function saveRulesEdit(){rulesData[activeRulesIdx].title=document.getElementById('rulesTitleInp').value.trim()||rulesData[activeRulesIdx].title;rulesData[activeRulesIdx].body=document.getElementById('rulesBodyTa').value;renderRulesCard();showToast('요강 저장됨!');}
+
+/* ── INFO ── */
+let infoData={
+  safety:['경기 전 반드시 준비운동(10분 이상)을 실시합니다.','운동화 끈을 단단히 매고, 슬리퍼·샌들 착용 금지합니다.','경기 중 상대 선수에게 고의적 신체 접촉을 금지합니다.','날씨가 더울 경우 충분한 수분 섭취 후 경기에 임합니다.','부상이 의심될 경우 즉시 경기를 중단하고 교사에게 알립니다.'],
+  award:['🥇 우승|우승 트로피 + 상장 + 상품|각 학년별 1팀','🥈 준우승|준우승 트로피 + 상장 + 상품|각 학년별 1팀','🥉 3위|3위 상장 + 상품|각 학년별 1팀','🤝 페어플레이상|페어플레이 상장|각 학년별 1팀','✨ 종합우승|종합우승 현판 + 특별 시상|3개 학년 통합 1팀'],
+  emergency:['골절·염좌|즉시 경기 중단 → 교사 호출 → 냉찜질 → 양호실 이송','머리 부상|즉시 안정 → 의식 확인 → 119 신고 (임의 이송 금지)','열사병·탈수|서늘한 곳 이동 → 옷 느슨하게 → 물 소량 제공 → 교사 호출','심정지 의심|즉시 119 신고 → 교사 호출 → AED: 교무실 옆 복도']
+};
+function renderInfoCard(type){const bodyEl=document.getElementById('body-'+type);if(!bodyEl)return;if(type==='safety')bodyEl.innerHTML=infoData.safety.map((item,i)=>`<div class="info-item"><div class="info-bullet safety">${i+1}</div><div>${item}</div></div>`).join('');else if(type==='award'){const rows=infoData.award.map(r=>{const[a,b,c]=r.split('|');return`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;}).join('');bodyEl.innerHTML=`<table class="award-table"><thead><tr><th>순위</th><th>시상 내용</th><th>대상</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:7px;font-size:10px;color:var(--text2);">※ 시상식은 모든 경기 종료 후 진행됩니다.</div>`;}else if(type==='emergency'){bodyEl.innerHTML=infoData.emergency.map((row,i)=>{const idx=row.indexOf('|');return`<div class="info-item"><div class="info-bullet emergency">${['①','②','③','④'][i]}</div><div><b>${row.substring(0,idx)}</b>: ${row.substring(idx+1)}</div></div>`;}).join('')+`<div style="margin-top:9px;background:#fef2f2;border-radius:5px;padding:7px 9px;font-size:11px;color:#991b1b;font-weight:700;line-height:1.7;">🆘 비상연락: 담당 교사 → 보건 교사 → 관리자 → 119</div>`;}}
+function toggleInfoEdit(type){const a=document.getElementById('editArea-'+type);if(a.classList.contains('show')){a.classList.remove('show');return;}document.getElementById('editText-'+type).value=infoData[type].join('\n');a.classList.add('show');}
+function cancelInfoEdit(type){document.getElementById('editArea-'+type).classList.remove('show');}
+function saveInfoEdit(type){infoData[type]=document.getElementById('editText-'+type).value.trim().split('\n').map(s=>s.trim()).filter(s=>s);renderInfoCard(type);document.getElementById('editArea-'+type).classList.remove('show');showToast('저장됨!');}
+function updateAdminInfoBtns(){['safety','award','emergency'].forEach(t=>document.getElementById('editBtn-'+t)?.classList.toggle('show',isAdmin));}
 
 /* ── TOURNAMENT ── */
 function makeTeams(g){return Array.from({length:10},(_,i)=>({id:i+1,name:`${i+1}반`}));}
 function initTournament(g){const t=makeTeams(g);return{teams:t,rounds:{r1:[{id:`${g}_r1_1`,round:'1라운드',home:t[6],away:t[9],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_r1_2`,round:'1라운드',home:t[7],away:t[8],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],qf:[{id:`${g}_qf_1`,round:'8강',home:t[0],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_2`,round:'8강',home:t[1],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_3`,round:'8강',home:t[2],away:t[5],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_4`,round:'8강',home:t[3],away:t[4],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],sf:[{id:`${g}_sf_1`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_sf_2`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],third:[{id:`${g}_3rd_1`,round:'3·4위전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],final:[{id:`${g}_f_1`,round:'결승전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}]}};}
 let tournaments={1:initTournament(1),2:initTournament(2),3:initTournament(3)};
 function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner||null;R.qf[1].away=R.r1[0].winner||null;R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;const l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;const l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;R.third[0].home=l0;R.third[0].away=l1;}
-function demoScores(){const R=tournaments[1].rounds;const sw=(m,h,a,d)=>{m.homeScore=h;m.awayScore=a;m.status='done';m.winner=h>a?m.home:m.away;m.date=d;};sw(R.r1[0],2,1,'5월 19일');sw(R.r1[1],1,3,'5월 19일');propagate(1);sw(R.qf[0],3,1,'5월 26일');sw(R.qf[1],2,0,'5월 26일');R.qf[2].status='playing';R.qf[2].homeScore=1;R.qf[2].awayScore=1;R.qf[2].date='5월 26일';propagate(1);}
+function demoScores(){const R=tournaments[1].rounds;const sw=(m,h,a,d)=>{m.homeScore=h;m.awayScore=a;m.status='done';m.winner=h>a?m.home:m.away;m.date=d;};sw(R.r1[0],2,1,'5월 19일');sw(R.r1[1],1,3,'5월 19일');propagate(1);sw(R.qf[0],3,1,'5월 26일');sw(R.qf[1],2,0,'5월 26일');propagate(1);}
 demoScores();
+
+/* Count stats from tournament data */
+function countStats(){
+  let done=0,sched=0;
+  [1,2,3].forEach(g=>{const R=tournaments[g].rounds;[...R.r1,...R.qf,...R.sf,...R.third,...R.final].forEach(m=>{if(m.status==='done')done++;else sched++;});});
+  return{total:done+sched,done,sched};
+}
+
 function teamLabel(t){return t?t.name:'TBD';}
 function matchNodeHTML(m,g){
+  const cls=gradeInfo[g].cls;
   const hWin=m.status==='done'&&m.winner===m.home,aWin=m.status==='done'&&m.winner===m.away;
-  const statusTxt=m.status==='scheduled'?'예정':m.status==='playing'?'진행중':'완료';
-  const pillCls=m.status==='done'?'pill-done':m.status==='playing'?'pill-playing':'pill-scheduled';
+  const statusTxt=m.status==='done'?'완료':'예정';
+  const pillCls=m.status==='done'?'pill-done':'pill-scheduled';
   const hNm=teamLabel(m.home),aNm=teamLabel(m.away);
   const adminBtn=isAdmin?`<button class="edit-btn-small" onclick="toggleEdit('${m.id}')">✏️</button>`:'';
   const ep=isAdmin?`<div class="edit-panel" id="edit_${m.id}">
-    <div class="edit-row"><span class="edit-label" style="color:var(--navy);font-weight:700;font-size:11px;min-width:auto;">팀명</span></div>
+    <div class="edit-row"><span class="edit-divider" style="font-size:11px;color:var(--navy);font-weight:700;border:none;padding:0;">팀 수정</span></div>
     <div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_${m.id}" value="${hNm==='TBD'?'':hNm}" placeholder="예) 3반"></div>
     <div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an_${m.id}" value="${aNm==='TBD'?'':aNm}" placeholder="예) 7반"></div>
     <div class="edit-divider">날짜 / 점수 / 상태</div>
     <div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="text" id="dt_${m.id}" value="${m.date||''}" placeholder="예) 5월 26일 월요일"></div>
-    <div class="edit-row"><span class="edit-label">${hNm}</span><input class="sc-inp" type="number" min="0" max="99" id="hs_${m.id}" value="${m.homeScore??''}"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as_${m.id}" value="${m.awayScore??''}"><span class="edit-label">${aNm}</span><select class="st-sel" id="st_${m.id}"><option value="scheduled" ${m.status==='scheduled'?'selected':''}>예정</option><option value="playing" ${m.status==='playing'?'selected':''}>진행중</option><option value="done" ${m.status==='done'?'selected':''}>완료</option></select></div>
+    <div class="edit-row"><span class="edit-label">${hNm}</span><input class="sc-inp" type="number" min="0" max="99" id="hs_${m.id}" value="${m.homeScore??''}"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as_${m.id}" value="${m.awayScore??''}"><span class="edit-label">${aNm}</span><select class="st-sel" id="st_${m.id}"><option value="scheduled" ${m.status==='scheduled'?'selected':''}>예정</option><option value="done" ${m.status==='done'?'selected':''}>완료</option></select></div>
     <div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch('${m.id}',${g})">💾 저장</button></div>
   </div>`:'';
-  return `<div class="match-node ${m.status==='playing'?'current-game':''}" id="node_${m.id}"><div class="match-top"><div class="match-round-row"><span class="match-round-label">${m.round}</span><span style="display:flex;align-items:center;gap:3px;"><span class="match-status-pill ${pillCls}">${statusTxt}</span>${adminBtn}</span></div>${m.date?`<div class="match-date-row">📅 ${m.date}</div>`:'<div class="match-date-row" style="color:#c8c8d4;">날짜 미정</div>'}</div><div class="team-row ${hWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${hNm}</div><div class="team-sc ${hWin?'win-sc':''}">${m.homeScore!==null?m.homeScore:'-'}</div></div><div class="team-row ${aWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${aNm}</div><div class="team-sc ${aWin?'win-sc':''}">${m.awayScore!==null?m.awayScore:'-'}</div></div>${ep}</div>`;
+  return `<div class="match-node ${cls}-node" id="node_${m.id}"><div class="match-top ${cls}"><div class="match-round-row"><span class="match-round-label ${cls}">${m.round}</span><span style="display:flex;align-items:center;gap:3px;"><span class="match-status-pill ${pillCls}">${statusTxt}</span>${adminBtn}</span></div>${m.date?`<div class="match-date-row">📅 ${m.date}</div>`:'<div class="match-date-row" style="color:#c8c8d4;">날짜 미정</div>'}</div><div class="team-row ${hWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${hNm}</div><div class="team-sc ${hWin?'win-sc':''}">${m.homeScore!==null?m.homeScore:'-'}</div></div><div class="team-row ${aWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${aNm}</div><div class="team-sc ${aWin?'win-sc':''}">${m.awayScore!==null?m.awayScore:'-'}</div></div>${ep}</div>`;
 }
 function toggleEdit(id){document.getElementById('edit_'+id)?.classList.toggle('show');}
 function saveMatch(id,g){const R=tournaments[g].rounds,allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],m=allM.find(x=>x.id===id);if(!m)return;const hn=document.getElementById('hn_'+id)?.value.trim(),an=document.getElementById('an_'+id)?.value.trim();if(hn&&m.home)m.home.name=hn;if(an&&m.away)m.away.name=an;m.date=document.getElementById('dt_'+id).value.trim();const hs=document.getElementById('hs_'+id).value,as=document.getElementById('as_'+id).value,st=document.getElementById('st_'+id).value;m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;if(st==='done'&&m.homeScore!==null&&m.awayScore!==null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);else m.winner=null;propagate(g);renderBracket(g);renderHome();showToast('저장됨!');}
-function renderBracket(g){propagate(g);const T=tournaments[g],R=T.rounds,info=gradeInfo[g];const allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],done=allM.filter(m=>m.status==='done').length;const f=R.final[0];let champ='',second='',third='';if(f.status==='done'&&f.winner){champ=f.winner.name;second=(f.winner===f.home?f.away:f.home)?.name||'';}if(R.third[0].status==='done'&&R.third[0].winner)third=R.third[0].winner.name;const podium=(champ||second||third)?`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">${champ?`<div class="summary-card" style="border-color:var(--gold);flex:1;min-width:90px;"><div style="font-size:16px;">🥇</div><div class="num" style="font-size:18px;">${champ}</div><div class="lbl">우승</div></div>`:''} ${second?`<div class="summary-card" style="flex:1;min-width:90px;"><div style="font-size:16px;">🥈</div><div class="num" style="font-size:18px;">${second}</div><div class="lbl">준우승</div></div>`:''} ${third?`<div class="summary-card" style="flex:1;min-width:90px;"><div style="font-size:16px;">🥉</div><div class="num" style="font-size:18px;">${third}</div><div class="lbl">3위</div></div>`:''}</div>`:'';const rl=s=>`<div style="text-align:center;font-size:11px;font-weight:700;padding:5px 8px;border-radius:6px 6px 0 0;margin:0 5px;${s==='결승전'?'background:var(--gold);color:var(--navy-dark);':'background:var(--navy);color:var(--white);'}">${s==='결승전'?'🏆 결승전':s}</div>`;document.getElementById('page-bracket'+g).innerHTML=`<div class="bracket-header"><div class="grade-badge">${info.icon} ${info.name}</div><div class="sport-badge">${info.sport}</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">${done}/9 완료</div></div>${podium}<div class="section-title" style="margin-top:0">토너먼트 대진표</div><div class="bracket-wrap"><div style="display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));align-items:start;"><div>${rl('1라운드')}<div style="padding:4px;">${R.r1.map(m=>matchNodeHTML(m,g)).join('')}</div></div><div>${rl('8강')}<div style="padding:4px;">${R.qf.map(m=>matchNodeHTML(m,g)).join('')}</div></div><div>${rl('4강')}<div style="padding:4px;">${R.sf.map(m=>matchNodeHTML(m,g)).join('')}</div></div><div>${rl('3·4위전')}<div style="padding:4px;">${R.third.map(m=>matchNodeHTML(m,g)).join('')}</div></div><div>${rl('결승전')}<div style="padding:4px;">${R.final.map(m=>matchNodeHTML(m,g)).join('')}</div></div></div></div><div class="section-title">${info.schedLabel}</div>${renderSchedule(g)}`;}
+
+function renderBracket(g){
+  propagate(g);
+  const T=tournaments[g],R=T.rounds,info=gradeInfo[g],cls=info.cls;
+  const allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],done=allM.filter(m=>m.status==='done').length;
+  const f=R.final[0];let champ='',second='',third='';
+  if(f.status==='done'&&f.winner){champ=f.winner.name;second=(f.winner===f.home?f.away:f.home)?.name||'';}
+  if(R.third[0].status==='done'&&R.third[0].winner)third=R.third[0].winner.name;
+  const podium=(champ||second||third)?`<div class="podium-grid">${champ?`<div class="podium-card gold-border"><div style="font-size:18px;">🥇</div><div class="podium-name">${champ}</div><div class="podium-lbl">우승</div></div>`:''} ${second?`<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">${second}</div><div class="podium-lbl">준우승</div></div>`:''} ${third?`<div class="podium-card"><div style="font-size:18px;">🥉</div><div class="podium-name">${third}</div><div class="podium-lbl">3위</div></div>`:''}</div>`:'';
+  const rl=(s,isFinal)=>`<div class="round-col-label ${cls}${isFinal?' final':''}">${isFinal?'🏆 결승전':s}</div>`;
+  document.getElementById('page-bracket'+g).innerHTML=`
+  <div class="bracket-header"><div class="grade-badge ${cls}">${info.icon} ${info.name}</div><div class="sport-badge ${cls}">${info.sport}</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">${done}/9 완료</div></div>
+  ${podium}
+  <div class="section-title" style="margin-top:0">토너먼트 대진표</div>
+  <div class="bracket-wrap"><div class="round-col-grid">
+    <div>${rl('1라운드',false)}<div style="padding:3px;">${R.r1.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('8강',false)}<div style="padding:3px;">${R.qf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('4강',false)}<div style="padding:3px;">${R.sf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('3·4위전',false)}<div style="padding:3px;">${R.third.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('결승전',true)}<div style="padding:3px;">${R.final.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+  </div></div>
+  <div class="section-title">${info.schedLabel}</div>
+  ${renderSchedule(g)}`;
+}
 
 /* ── HOME ── */
 function renderHome(){
-  let done=0,playing=0,sched=0;
-  [1,2,3].forEach(g=>{const R=tournaments[g].rounds;[...R.r1,...R.qf,...R.sf,...R.third,...R.final].forEach(m=>{if(m.status==='done')done++;else if(m.status==='playing')playing++;else sched++;});});
+  syncCalFromSchedules();
+  const st=countStats();
   const tops=[];[1,2,3].forEach(g=>{const f=tournaments[g].rounds.final[0];if(f.status==='done'&&f.winner)tops.push({grade:g,team:f.winner.name});});
   document.getElementById('page-home').innerHTML=`
-  <div class="hero"><div class="hero-title">2026 한수컵</div><div class="hero-sub">한수중학교 스포츠클럽 대회</div>
-    <div class="hero-meta"><div class="hero-badge">📅 2026년 봄학기</div><div class="hero-badge">👥 3학년 30반 참가</div><div class="hero-badge">🏆 토너먼트 9경기</div></div>
+  <div class="hero">
+    <div class="hero-title">2026 한수컵</div>
+    <div class="hero-sub">한수중학교 스포츠클럽 대회</div>
+    <div class="hero-keywords">
+      <span class="hero-kw">🏆 토너먼트 경기</span>
+      <span class="hero-kw">🤝 페어플레이</span>
+      <span class="hero-kw">🌟 스포츠맨십</span>
+    </div>
   </div>
-  <div class="summary-grid">
-    <div class="summary-card"><div class="num">${done+playing+sched}</div><div class="lbl">전체 경기</div></div>
-    <div class="summary-card"><div class="num">${done}</div><div class="lbl">완료</div></div>
-    <div class="summary-card" style="border-color:var(--gold)"><div class="num" style="color:var(--gold)">${playing}</div><div class="lbl">진행중</div></div>
-    <div class="summary-card"><div class="num">${sched}</div><div class="lbl">예정</div></div>
+  <div class="stat-grid">
+    <div class="stat-card total-card"><div class="num">${st.total}</div><div class="lbl">전체 경기</div></div>
+    <div class="stat-card done-card"><div class="num">${st.done}</div><div class="lbl">완료</div></div>
+    <div class="stat-card"><div class="num">${st.sched}</div><div class="lbl">예정</div></div>
   </div>
   <div class="section-title">학년별 종목</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;">
-    ${[1,2,3].map(g=>`<div class="summary-card" style="cursor:pointer;" onclick="goGrade(${g})"><div style="font-size:22px;">${gradeInfo[g].icon}</div><div style="font-size:13px;font-weight:700;color:var(--navy);margin-top:4px;">${gradeInfo[g].name}</div><div style="font-size:11px;color:var(--text2);">${gradeInfo[g].sport}</div></div>`).join('')}
+  <div class="sport-cards">
+    <div class="sport-card futsal" onclick="goGrade(1)"><div class="s-icon">⚽</div><div class="s-grade">1학년</div><div class="s-sport">풋살</div></div>
+    <div class="sport-card tchouk" onclick="goGrade(2)"><div class="s-icon">🤾</div><div class="s-grade">2학년</div><div class="s-sport">츄크볼</div></div>
+    <div class="sport-card volleyball" onclick="goGrade(3)"><div class="s-icon">🏐</div><div class="s-grade">3학년</div><div class="s-sport">배구</div></div>
   </div>
   <div class="section-title">대회 일정 달력</div>
   ${renderCalendar()}
-  ${tops.length?`<div class="section-title">🏆 우승팀</div><div style="display:flex;gap:8px;flex-wrap:wrap;">${tops.map(t=>`<div class="summary-card" style="border-color:var(--gold);flex:1;min-width:120px;"><div style="font-size:12px;color:var(--text2);">${gradeInfo[t.grade].name}</div><div class="num" style="font-size:20px;">${t.team}</div><div class="lbl">🏆 우승</div></div>`).join('')}</div>`:''}`;
+  ${tops.length?`<div class="section-title">🏆 우승팀</div><div style="display:flex;gap:8px;flex-wrap:wrap;">${tops.map(t=>`<div class="stat-card" style="border-color:var(--gold);flex:1;min-width:100px;"><div style="font-size:11px;color:var(--text2);">${gradeInfo[t.grade].icon} ${gradeInfo[t.grade].name}</div><div class="num" style="font-size:18px;">${t.team}</div><div class="lbl">🏆 우승</div></div>`).join('')}</div>`:''}`;
 }
 
 /* ── BOARD ── */
-let noticePosts=[{id:1,type:'notice',cat:'공지',field1:'2026 한수컵 대회 일정 최종 안내',field2:'체육부',field3:'1학년 풋살: 운동장\n2학년 츄크볼: 체육관\n3학년 배구: 체육관\n경기 15분 전까지 집합 바랍니다.',date:'2026-05-01'},{id:2,type:'notice',cat:'안내',field1:'선수 명단 제출 마감 안내',field2:'체육부',field3:'각 반 담임 선생님께서는 선수 명단을 5월 15일까지 제출해 주세요.',date:'2026-05-05'}];
+let noticePosts=[{id:1,type:'notice',cat:'공지',field1:'2026 한수컵 대회 일정 최종 안내',field2:'체육부',field3:'1학년 풋살: 운동장\n2학년 츄크볼: 체육관\n3학년 배구: 체육관',date:'2026-05-01'},{id:2,type:'notice',cat:'안내',field1:'선수 명단 제출 마감 안내',field2:'체육부',field3:'각 반 담임 선생님께서는 선수 명단을 5월 15일까지 제출해 주세요.',date:'2026-05-05'}];
 let studentPosts=[{id:101,type:'student',cat:'응원',field1:'10301',field2:'김민준',field3:'1학년 3반 풋살 파이팅!! 🔥 우리 반 최고야!',date:'2026-05-10'},{id:102,type:'student',cat:'응원',field1:'30702',field2:'박서윤',field3:'3학년 7반 배구 화이팅!!',date:'2026-05-11'}];
 let nextNoticeId=10,nextStudentId=200,_writeTarget='student';
-function renderBoard(){
-  const nb=document.getElementById('noticeWriteBtn');if(nb)nb.style.display=isAdmin?'inline-block':'none';
-  document.getElementById('noticeList').innerHTML=noticePosts.length?noticePosts.slice().reverse().map(p=>`<div class="post-item"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><span class="post-badge">📢 ${p.cat}</span><div class="post-title-sm" onclick="viewPost(${p.id},'notice')">${p.field1}</div></div><div class="post-meta-sm"><span>${p.field2}</span><span>${p.date}</span><div class="post-actions ${isAdmin?'show':''}"><button class="act-btn act-edit" onclick="openEditPostModal(${p.id},'notice')">수정</button><button class="act-btn act-del" onclick="confirmDelete(${p.id},'notice')">삭제</button></div></div></div>`).join(''):`<div class="empty-msg">공지사항이 없습니다.</div>`;
-  document.getElementById('studentList').innerHTML=studentPosts.length?studentPosts.slice().reverse().map(p=>`<div class="post-item"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><span class="post-badge">${p.cat==='응원'?'🎉':p.cat==='문의'?'❓':'💬'} ${p.cat}</span><div class="post-title-sm" onclick="viewPost(${p.id},'student')">${p.field3.length>22?p.field3.substring(0,22)+'…':p.field3}</div></div><div class="post-meta-sm"><span style="font-weight:700">학번 ${p.field1}</span><span>${p.field2}</span><span>${p.date}</span><div class="post-actions ${isAdmin?'show':''}"><button class="act-btn act-edit" onclick="openEditPostModal(${p.id},'student')">수정</button><button class="act-btn act-del" onclick="confirmDelete(${p.id},'student')">삭제</button></div></div></div>`).join(''):`<div class="empty-msg">게시글이 없습니다.</div>`;
-}
+function renderBoard(){const nb=document.getElementById('noticeWriteBtn');if(nb)nb.style.display=isAdmin?'inline-block':'none';document.getElementById('noticeList').innerHTML=noticePosts.length?noticePosts.slice().reverse().map(p=>`<div class="post-item"><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;"><span class="post-badge">📢 ${p.cat}</span><div class="post-title-sm" onclick="viewPost(${p.id},'notice')">${p.field1}</div></div><div class="post-meta-sm"><span>${p.field2}</span><span>${p.date}</span><div class="post-actions ${isAdmin?'show':''}"><button class="act-btn act-edit" onclick="openEditPostModal(${p.id},'notice')">수정</button><button class="act-btn act-del" onclick="confirmDelete(${p.id},'notice')">삭제</button></div></div></div>`).join(''):`<div class="empty-msg">공지사항이 없습니다.</div>`;document.getElementById('studentList').innerHTML=studentPosts.length?studentPosts.slice().reverse().map(p=>`<div class="post-item"><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;"><span class="post-badge">${p.cat==='응원'?'🎉':p.cat==='문의'?'❓':'💬'} ${p.cat}</span><div class="post-title-sm" onclick="viewPost(${p.id},'student')">${p.field3.length>20?p.field3.substring(0,20)+'…':p.field3}</div></div><div class="post-meta-sm"><span style="font-weight:700">학번 ${p.field1}</span><span>${p.field2}</span><span>${p.date}</span><div class="post-actions ${isAdmin?'show':''}"><button class="act-btn act-edit" onclick="openEditPostModal(${p.id},'student')">수정</button><button class="act-btn act-del" onclick="confirmDelete(${p.id},'student')">삭제</button></div></div></div>`).join(''):`<div class="empty-msg">게시글이 없습니다.</div>`;}
 function openWriteModal(target){_writeTarget=target;const isN=target==='notice';document.getElementById('writeModalTitle').textContent=isN?'📢 공지사항 작성':'💬 학생 게시판 글쓰기';document.getElementById('labelField1').textContent=isN?'제목':'학번';document.getElementById('labelField2').textContent=isN?'작성자':'이름';document.getElementById('labelField3').textContent='내용';document.getElementById('postField1').placeholder=isN?'제목':'예) 10301';document.getElementById('postField2').placeholder=isN?'예) 체육부':'예) 김민준';document.getElementById('postField3').placeholder='내용을 입력하세요';['postField1','postField2','postField3'].forEach(id=>document.getElementById(id).value='');document.getElementById('writeModal').classList.add('show');}
 function submitPost(){const f1=document.getElementById('postField1').value.trim(),f2=document.getElementById('postField2').value.trim(),f3=document.getElementById('postField3').value.trim();if(!f1||!f3){showToast(_writeTarget==='notice'?'제목과 내용을 입력해 주세요.':'학번과 내용을 입력해 주세요.');return;}const d=new Date(),ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const post={type:_writeTarget,cat:_writeTarget==='notice'?'공지':'응원',field1:f1,field2:f2||(_writeTarget==='notice'?'작성자':'익명'),field3:f3,date:ds};if(_writeTarget==='notice'){post.id=nextNoticeId++;noticePosts.push(post);}else{post.id=nextStudentId++;studentPosts.push(post);}closeModal('writeModal');renderBoard();showToast('등록됨!');}
 function openEditPostModal(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;const isN=type==='notice';document.getElementById('editPostId').value=id;document.getElementById('editPostType').value=type;document.getElementById('editLabelField1').textContent=isN?'제목':'학번';document.getElementById('editLabelField2').textContent=isN?'작성자':'이름';document.getElementById('editLabelField3').textContent='내용';document.getElementById('editPostField1').value=p.field1;document.getElementById('editPostField2').value=p.field2;document.getElementById('editPostField3').value=p.field3;document.getElementById('editPostModal').classList.add('show');}
@@ -666,29 +667,18 @@ function viewPost(id,type){const list=type==='notice'?noticePosts:studentPosts,p
 function confirmDelete(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;document.getElementById('confirmMsg').textContent='이 게시글을 삭제하시겠습니까?';document.getElementById('confirmOkBtn').onclick=()=>{if(type==='notice')noticePosts=noticePosts.filter(x=>x.id!==id);else studentPosts=studentPosts.filter(x=>x.id!==id);closeModal('confirmModal');renderBoard();showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
 
 /* ── ADMIN ── */
-function openAdminModal(){
-  if(isAdmin){isAdmin=false;document.getElementById('adminToggleBtn').classList.remove('active-admin');document.getElementById('adminToggleBtn').textContent='🔒 관리자';updateAdminInfoBtns();[1,2,3].forEach(g=>{const c=document.getElementById('page-bracket'+g);if(c.innerHTML.trim())renderBracket(g);});renderBoard();renderHome();if(document.getElementById('page-rules').classList.contains('active'))renderRulesCard();showToast('관리자 모드 해제');return;}
-  document.getElementById('adminPin').value='';document.getElementById('adminModal').classList.add('show');setTimeout(()=>document.getElementById('adminPin').focus(),100);
-}
-function checkAdmin(){
-  if(document.getElementById('adminPin').value===ADMIN_PASS){isAdmin=true;closeModal('adminModal');document.getElementById('adminToggleBtn').classList.add('active-admin');document.getElementById('adminToggleBtn').textContent='🔓 관리자 모드';updateAdminInfoBtns();[1,2,3].forEach(g=>{const c=document.getElementById('page-bracket'+g);if(c.innerHTML.trim())renderBracket(g);});renderBoard();renderHome();if(document.getElementById('page-rules').classList.contains('active'))renderRulesCard();showToast('관리자 모드 활성화');}else{showToast('비밀번호가 틀렸습니다.');document.getElementById('adminPin').value='';}
-}
+function openAdminModal(){if(isAdmin){isAdmin=false;document.getElementById('adminToggleBtn').classList.remove('active-admin');document.getElementById('adminToggleBtn').textContent='🔒 관리자';updateAdminInfoBtns();[1,2,3].forEach(g=>{const c=document.getElementById('page-bracket'+g);if(c.innerHTML.trim())renderBracket(g);});renderBoard();renderHome();if(document.getElementById('page-rules').classList.contains('active'))renderRulesCard();showToast('관리자 모드 해제');return;}document.getElementById('adminPin').value='';document.getElementById('adminModal').classList.add('show');setTimeout(()=>document.getElementById('adminPin').focus(),100);}
+function checkAdmin(){if(document.getElementById('adminPin').value===ADMIN_PASS){isAdmin=true;closeModal('adminModal');document.getElementById('adminToggleBtn').classList.add('active-admin');document.getElementById('adminToggleBtn').textContent='🔓 관리자';updateAdminInfoBtns();[1,2,3].forEach(g=>{const c=document.getElementById('page-bracket'+g);if(c.innerHTML.trim())renderBracket(g);});renderBoard();renderHome();if(document.getElementById('page-rules').classList.contains('active'))renderRulesCard();showToast('관리자 모드 활성화');}else{showToast('비밀번호가 틀렸습니다.');document.getElementById('adminPin').value='';}}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 function showPage(name,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');if(['bracket1','bracket2','bracket3'].includes(name))renderBracket(+name.slice(-1));if(name==='home')renderHome();if(name==='board')renderBoard();if(name==='rules')renderRulesCard();}
 function goGrade(g){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach((t,i)=>{t.classList.remove('active');if(i===g)t.classList.add('active');});document.getElementById('page-bracket'+g).classList.add('active');renderBracket(g);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.display='none';},2500);}
 
+// Init
+syncCalFromSchedules();
 renderHome();
 renderRulesCard();
 ['safety','award','emergency'].forEach(t=>renderInfoCard(t));
-
-function saveData(){
-  firebase.database().ref("hansuCup").set({
-    calEvents,
-    schedules,
-    tournaments,
-    rulesData,
-    infoData
-  });
-}
 </script>
+</body>
+</html>
