@@ -1029,6 +1029,70 @@ if (TEACHER_MODE) {
   const navBar = document.querySelector('.nav-bar');
   if (navBar) navBar.style.background = '#1a4a2a';
 }
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "여기에 apiKey",
+  authDomain: "여기에 authDomain",
+  databaseURL: "여기에 databaseURL",
+  projectId: "여기에 projectId",
+  storageBucket: "여기에 storageBucket",
+  messagingSenderId: "여기에 senderId",
+  appId: "여기에 appId"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window._saveToFirebase = async function(type){
+
+  const data = {
+    overviewData,
+    schedules,
+    calManualEvents,
+    rulesData,
+    posts,
+    infoData
+  };
+
+  await set(ref(db, "hansucup"), data);
+};
+
+async function loadData(){
+
+  const snapshot = await get(ref(db, "hansucup"));
+
+  if(snapshot.exists()){
+
+    const d = snapshot.val();
+
+    if(d.overviewData) overviewData = d.overviewData;
+    if(d.schedules) schedules = d.schedules;
+    if(d.calManualEvents) calManualEvents = d.calManualEvents;
+    if(d.rulesData) rulesData = d.rulesData;
+    if(d.posts) posts = d.posts;
+    if(d.infoData) infoData = d.infoData;
+
+    renderHome();
+
+    [1,2,3].forEach(g=>{
+      renderBracket(g);
+    });
+
+    renderRules();
+    renderBoard();
+  }
+}
+
+loadData();
+</script>
 </script>
 </body>
 </html>
