@@ -1029,29 +1029,33 @@ if (TEACHER_MODE) {
   const navBar = document.querySelector('.nav-bar');
   if (navBar) navBar.style.background = '#1a4a2a';
 }
+</script>
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getDatabase,
   ref,
   set,
   get
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 const firebaseConfig = {
-  apiKey: "여기에 apiKey",
-  authDomain: "여기에 authDomain",
-  databaseURL: "여기에 databaseURL",
-  projectId: "여기에 projectId",
-  storageBucket: "여기에 storageBucket",
-  messagingSenderId: "여기에 senderId",
-  appId: "여기에 appId"
+  apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
+  authDomain: "hansucup-d154b.firebaseapp.com",
+  databaseURL: "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hansucup-d154b",
+  storageBucket: "hansucup-d154b.firebasestorage.app",
+  messagingSenderId: "732633509551",
+  appId: "1:732633509551:web:a925fbe990ebb000b46e5a",
+  measurementId: "G-KT3SY3NGY5"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
-window._saveToFirebase = async function(type){
+window._saveToFirebase = async function(){
 
   const data = {
     overviewData,
@@ -1074,10 +1078,15 @@ async function loadData(){
     const d = snapshot.val();
 
     if(d.overviewData) overviewData = d.overviewData;
+
     if(d.schedules) schedules = d.schedules;
+
     if(d.calManualEvents) calManualEvents = d.calManualEvents;
+
     if(d.rulesData) rulesData = d.rulesData;
+
     if(d.posts) posts = d.posts;
+
     if(d.infoData) infoData = d.infoData;
 
     renderHome();
@@ -1087,12 +1096,13 @@ async function loadData(){
     });
 
     renderRules();
+
     renderBoard();
   }
 }
 
 loadData();
-</script>
+
 </script>
 </body>
 </html>
