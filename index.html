@@ -504,7 +504,7 @@ function toggleOverviewEdit(){
 function cancelOverviewEdit(){document.getElementById('overviewEditArea').classList.remove('show');}
 function saveOverviewEdit(){
   overviewData=document.getElementById('overviewEditText').value.trim().split('\n').map(s=>s.trim()).filter(s=>s&&s.includes('|'));
-  renderOverview();document.getElementById('overviewEditArea').classList.remove('show');if(typeof _saveToFirebase==='function')_saveToFirebase('overview');showToast('행사개요 저장됨!');
+  renderOverview();document.getElementById('overviewEditArea').classList.remove('show');_saveToFirebase('overview');showToast('행사개요 저장됨!');
 }
 
 /* ── CALENDAR ── */
@@ -598,14 +598,14 @@ function saveCalEvent(){
     if(ev&&ev.auto){applyCalToSchedule(ev,newDate,newTitle);[1,2,3].forEach(g=>{const c=document.getElementById('page-bracket'+g);if(c&&c.innerHTML.trim())renderBracket(g);});}
     else{const e=calManualEvents.find(x=>String(x.id)===id);if(e)Object.assign(e,{date:newDate,title:newTitle,type,note});}
   }else{calManualEvents.push({id:nextCalId++,date:newDate,title:newTitle,type,note,auto:false});}
-  closeModal('calEventModal');renderHome();if(typeof _saveToFirebase==='function')_saveToFirebase('calendar');showToast(id?'수정됨!':'추가됨!');
+  closeModal('calEventModal');renderHome();_saveToFirebase('calendar');showToast(id?'수정됨!':'추가됨!');
 }
 function deleteCalEvent(id){
   // if auto, remove from schedule
   const allEv=getAllCalEvents();const ev=allEv.find(e=>String(e.id)===String(id));
   if(ev&&ev.auto){deleteGame(ev.g,ev.ri,ev.gi);return;}
   calManualEvents=calManualEvents.filter(e=>String(e.id)!==String(id));
-  renderHome();showToast('삭제됨.');
+  renderHome();_saveToFirebase('calendar');showToast('삭제됨.');
 }
 
 /* ── SCHEDULE DATA ── */
@@ -658,12 +658,12 @@ function saveScheduleGame(){
   const g=+document.getElementById('sgGrade').value,ri=+document.getElementById('sgRoundIdx').value,gi=+document.getElementById('sgGameIdx').value;
   const gm={date:document.getElementById('sgDate').value||'',time:document.getElementById('sgTime').value||'',venue:'체육관',home:document.getElementById('sgHome').value.trim()||'TBD',away:document.getElementById('sgAway').value.trim()||'TBD',note:document.getElementById('sgNote').value.trim(),teacher:document.getElementById('sgTeacher').value.trim()};
   if(_sgMode==='add')schedules[g][ri].games.push(gm);else schedules[g][ri].games[gi]=gm;
-  closeModal('scheduleGameModal');renderBracket(g);renderHome();if(typeof _saveToFirebase==='function')_saveToFirebase('schedule');showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
+  closeModal('scheduleGameModal');renderBracket(g);renderHome();_saveToFirebase('schedule');showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
 }
-function deleteGame(g,ri,gi){schedules[g][ri].games.splice(gi,1);renderBracket(g);renderHome();if(typeof _saveToFirebase==='function')_saveToFirebase('schedule');showToast('삭제됨.');}
+function deleteGame(g,ri,gi){schedules[g][ri].games.splice(gi,1);renderBracket(g);renderHome();_saveToFirebase('schedule');showToast('삭제됨.');}
 function openAddRound(g){document.getElementById('arGrade').value=g;document.getElementById('addRoundModal').classList.add('show');}
-function saveNewRound(){const g=+document.getElementById('arGrade').value;schedules[g].push({roundName:document.getElementById('arName').value,status:document.getElementById('arStatus').value,games:[]});closeModal('addRoundModal');renderBracket(g);if(typeof _saveToFirebase==='function')_saveToFirebase('round');showToast('라운드 추가됨!');}
-function deleteRound(g,ri){document.getElementById('confirmMsg').textContent=`"${schedules[g][ri].roundName}" 라운드를 삭제하시겠습니까?`;document.getElementById('confirmOkBtn').onclick=()=>{schedules[g].splice(ri,1);closeModal('confirmModal');renderBracket(g);renderHome();showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
+function saveNewRound(){const g=+document.getElementById('arGrade').value;schedules[g].push({roundName:document.getElementById('arName').value,status:document.getElementById('arStatus').value,games:[]});closeModal('addRoundModal');renderBracket(g);_saveToFirebase('round');showToast('라운드 추가됨!');}
+function deleteRound(g,ri){document.getElementById('confirmMsg').textContent=`"${schedules[g][ri].roundName}" 라운드를 삭제하시겠습니까?`;document.getElementById('confirmOkBtn').onclick=()=>{schedules[g].splice(ri,1);closeModal('confirmModal');renderBracket(g);renderHome();_saveToFirebase('round');showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
 
 /* ── RULES ── */
 let rulesData=[
@@ -681,7 +681,7 @@ function renderRulesCard(){
 function showRules(idx,btn){activeRulesIdx=idx;document.querySelectorAll('.rules-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRulesCard();}
 function toggleRulesEdit(){const a=document.getElementById('rulesEditArea');a.classList.toggle('show');if(a.classList.contains('show')){document.getElementById('rulesTitleInp').value=rulesData[activeRulesIdx].title;document.getElementById('rulesBodyTa').value=rulesData[activeRulesIdx].body;}}
 function cancelRulesEdit(){document.getElementById('rulesEditArea').classList.remove('show');}
-function saveRulesEdit(){rulesData[activeRulesIdx].title=document.getElementById('rulesTitleInp').value.trim()||rulesData[activeRulesIdx].title;rulesData[activeRulesIdx].body=document.getElementById('rulesBodyTa').value;renderRulesCard();if(typeof _saveToFirebase==='function')_saveToFirebase('rules');showToast('저장됨!');}
+function saveRulesEdit(){rulesData[activeRulesIdx].title=document.getElementById('rulesTitleInp').value.trim()||rulesData[activeRulesIdx].title;rulesData[activeRulesIdx].body=document.getElementById('rulesBodyTa').value;renderRulesCard();_saveToFirebase('rules');showToast('저장됨!');}
 
 /* ── INFO ── */
 let infoData={
@@ -692,7 +692,7 @@ let infoData={
 function renderInfoCard(type){const bodyEl=document.getElementById('body-'+type);if(!bodyEl)return;if(type==='safety')bodyEl.innerHTML=infoData.safety.map((item,i)=>`<div class="info-item"><div class="info-bullet safety">${i+1}</div><div>${item}</div></div>`).join('');else if(type==='award'){const rows=infoData.award.map(r=>{const[a,b,c]=r.split('|');return`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;}).join('');bodyEl.innerHTML=`<table class="award-table"><thead><tr><th>순위</th><th>시상 내용</th><th>대상</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:7px;font-size:10px;color:var(--text2);">※ 시상식은 모든 경기 종료 후 진행됩니다.</div>`;}else if(type==='emergency'){bodyEl.innerHTML=infoData.emergency.map((row,i)=>{const idx=row.indexOf('|');return`<div class="info-item"><div class="info-bullet emergency">${['①','②','③','④'][i]}</div><div><b>${row.substring(0,idx)}</b>: ${row.substring(idx+1)}</div></div>`;}).join('')+`<div style="margin-top:9px;background:#fef2f2;border-radius:5px;padding:7px 9px;font-size:11px;color:#991b1b;font-weight:700;line-height:1.7;">🆘 비상연락: 담당 교사 → 보건 교사 → 관리자 → 119</div>`;}}
 function toggleInfoEdit(type){const a=document.getElementById('editArea-'+type);if(a.classList.contains('show')){a.classList.remove('show');return;}document.getElementById('editText-'+type).value=infoData[type].join('\n');a.classList.add('show');}
 function cancelInfoEdit(type){document.getElementById('editArea-'+type).classList.remove('show');}
-function saveInfoEdit(type){infoData[type]=document.getElementById('editText-'+type).value.trim().split('\n').map(s=>s.trim()).filter(s=>s);renderInfoCard(type);document.getElementById('editArea-'+type).classList.remove('show');if(typeof _saveToFirebase==='function')_saveToFirebase('info');showToast('저장됨!');}
+function saveInfoEdit(type){infoData[type]=document.getElementById('editText-'+type).value.trim().split('\n').map(s=>s.trim()).filter(s=>s);renderInfoCard(type);document.getElementById('editArea-'+type).classList.remove('show');_saveToFirebase('info');showToast('저장됨!');}
 function updateAdminInfoBtns(){['safety','award','emergency'].forEach(t=>document.getElementById('editBtn-'+t)?.classList.toggle('show',isAdmin));}
 
 /* ── TOURNAMENT ── */
@@ -722,7 +722,7 @@ function matchNodeHTML(m,g){
   return`<div class="match-node ${cls}-node" id="node_${m.id}"><div class="match-top ${cls}"><div class="match-round-row"><span class="match-round-label ${cls}">${m.round}</span><span style="display:flex;align-items:center;gap:3px;"><span class="match-status-pill ${pillCls}">${statusTxt}</span>${adminBtn}</span></div><div class="match-date-row" style="${!m.date?'color:#c8c8d4':''}">${dateDisplay}</div></div><div class="team-row ${hWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${hNm}</div><div class="team-sc ${hWin?'win-sc':''}">${m.homeScore!==null?m.homeScore:'-'}</div></div><div class="team-row ${aWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${aNm}</div><div class="team-sc ${aWin?'win-sc':''}">${m.awayScore!==null?m.awayScore:'-'}</div></div>${ep}</div>`;
 }
 function toggleEdit(id){document.getElementById('edit_'+id)?.classList.toggle('show');}
-function saveMatch(id,g){const R=tournaments[g].rounds,allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],m=allM.find(x=>x.id===id);if(!m)return;const hn=document.getElementById('hn_'+id)?.value.trim(),an=document.getElementById('an_'+id)?.value.trim();if(hn&&m.home)m.home.name=hn;if(an&&m.away)m.away.name=an;m.date=document.getElementById('dt_'+id).value;const hs=document.getElementById('hs_'+id).value,as=document.getElementById('as_'+id).value,st=document.getElementById('st_'+id).value;m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;if(st==='done'&&m.homeScore!==null&&m.awayScore!==null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);else m.winner=null;propagate(g);renderBracket(g);renderHome();showToast('저장됨!');}
+function saveMatch(id,g){const R=tournaments[g].rounds,allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],m=allM.find(x=>x.id===id);if(!m)return;const hn=document.getElementById('hn_'+id)?.value.trim(),an=document.getElementById('an_'+id)?.value.trim();if(hn&&m.home)m.home.name=hn;if(an&&m.away)m.away.name=an;m.date=document.getElementById('dt_'+id).value;const hs=document.getElementById('hs_'+id).value,as=document.getElementById('as_'+id).value,st=document.getElementById('st_'+id).value;m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;if(st==='done'&&m.homeScore!==null&&m.awayScore!==null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);else m.winner=null;propagate(g);renderBracket(g);renderHome();_saveToFirebase('match');showToast('저장됨!');}
 function renderBracket(g){
   propagate(g);const T=tournaments[g],R=T.rounds,info=gradeInfo[g],cls=info.cls;
   const allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],done=allM.filter(m=>m.status==='done').length;
@@ -785,11 +785,11 @@ function buildPaging(cur,total,varName){
   return h;
 }
 function openWriteModal(target){_writeTarget=target;const isN=target==='notice';document.getElementById('writeModalTitle').textContent=isN?'📢 공지사항 작성':'💬 학생 게시판 글쓰기';document.getElementById('noticeCatRow').style.display=isN?'block':'none';document.getElementById('studentCatRow').style.display=isN?'none':'block';document.getElementById('labelField1').textContent=isN?'제목':'학번';document.getElementById('labelField2').textContent=isN?'작성자':'이름';document.getElementById('labelField3').textContent='내용';document.getElementById('postField1').placeholder=isN?'제목':'예) 10301';document.getElementById('postField2').placeholder=isN?'예) 체육부':'예) 김민준';document.getElementById('postField3').placeholder='내용을 입력하세요';['postField1','postField2','postField3'].forEach(id=>document.getElementById(id).value='');document.getElementById('writeModal').classList.add('show');}
-function submitPost(){const f1=document.getElementById('postField1').value.trim(),f2=document.getElementById('postField2').value.trim(),f3=document.getElementById('postField3').value.trim();if(!f1||!f3){showToast(_writeTarget==='notice'?'제목과 내용을 입력해 주세요.':'학번과 내용을 입력해 주세요.');return;}const isN=_writeTarget==='notice';const cat=isN?document.getElementById('noticeCat').value:document.getElementById('studentCat').value;const d=new Date(),ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const post={type:_writeTarget,cat,field1:f1,field2:f2||(isN?'작성자':'익명'),field3:f3,date:ds};if(isN){post.id=nextNoticeId++;noticePosts.push(post);noticePage=Math.ceil(noticePosts.length/PAGE_SIZE);}else{post.id=nextStudentId++;studentPosts.push(post);studentPage=Math.ceil(studentPosts.length/PAGE_SIZE);}closeModal('writeModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();if(typeof _saveToFirebase==='function')_saveToFirebase('post');showToast('등록됨!');}
+function submitPost(){const f1=document.getElementById('postField1').value.trim(),f2=document.getElementById('postField2').value.trim(),f3=document.getElementById('postField3').value.trim();if(!f1||!f3){showToast(_writeTarget==='notice'?'제목과 내용을 입력해 주세요.':'학번과 내용을 입력해 주세요.');return;}const isN=_writeTarget==='notice';const cat=isN?document.getElementById('noticeCat').value:document.getElementById('studentCat').value;const d=new Date(),ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const post={type:_writeTarget,cat,field1:f1,field2:f2||(isN?'작성자':'익명'),field3:f3,date:ds};if(isN){post.id=nextNoticeId++;noticePosts.push(post);noticePage=Math.ceil(noticePosts.length/PAGE_SIZE);}else{post.id=nextStudentId++;studentPosts.push(post);studentPage=Math.ceil(studentPosts.length/PAGE_SIZE);}closeModal('writeModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();_saveToFirebase('post');showToast('등록됨!');}
 function openEditPostModal(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;const isN=type==='notice';document.getElementById('editPostId').value=id;document.getElementById('editPostType').value=type;document.getElementById('editLabelField1').textContent=isN?'제목':'학번';document.getElementById('editLabelField2').textContent=isN?'작성자':'이름';document.getElementById('editLabelField3').textContent='내용';document.getElementById('editPostField1').value=p.field1;document.getElementById('editPostField2').value=p.field2;document.getElementById('editPostField3').value=p.field3;document.getElementById('editPostModal').classList.add('show');}
-function saveEditPost(){const id=+document.getElementById('editPostId').value,type=document.getElementById('editPostType').value;const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;p.field1=document.getElementById('editPostField1').value.trim()||p.field1;p.field2=document.getElementById('editPostField2').value.trim()||p.field2;p.field3=document.getElementById('editPostField3').value.trim()||p.field3;closeModal('editPostModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();if(typeof _saveToFirebase==='function')_saveToFirebase('post');showToast('수정됨!');}
+function saveEditPost(){const id=+document.getElementById('editPostId').value,type=document.getElementById('editPostType').value;const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;p.field1=document.getElementById('editPostField1').value.trim()||p.field1;p.field2=document.getElementById('editPostField2').value.trim()||p.field2;p.field3=document.getElementById('editPostField3').value.trim()||p.field3;closeModal('editPostModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();_saveToFirebase('post');showToast('수정됨!');}
 function viewPost(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;const isN=type==='notice';document.getElementById('pvTitle').textContent=isN?p.field1:p.field2;document.getElementById('pvMeta').textContent=isN?`${p.cat} · ${p.field2} · ${p.date}`:`${p.cat} · 학번: ${p.field1} · ${p.field2} · ${p.date}`;document.getElementById('pvBody').textContent=p.field3;document.getElementById('postViewModal').classList.add('show');}
-function confirmDelete(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;document.getElementById('confirmMsg').textContent='이 게시글을 삭제하시겠습니까?';document.getElementById('confirmOkBtn').onclick=()=>{if(type==='notice')noticePosts=noticePosts.filter(x=>x.id!==id);else studentPosts=studentPosts.filter(x=>x.id!==id);closeModal('confirmModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
+function confirmDelete(id,type){const list=type==='notice'?noticePosts:studentPosts,p=list.find(x=>x.id===id);if(!p)return;document.getElementById('confirmMsg').textContent='이 게시글을 삭제하시겠습니까?';document.getElementById('confirmOkBtn').onclick=()=>{if(type==='notice')noticePosts=noticePosts.filter(x=>x.id!==id);else studentPosts=studentPosts.filter(x=>x.id!==id);closeModal('confirmModal');renderBoard();if(document.getElementById('page-home').classList.contains('active'))renderHome();_saveToFirebase('post');showToast('삭제됨.');};document.getElementById('confirmModal').classList.add('show');}
 
 /* ── HOME ── */
 function renderHome(){
@@ -872,128 +872,154 @@ renderHome();
 renderRulesCard();
 ['safety','award','emergency'].forEach(t=>renderInfoCard(t));
 </script>
+<!-- ════════════════════════════════════════════
+     FIREBASE REALTIME DATABASE 연동
+     - compat SDK (CDN) 사용
+     - 초기화 실패 시 콘솔에 상세 오류 출력
+════════════════════════════════════════════ -->
 
-<!-- ═══════════════════ FIREBASE ═══════════════════ -->
-<!-- SDK 3개를 HTML에서 직접 로드 (순서 보장) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<!-- 1단계: Firebase App -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
+  onerror="document.body.insertAdjacentHTML('beforeend','<div style=position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:10px;z-index:9999;font-size:14px;>⚠️ Firebase SDK 로드 실패 — 인터넷 연결 확인</div>')">
+</script>
+
+<!-- 2단계: Firebase Auth -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<!-- 3단계: Firebase Database -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+<!-- 4단계: 앱 로직 -->
 <script>
-/* ============================================================
-   한수컵 2026 — Firebase 실시간 연동
-   - 교사 로그인 (Firebase Auth)
-   - 실시간 DB 저장/수신 (Realtime Database)
-   - 학생/교사 링크 분리
-   ============================================================ */
+// ── 전역 변수 ──
+var FB = null;   // Firebase app
+var FBAUTH = null;
+var FBDB = null;
+var DBREF = null;
+var FB_OK = false;
 
-var fbApp, fbAuth, fbDB, DB_REF;
-var FB_READY = false;
-
-var FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
-  authDomain: "hansucup-d154b.firebaseapp.com",
-  databaseURL: "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "hansucup-d154b",
-  storageBucket: "hansucup-d154b.firebasestorage.app",
+var FB_CONFIG = {
+  apiKey:            "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
+  authDomain:        "hansucup-d154b.firebaseapp.com",
+  databaseURL:       "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "hansucup-d154b",
+  storageBucket:     "hansucup-d154b.firebasestorage.app",
   messagingSenderId: "732633509551",
-  appId: "1:732633509551:web:a925fbe990ebb000b46e5a"
+  appId:             "1:732633509551:web:a925fbe990ebb000b46e5a"
 };
 
-/* Firebase 초기화 — SDK 로드 완료 후 실행 */
-function initFirebase() {
-  try {
-    if (typeof firebase === 'undefined') {
-      console.warn('Firebase SDK 없음 — 오프라인 모드');
-      return;
-    }
-    fbApp  = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
-    fbAuth = firebase.auth();
-    fbDB   = firebase.database();
-    DB_REF = fbDB.ref('hansucup/v1');
-    FB_READY = true;
-    console.log('✅ Firebase 초기화 완료');
+function startFirebase() {
+  console.log('[Firebase] 초기화 시작...');
 
-    /* ── 실시간 수신: DB 변경 → 모든 접속자 화면 갱신 ── */
-    DB_REF.on('value', function(snapshot) {
-      var data = snapshot.val();
-      if (!data) return;
-      try {
-        if (data.tournaments) {
-          var saved = JSON.parse(data.tournaments);
-          [1,2,3].forEach(function(g) {
-            if (!saved[g]) return;
-            var R = saved[g].rounds;
-            var allM = [].concat(R.r1, R.qf, R.sf, R.third, R.final);
-            allM.forEach(function(m) {
-              if (!m.winner) return;
-              if (m.home && m.winner.id === m.home.id) m.winner = m.home;
-              else if (m.away && m.winner.id === m.away.id) m.winner = m.away;
-              else m.winner = null;
-            });
-            tournaments[g] = saved[g];
-            propagate(g);
-          });
-        }
-        if (data.schedules)       Object.assign(schedules, JSON.parse(data.schedules));
-        if (data.noticePosts)     noticePosts     = JSON.parse(data.noticePosts);
-        if (data.studentPosts)    studentPosts    = JSON.parse(data.studentPosts);
-        if (data.overviewData)    overviewData    = JSON.parse(data.overviewData);
-        if (data.rulesData)       rulesData       = JSON.parse(data.rulesData);
-        if (data.infoData)        Object.assign(infoData, JSON.parse(data.infoData));
-        if (data.calManualEvents) calManualEvents = JSON.parse(data.calManualEvents);
-      } catch(e) {
-        console.warn('DB 파싱 오류:', e);
-        return;
-      }
-      /* 현재 보이는 페이지 다시 그리기 */
-      refreshCurrentPage();
-    }, function(err) {
-      console.error('DB 수신 오류:', err);
-    });
-
-    /* ── 로그인 상태 감지 ── */
-    fbAuth.onAuthStateChanged(function(user) {
-      if (user && TEACHER_MODE) {
-        activateAdmin();
-      } else if (!user && isAdmin) {
-        deactivateAdmin();
-      }
-    });
-
-  } catch(e) {
-    console.error('Firebase 초기화 오류:', e);
-  }
-}
-
-/* ── 교사 PIN 입력 → Firebase 비밀번호로 검증 ──
-   비밀번호는 Firebase 서버에만 있음. 코드에 없음. */
-function fbCheckAdmin(pin) {
-  if (!FB_READY) {
-    document.getElementById('adminError').textContent =
-      'Firebase 미연결. GitHub Pages에서 실행해 주세요.';
+  if (typeof firebase === 'undefined') {
+    console.error('[Firebase] SDK 로드 실패 — CDN 차단 또는 오프라인');
+    showToast('⚠️ Firebase 연결 실패. 인터넷 확인 후 새로고침해 주세요.');
     return;
   }
-  var TEACHER_EMAIL = 'teacher@hansucup.kr';
-  document.getElementById('adminError').textContent = '확인 중...';
-  fbAuth.signInWithEmailAndPassword(TEACHER_EMAIL, pin)
-    .catch(function(err) {
+
+  try {
+    FB     = firebase.apps.length ? firebase.app() : firebase.initializeApp(FB_CONFIG);
+    FBAUTH = firebase.auth();
+    FBDB   = firebase.database();
+    DBREF  = FBDB.ref('hansucup');
+    FB_OK  = true;
+    console.log('[Firebase] ✅ 초기화 완료');
+  } catch(e) {
+    console.error('[Firebase] 초기화 오류:', e);
+    return;
+  }
+
+  // ── 실시간 수신: DB 변경 → 모든 화면 즉시 갱신 ──
+  DBREF.on('value', function(snap) {
+    var d = snap.val();
+    if (!d) { console.log('[Firebase] DB 비어있음'); return; }
+    console.log('[Firebase] 데이터 수신:', Object.keys(d));
+
+    try {
+      if (d.tournaments) {
+        var T = JSON.parse(d.tournaments);
+        [1,2,3].forEach(function(g) {
+          if (!T[g]) return;
+          // winner 참조 복원
+          var R = T[g].rounds;
+          [].concat(R.r1,R.qf,R.sf,R.third,R.final).forEach(function(m) {
+            if (!m || !m.winner) return;
+            if (m.home && m.winner.id === m.home.id) m.winner = m.home;
+            else if (m.away && m.winner.id === m.away.id) m.winner = m.away;
+            else m.winner = null;
+          });
+          tournaments[g] = T[g];
+          propagate(g);
+        });
+      }
+      if (d.schedules)       Object.assign(schedules, JSON.parse(d.schedules));
+      if (d.noticePosts)     noticePosts     = JSON.parse(d.noticePosts);
+      if (d.studentPosts)    studentPosts    = JSON.parse(d.studentPosts);
+      if (d.overviewData)    overviewData    = JSON.parse(d.overviewData);
+      if (d.rulesData)       rulesData       = JSON.parse(d.rulesData);
+      if (d.infoData)        Object.assign(infoData, JSON.parse(d.infoData));
+      if (d.calManualEvents) calManualEvents = JSON.parse(d.calManualEvents);
+    } catch(e) {
+      console.error('[Firebase] 데이터 파싱 오류:', e);
+      return;
+    }
+
+    // 현재 화면 다시 그리기
+    var pid = (document.querySelector('.page.active') || {}).id || '';
+    if      (pid === 'page-home')     renderHome();
+    else if (pid === 'page-bracket1') renderBracket(1);
+    else if (pid === 'page-bracket2') renderBracket(2);
+    else if (pid === 'page-bracket3') renderBracket(3);
+    else if (pid === 'page-board')    renderBoard();
+    else if (pid === 'page-rules')    renderRulesCard();
+    ['safety','award','emergency'].forEach(function(t){ renderInfoCard(t); });
+
+  }, function(err) {
+    console.error('[Firebase] DB 수신 오류:', err.code, err.message);
+  });
+
+  // ── 로그인 상태 감지 ──
+  FBAUTH.onAuthStateChanged(function(user) {
+    console.log('[Firebase] 인증 상태:', user ? '로그인됨 '+user.email : '로그아웃');
+    if (user && TEACHER_MODE) {
+      _activateAdmin();
+    } else if (!user && isAdmin) {
+      _deactivateAdmin();
+    }
+  });
+}
+
+// ── PIN 입력 → Firebase 비밀번호 검증 ──
+// 비밀번호는 Firebase 서버에만 있음. 이 코드에 없음.
+function fbCheckAdmin(pin) {
+  var errEl = document.getElementById('adminError');
+  if (!FB_OK) {
+    errEl.textContent = 'Firebase 미연결 상태입니다. 새로고침 후 다시 시도해 주세요.';
+    return;
+  }
+  errEl.textContent = '확인 중...';
+  // 이메일은 고정, PIN이 비밀번호
+  FBAUTH.signInWithEmailAndPassword('parkmn0518@goedu.kr', pin)
+    .then(function() {
+      console.log('[Firebase] 교사 로그인 성공');
+    })
+    .catch(function(e) {
+      console.warn('[Firebase] 로그인 실패:', e.code);
       var msg = '비밀번호가 틀렸습니다.';
-      if (err.code === 'auth/too-many-requests') msg = '잠시 후 다시 시도해 주세요.';
-      if (err.code === 'auth/network-request-failed') msg = '네트워크 오류를 확인해 주세요.';
-      document.getElementById('adminError').textContent = msg;
+      if (e.code === 'auth/too-many-requests') msg = '시도 횟수 초과. 잠시 후 다시 시도해 주세요.';
+      if (e.code === 'auth/network-request-failed') msg = '네트워크 오류. 인터넷 연결을 확인해 주세요.';
+      errEl.textContent = msg;
       document.getElementById('adminPin').value = '';
       document.getElementById('adminPin').focus();
     });
 }
 
-/* ── DB 저장 — 교사 로그인 상태에서만 실행 ── */
+// ── DB 저장 ──
 function _saveToFirebase(label) {
-  if (!isAdmin || !FB_READY) return;
-  if (!fbAuth.currentUser) {
-    console.warn('저장 실패: 로그인 필요');
-    return;
-  }
+  if (!isAdmin) { console.warn('[Save] 관리자 아님'); return; }
+  if (!FB_OK)   { console.warn('[Save] Firebase 미연결'); return; }
+  if (!FBAUTH.currentUser) { console.warn('[Save] 로그인 필요'); return; }
+
   var payload = {
     tournaments:     JSON.stringify(tournaments),
     schedules:       JSON.stringify(schedules),
@@ -1003,20 +1029,22 @@ function _saveToFirebase(label) {
     rulesData:       JSON.stringify(rulesData),
     infoData:        JSON.stringify(infoData),
     calManualEvents: JSON.stringify(calManualEvents),
-    lastUpdated:     new Date().toISOString()
+    savedAt:         new Date().toISOString()
   };
-  DB_REF.set(payload)
+
+  console.log('[Save] Firebase 저장 시작...', label);
+  DBREF.set(payload)
     .then(function() {
-      console.log('✅ Firebase 저장 완료:', label);
+      console.log('[Save] ✅ 저장 완료:', label);
     })
     .catch(function(e) {
-      console.error('Firebase 저장 오류:', e);
-      showToast('⚠️ 저장 실패 — 네트워크를 확인해 주세요');
+      console.error('[Save] 저장 실패:', e.code, e.message);
+      showToast('⚠️ 저장 실패: ' + e.message);
     });
 }
 
-/* ── 관리자 활성화/비활성화 ── */
-function activateAdmin() {
+// ── 관리자 활성화/비활성화 ──
+function _activateAdmin() {
   isAdmin = true;
   closeModal('adminModal');
   var btn = document.getElementById('adminToggleBtn');
@@ -1033,7 +1061,7 @@ function activateAdmin() {
   showToast('✅ 교사 모드 활성화');
 }
 
-function deactivateAdmin() {
+function _deactivateAdmin() {
   isAdmin = false;
   var btn = document.getElementById('adminToggleBtn');
   if (btn) { btn.classList.remove('active-admin'); btn.textContent = '🔒 관리자'; }
@@ -1047,37 +1075,19 @@ function deactivateAdmin() {
   renderBoard(); renderHome();
 }
 
-/* ── 현재 페이지 다시 그리기 ── */
-function refreshCurrentPage() {
-  var pid = (document.querySelector('.page.active') || {}).id;
-  if (pid === 'page-home')     renderHome();
-  else if (pid === 'page-bracket1') renderBracket(1);
-  else if (pid === 'page-bracket2') renderBracket(2);
-  else if (pid === 'page-bracket3') renderBracket(3);
-  else if (pid === 'page-board')    renderBoard();
-  else if (pid === 'page-rules')    renderRulesCard();
-  ['safety','award','emergency'].forEach(function(t) { renderInfoCard(t); });
-}
-
-/* ── 교사 모드 UI 초기화 ── */
+// ── 교사 모드 UI ──
 if (TEACHER_MODE) {
   document.addEventListener('DOMContentLoaded', function() {
-    var badge = document.getElementById('teacherBadge');
-    if (badge) { badge.style.display = 'inline'; }
-    var nav = document.querySelector('.nav-bar');
+    var nav = document.querySelector('.nav-bar, .nav-inner');
     if (nav) nav.style.background = '#1a4a2a';
-    var inner = document.querySelector('.nav-inner');
-    if (inner) inner.style.background = '#1a4a2a';
+    var badge = document.getElementById('teacherBadge');
+    if (badge) badge.style.display = 'inline';
   });
 }
 
-/* ── Firebase 초기화 실행 ── */
-/* SDK가 위에서 로드됐으므로 바로 실행 */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initFirebase);
-} else {
-  initFirebase();
-}
+// ── Firebase 시작 ──
+// SDK 스크립트가 위에서 동기적으로 로드되므로 바로 실행 가능
+window.addEventListener('load', startFirebase);
 
 </script>
 </body>
