@@ -872,16 +872,25 @@ renderHome();
 renderRulesCard();
 ['safety','award','emergency'].forEach(t=>renderInfoCard(t));
 </script>
-<!-- ═══════════════════════════════════════════════════════
-     FIREBASE — 일반 script (module 아님 → 전역 함수 사용 가능)
-     실시간 DB 동기화 + Firebase 인증 (PIN → Firebase 비밀번호 검증)
-════════════════════════════════════════════════════════ -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<!-- ═══════════════════ FIREBASE ═══════════════════ -->
+<!-- SDK 3개를 HTML에서 직접 로드 (순서 보장) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-// ── Firebase 초기화 ──
-const firebaseConfig = {
+/* ============================================================
+   한수컵 2026 — Firebase 실시간 연동
+   - 교사 로그인 (Firebase Auth)
+   - 실시간 DB 저장/수신 (Realtime Database)
+   - 학생/교사 링크 분리
+   ============================================================ */
+
+var fbApp, fbAuth, fbDB, DB_REF;
+var FB_READY = false;
+
+var FIREBASE_CONFIG = {
   apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
   authDomain: "hansucup-d154b.firebaseapp.com",
   databaseURL: "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -890,119 +899,102 @@ const firebaseConfig = {
   messagingSenderId: "732633509551",
   appId: "1:732633509551:web:a925fbe990ebb000b46e5a"
 };
-firebase.initializeApp(firebaseConfig);
-const fbAuth = firebase.auth();
-const fbDB   = firebase.database();
-const DB_REF = fbDB.ref('hansucup/appData');
 
-// ── 교사 전용 이메일 (Firebase Auth에 등록된 이메일)
-// 비밀번호는 Firebase 서버에만 있음 — 코드에 노출 없음
-const TEACHER_EMAIL = 'teacher@hansucup.kr';
+/* Firebase 초기화 — SDK 로드 완료 후 실행 */
+function initFirebase() {
+  try {
+    if (typeof firebase === 'undefined') {
+      console.warn('Firebase SDK 없음 — 오프라인 모드');
+      return;
+    }
+    fbApp  = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+    fbAuth = firebase.auth();
+    fbDB   = firebase.database();
+    DB_REF = fbDB.ref('hansucup/v1');
+    FB_READY = true;
+    console.log('✅ Firebase 초기화 완료');
 
-// ── 1. PIN 입력 → Firebase 비밀번호로 검증 ──
+    /* ── 실시간 수신: DB 변경 → 모든 접속자 화면 갱신 ── */
+    DB_REF.on('value', function(snapshot) {
+      var data = snapshot.val();
+      if (!data) return;
+      try {
+        if (data.tournaments) {
+          var saved = JSON.parse(data.tournaments);
+          [1,2,3].forEach(function(g) {
+            if (!saved[g]) return;
+            var R = saved[g].rounds;
+            var allM = [].concat(R.r1, R.qf, R.sf, R.third, R.final);
+            allM.forEach(function(m) {
+              if (!m.winner) return;
+              if (m.home && m.winner.id === m.home.id) m.winner = m.home;
+              else if (m.away && m.winner.id === m.away.id) m.winner = m.away;
+              else m.winner = null;
+            });
+            tournaments[g] = saved[g];
+            propagate(g);
+          });
+        }
+        if (data.schedules)       Object.assign(schedules, JSON.parse(data.schedules));
+        if (data.noticePosts)     noticePosts     = JSON.parse(data.noticePosts);
+        if (data.studentPosts)    studentPosts    = JSON.parse(data.studentPosts);
+        if (data.overviewData)    overviewData    = JSON.parse(data.overviewData);
+        if (data.rulesData)       rulesData       = JSON.parse(data.rulesData);
+        if (data.infoData)        Object.assign(infoData, JSON.parse(data.infoData));
+        if (data.calManualEvents) calManualEvents = JSON.parse(data.calManualEvents);
+      } catch(e) {
+        console.warn('DB 파싱 오류:', e);
+        return;
+      }
+      /* 현재 보이는 페이지 다시 그리기 */
+      refreshCurrentPage();
+    }, function(err) {
+      console.error('DB 수신 오류:', err);
+    });
+
+    /* ── 로그인 상태 감지 ── */
+    fbAuth.onAuthStateChanged(function(user) {
+      if (user && TEACHER_MODE) {
+        activateAdmin();
+      } else if (!user && isAdmin) {
+        deactivateAdmin();
+      }
+    });
+
+  } catch(e) {
+    console.error('Firebase 초기화 오류:', e);
+  }
+}
+
+/* ── 교사 PIN 입력 → Firebase 비밀번호로 검증 ──
+   비밀번호는 Firebase 서버에만 있음. 코드에 없음. */
 function fbCheckAdmin(pin) {
+  if (!FB_READY) {
+    document.getElementById('adminError').textContent =
+      'Firebase 미연결. GitHub Pages에서 실행해 주세요.';
+    return;
+  }
+  var TEACHER_EMAIL = 'teacher@hansucup.kr';
   document.getElementById('adminError').textContent = '확인 중...';
   fbAuth.signInWithEmailAndPassword(TEACHER_EMAIL, pin)
-    .then(() => {
-      // onAuthStateChanged 에서 처리
-    })
-    .catch(err => {
-      let msg = '비밀번호가 틀렸습니다.';
+    .catch(function(err) {
+      var msg = '비밀번호가 틀렸습니다.';
       if (err.code === 'auth/too-many-requests') msg = '잠시 후 다시 시도해 주세요.';
+      if (err.code === 'auth/network-request-failed') msg = '네트워크 오류를 확인해 주세요.';
       document.getElementById('adminError').textContent = msg;
       document.getElementById('adminPin').value = '';
       document.getElementById('adminPin').focus();
     });
 }
 
-// ── 2. 로그인 상태 감지 ──
-fbAuth.onAuthStateChanged(user => {
-  if (user && TEACHER_MODE) {
-    // 로그인 성공
-    isAdmin = true;
-    closeModal('adminModal');
-    const btn = document.getElementById('adminToggleBtn');
-    btn.classList.add('active-admin');
-    btn.textContent = '🔓 로그아웃';
-    const badge = document.getElementById('teacherBadge');
-    if (badge) badge.style.display = 'inline';
-    updateAdminInfoBtns();
-    [1,2,3].forEach(g => {
-      const c = document.getElementById('page-bracket'+g);
-      if (c && c.innerHTML.trim()) renderBracket(g);
-    });
-    renderBoard(); renderHome();
-    if (document.getElementById('page-rules').classList.contains('active')) renderRulesCard();
-    showToast('✅ 교사 모드 활성화');
-  } else if (!user && isAdmin) {
-    // 로그아웃
-    isAdmin = false;
-    const btn = document.getElementById('adminToggleBtn');
-    btn.classList.remove('active-admin');
-    btn.textContent = '🔒 관리자';
-    const badge = document.getElementById('teacherBadge');
-    if (badge) badge.style.display = 'none';
-    updateAdminInfoBtns();
-    [1,2,3].forEach(g => {
-      const c = document.getElementById('page-bracket'+g);
-      if (c && c.innerHTML.trim()) renderBracket(g);
-    });
-    renderBoard(); renderHome();
-  }
-});
-
-// ── 3. 실시간 DB 수신 — 모든 접속자 화면 자동 갱신 ──
-DB_REF.on('value', snapshot => {
-  const data = snapshot.val();
-  if (!data) return;
-
-  let changed = false;
-  try {
-    if (data.tournaments) {
-      const saved = JSON.parse(data.tournaments);
-      [1,2,3].forEach(g => {
-        if (!saved[g]) return;
-        // 팀 객체 winner 참조 복원
-        const R = saved[g].rounds;
-        const allM = [...R.r1,...R.qf,...R.sf,...R.third,...R.final];
-        allM.forEach(m => {
-          if (m.winner) {
-            if (m.home && m.winner.id === m.home.id) m.winner = m.home;
-            else if (m.away && m.winner.id === m.away.id) m.winner = m.away;
-            else m.winner = null;
-          }
-        });
-        tournaments[g] = saved[g];
-        propagate(g);
-      });
-      changed = true;
-    }
-    if (data.schedules)     { Object.assign(schedules, JSON.parse(data.schedules)); changed = true; }
-    if (data.noticePosts)   { noticePosts  = JSON.parse(data.noticePosts);  changed = true; }
-    if (data.studentPosts)  { studentPosts = JSON.parse(data.studentPosts); changed = true; }
-    if (data.overviewData)  { overviewData = JSON.parse(data.overviewData); changed = true; }
-    if (data.rulesData)     { rulesData    = JSON.parse(data.rulesData);    changed = true; }
-    if (data.infoData)      { Object.assign(infoData, JSON.parse(data.infoData)); changed = true; }
-    if (data.calManualEvents){ calManualEvents = JSON.parse(data.calManualEvents); changed = true; }
-  } catch(e) { console.warn('DB 파싱 오류:', e); }
-
-  if (!changed) return;
-
-  // 현재 보이는 페이지만 다시 그리기
-  const pid = document.querySelector('.page.active')?.id;
-  if (pid === 'page-home') renderHome();
-  else if (pid === 'page-bracket1') renderBracket(1);
-  else if (pid === 'page-bracket2') renderBracket(2);
-  else if (pid === 'page-bracket3') renderBracket(3);
-  else if (pid === 'page-board')  renderBoard();
-  else if (pid === 'page-rules')  renderRulesCard();
-  ['safety','award','emergency'].forEach(t => renderInfoCard(t));
-});
-
-// ── 4. DB 저장 — 교사(로그인 상태)만 실행됨 ──
+/* ── DB 저장 — 교사 로그인 상태에서만 실행 ── */
 function _saveToFirebase(label) {
-  if (!isAdmin || !fbAuth.currentUser) return;
-  const payload = {
+  if (!isAdmin || !FB_READY) return;
+  if (!fbAuth.currentUser) {
+    console.warn('저장 실패: 로그인 필요');
+    return;
+  }
+  var payload = {
     tournaments:     JSON.stringify(tournaments),
     schedules:       JSON.stringify(schedules),
     noticePosts:     JSON.stringify(noticePosts),
@@ -1014,21 +1006,79 @@ function _saveToFirebase(label) {
     lastUpdated:     new Date().toISOString()
   };
   DB_REF.set(payload)
-    .then(() => console.log('✅ 저장됨:', label))
-    .catch(e => { showToast('⚠️ 저장 실패 — 네트워크 확인'); console.error(e); });
+    .then(function() {
+      console.log('✅ Firebase 저장 완료:', label);
+    })
+    .catch(function(e) {
+      console.error('Firebase 저장 오류:', e);
+      showToast('⚠️ 저장 실패 — 네트워크를 확인해 주세요');
+    });
 }
 
-// ── 5. TEACHER_MODE 배지 초기화 ──
-if (TEACHER_MODE) {
-  const badge = document.getElementById('teacherBadge');
-  if (badge) {
-    badge.style.display = 'inline';
-    badge.title = '교사용 페이지';
-  }
-  // 네비게이션 배경색으로 교사 모드 구분
-  const navBar = document.querySelector('.nav-bar');
-  if (navBar) navBar.style.background = '#1a4a2a';
+/* ── 관리자 활성화/비활성화 ── */
+function activateAdmin() {
+  isAdmin = true;
+  closeModal('adminModal');
+  var btn = document.getElementById('adminToggleBtn');
+  if (btn) { btn.classList.add('active-admin'); btn.textContent = '🔓 로그아웃'; }
+  var badge = document.getElementById('teacherBadge');
+  if (badge) badge.style.display = 'inline';
+  updateAdminInfoBtns();
+  [1,2,3].forEach(function(g) {
+    var c = document.getElementById('page-bracket'+g);
+    if (c && c.innerHTML.trim()) renderBracket(g);
+  });
+  renderBoard(); renderHome();
+  if (document.getElementById('page-rules').classList.contains('active')) renderRulesCard();
+  showToast('✅ 교사 모드 활성화');
 }
+
+function deactivateAdmin() {
+  isAdmin = false;
+  var btn = document.getElementById('adminToggleBtn');
+  if (btn) { btn.classList.remove('active-admin'); btn.textContent = '🔒 관리자'; }
+  var badge = document.getElementById('teacherBadge');
+  if (badge) badge.style.display = 'none';
+  updateAdminInfoBtns();
+  [1,2,3].forEach(function(g) {
+    var c = document.getElementById('page-bracket'+g);
+    if (c && c.innerHTML.trim()) renderBracket(g);
+  });
+  renderBoard(); renderHome();
+}
+
+/* ── 현재 페이지 다시 그리기 ── */
+function refreshCurrentPage() {
+  var pid = (document.querySelector('.page.active') || {}).id;
+  if (pid === 'page-home')     renderHome();
+  else if (pid === 'page-bracket1') renderBracket(1);
+  else if (pid === 'page-bracket2') renderBracket(2);
+  else if (pid === 'page-bracket3') renderBracket(3);
+  else if (pid === 'page-board')    renderBoard();
+  else if (pid === 'page-rules')    renderRulesCard();
+  ['safety','award','emergency'].forEach(function(t) { renderInfoCard(t); });
+}
+
+/* ── 교사 모드 UI 초기화 ── */
+if (TEACHER_MODE) {
+  document.addEventListener('DOMContentLoaded', function() {
+    var badge = document.getElementById('teacherBadge');
+    if (badge) { badge.style.display = 'inline'; }
+    var nav = document.querySelector('.nav-bar');
+    if (nav) nav.style.background = '#1a4a2a';
+    var inner = document.querySelector('.nav-inner');
+    if (inner) inner.style.background = '#1a4a2a';
+  });
+}
+
+/* ── Firebase 초기화 실행 ── */
+/* SDK가 위에서 로드됐으므로 바로 실행 */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFirebase);
+} else {
+  initFirebase();
+}
+
 </script>
 </body>
 </html>
