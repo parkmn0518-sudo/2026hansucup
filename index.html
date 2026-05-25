@@ -1142,15 +1142,22 @@ onValue(ref(database, "hansucup/data"), (snapshot) => {
   if (data.rulesData) rulesData = data.rulesData;
   if (data.infoData) infoData = data.infoData;
 
-  renderHome();
+try{
+  if(typeof renderHome==='function') renderHome();
 
   [1,2,3].forEach(g => {
-    const page = document.getElementById('page-bracket' + g);
-    if(page) renderBracket(g);
+    if(typeof renderBracket==='function'){
+      const page=document.getElementById('page-bracket'+g);
+      if(page) renderBracket(g);
+    }
   });
 
-  renderRules();
-  renderBoard();
+  if(typeof renderRules==='function') renderRules();
+  if(typeof renderBoard==='function') renderBoard();
+
+}catch(e){
+  console.log(e);
+}
 
   console.log("Firebase 데이터 불러오기 완료");
 });
