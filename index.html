@@ -890,17 +890,14 @@ renderRulesCard();
 var fbApp, fbAuth, fbDB, DB_REF;
 var FB_READY = false;
 
-varconst firebaseConfig = {
+var FIREBASE_CONFIG = {
   apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
   authDomain: "hansucup-d154b.firebaseapp.com",
-
   databaseURL: "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
-
   projectId: "hansucup-d154b",
   storageBucket: "hansucup-d154b.firebasestorage.app",
   messagingSenderId: "732633509551",
-  appId: "1:732633509551:web:a925fbe990ebb000b46e5a",
-  measurementId: "G-KT3SY3NGY5"
+  appId: "1:732633509551:web:a925fbe990ebb000b46e5a"
 };
 
 /* Firebase 초기화 — SDK 로드 완료 후 실행 */
@@ -1081,88 +1078,7 @@ if (document.readyState === 'loading') {
 } else {
   initFirebase();
 }
-<script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-  getDatabase,
-  ref,
-  set,
-  onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDNqCBw9aPHzMsuU0ezBh_EjSNEtXjzuQA",
-  authDomain: "hansucup-d154b.firebaseapp.com",
-
-  databaseURL:
-    "https://hansucup-d154b-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-  projectId: "hansucup-d154b",
-  storageBucket: "hansucup-d154b.firebasestorage.app",
-  messagingSenderId: "732633509551",
-  appId: "1:732633509551:web:a925fbe990ebb000b46e5a",
-  measurementId: "G-KT3SY3NGY5"
-};
-
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-
-console.log("Firebase 초기화 완료");
-
-window._saveToFirebase = async function () {
-
-  const saveData = {
-    overviewData,
-    schedules,
-    calManualEvents,
-    notices,
-    studentPosts,
-    rulesData,
-    infoData
-  };
-
-  await set(ref(database, "hansucup/data"), saveData);
-
-  console.log("Firebase 저장 완료");
-};
-
-onValue(ref(database, "hansucup/data"), (snapshot) => {
-
-  const data = snapshot.val();
-
-  if (!data) return;
-
-  if (data.overviewData) overviewData = data.overviewData;
-  if (data.schedules) schedules = data.schedules;
-  if (data.calManualEvents) calManualEvents = data.calManualEvents;
-  if (data.notices) notices = data.notices;
-  if (data.studentPosts) studentPosts = data.studentPosts;
-  if (data.rulesData) rulesData = data.rulesData;
-  if (data.infoData) infoData = data.infoData;
-
-try{
-  if(typeof renderHome==='function') renderHome();
-
-  [1,2,3].forEach(g => {
-    if(typeof renderBracket==='function'){
-      const page=document.getElementById('page-bracket'+g);
-      if(page) renderBracket(g);
-    }
-  });
-
-  if(typeof renderRules==='function') renderRules();
-  if(typeof renderBoard==='function') renderBoard();
-
-}catch(e){
-  console.log(e);
-}
-
-  console.log("Firebase 데이터 불러오기 완료");
-});
-
-</script>
 </script>
 </body>
 </html>
