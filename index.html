@@ -327,7 +327,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <button class="nav-tab" onclick="showPage('bracket3',this)">🏐 3학년</button>
     <button class="nav-tab" onclick="showPage('rules',this)">📋 경기 요강</button>
     <button class="nav-tab" onclick="showPage('board',this)">📢 게시판</button>
-    <button class="admin-btn" id="adminToggleBtn" onclick="openAdminModal()">🔒 관리자</button>
+    <button class="admin-btn" id="adminToggleBtn" onclick="openAdminModal()" style="display:none;">🔒 관리자</button>
     <span id="teacherBadge" style="display:none;background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex-shrink:0;">📝 교사모드</span>
   </div>
 </div>
@@ -667,7 +667,6 @@ function renderSchedule(g){
   var rounds=schedules[g]||[];
   var cls=gradeInfo[g].cls;
   var thC='th-'+cls;
-  // 전체 경기 모으기
   var allGames=[];
   rounds.forEach(function(rnd,ri){
     rnd.games.forEach(function(gm,gi){
@@ -675,15 +674,27 @@ function renderSchedule(g){
     });
   });
   if(!allGames.length) return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
+
+  // 라운드별 색상 팔레트
+  var rndColors=['#f0f4ff','#f0fff4','#fffbf0','#fff0f0','#f5f0ff'];
+  var rndBorder=['#93c5fd','#86efac','#fde047','#fca5a5','#c4b5fd'];
+  // 라운드명 → 인덱스 매핑
+  var rndColorMap={};
+  rounds.forEach(function(rnd,ri){
+    rndColorMap[rnd.roundName]=ri % rndColors.length;
+  });
+
   var rows=allGames.map(function(item){
     var rnd=item.rnd,ri=item.ri,gi=item.gi,gm=item.gm;
+    var ci=rndColorMap[rnd.roundName]!==undefined?rndColorMap[rnd.roundName]:0;
+    var bg=rndColors[ci];
+    var border=rndBorder[ci];
     var hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'-';
     var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'-';
     var resultCell='<td style="font-weight:700;text-align:center;">'+hs+'</td><td style="color:var(--text2);text-align:center;">:</td><td style="font-weight:700;text-align:center;">'+as_+'</td>';
-    var statusBadge='<span class="rsb '+(gm.status==='완료'?'rsb-done':'rsb-sched')+'">'+gm.status+'</span>';
     var adm=isAdmin?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>':'';
-    return '<tr>'
-      +'<td style="font-size:10px;font-weight:700;color:var(--text2);">'+rnd.roundName+'</td>'
+    return '<tr style="background:'+bg+';border-left:3px solid '+border+';">'
+      +'<td style="font-size:10px;font-weight:700;color:var(--text);">'+rnd.roundName+'</td>'
       +'<td>'+fmtDate(gm.date)+'</td>'
       +'<td>'+(gm.time||'-')+'</td>'
       +'<td class="vs-cell">'+gm.home+' vs '+gm.away+'</td>'
@@ -692,15 +703,17 @@ function renderSchedule(g){
       +'<td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'
       +adm+'</tr>';
   }).join('');
-  // 라운드 추가 버튼들
+
+  // ② 라운드 추가 버튼 없음, 경기 추가 버튼만 관리자에게 표시
   var adminBtns='';
   if(isAdmin){
     adminBtns='<div class="admin-bar" style="margin-top:8px;flex-wrap:wrap;">';
     rounds.forEach(function(rnd,ri){
       adminBtns+='<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ '+rnd.roundName+'</button>';
     });
-    adminBtns+='<button class="add-round-btn '+cls+'" onclick="openAddRound('+g+')" style="margin-top:0">📅 라운드 추가</button></div>';
+    adminBtns+='</div>';
   }
+
   return '<div class="round-block">'
     +'<div style="overflow-x:auto;">'
     +'<table class="sched-table">'
@@ -1123,10 +1136,13 @@ renderRulesCard();
 /* 교사모드 UI */
 if(TEACHER_MODE){
   document.addEventListener('DOMContentLoaded',function(){
-    const nav=document.querySelector('.nav-inner');
+    var nav=document.querySelector('.nav-inner');
     if(nav)nav.style.background='#1a4a2a';
-    const badge=document.getElementById('teacherBadge');
+    var badge=document.getElementById('teacherBadge');
     if(badge)badge.style.display='inline';
+    // 교사 모드일 때만 관리자 버튼 표시
+    var adminBtn=document.getElementById('adminToggleBtn');
+    if(adminBtn)adminBtn.style.display='block';
   });
 }
 </script>
