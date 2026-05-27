@@ -413,6 +413,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <label>메모</label><input type="text" id="sgNote" placeholder="비고">
   <label>담당 교사</label><input type="text" id="sgTeacher" placeholder="홍길동 선생님">
   <label>심판</label><input type="text" id="sgReferee" placeholder="심판 이름">
+  <label>경기 결과 (경기 후 입력)</label>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+    <input type="number" id="sgHomeScore" placeholder="홈 점수" min="0" max="99" style="flex:1;">
+    <span style="font-size:18px;font-weight:700;color:var(--text2);">:</span>
+    <input type="number" id="sgAwayScore" placeholder="원정 점수" min="0" max="99" style="flex:1;">
+  </div>
+  <label>경기 상태</label>
+  <select id="sgStatus"><option value="예정">예정</option><option value="완료">완료</option></select>
   <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div>
 </div></div>
 
@@ -521,7 +529,7 @@ function renderCalendar(){
     const evHtml=evs.slice(0,2).map(function(ev){
       const del=isAdmin&&!ev.auto?'<button class="ev-del" onclick="deleteCalEvent(\''+ev.id+'\');event.stopPropagation()">✕</button>':'';
       const short=ev.title.length>10?ev.title.substring(0,10)+'…':ev.title;
-      return '<div class="cal-event '+ev.type+'" onclick="openCalDetail(\'+ev.id+\')" title="'+ev.title+'" style="cursor:pointer">'+short+del+'</div>';
+      return '<div class="cal-event '+ev.type+'" data-evid="'+ev.id+'" title="'+ev.title+'" style="cursor:pointer">'+short+del+'</div>';
     }).join('');
     const more=evs.length>2?'<div class="cal-more">+'+(evs.length-2)+'개</div>':'';
     const addBtn='<button class="cal-add-cell-btn" onclick="openAddCalEvent(\''+ds+'\')" title="추가">+</button>';
@@ -535,7 +543,7 @@ function renderCalendar(){
     '<div style="display:flex;gap:6px;align-items:center;">'+addBtnHdr+'<button class="cal-nav-btn" onclick="calNav(1)">›</button></div>'+
     '</div>'+
     '<div class="cal-day-names">'+['일','월','화','수','목','금','토'].map(function(dd){return '<div class="cal-dn">'+dd+'</div>';}).join('')+'</div>'+
-    '<div class="cal-grid">'+cells+'</div>'+
+    '<div class="cal-grid" onclick="handleCalClick(event)">'+cells+'</div>'+
     '<div class="cal-legend">'+
     '<div class="leg-item"><div class="leg-dot ev-futsal"></div>풋살</div>'+
     '<div class="leg-item"><div class="leg-dot ev-tchouk"></div>츄크볼</div>'+
@@ -596,12 +604,26 @@ function syncSchedToBracket(g,gm,ri,gi){
   if(!arr||gi>=arr.length)return;
   const bm=arr[gi];
   if(!bm)return;
+  // 날짜·교시·교사·심판 동기화
   if(gm.date)bm.date=gm.date;
+  bm.teacher=gm.teacher||bm.teacher||'';
+  bm.referee=gm.referee||bm.referee||'';
+  bm.time=gm.time||bm.time||'';
   if(gm.home&&gm.home!=='TBD'){if(!bm.home)bm.home={id:gi+1,name:gm.home};else bm.home.name=gm.home;}
   if(gm.away&&gm.away!=='TBD'){if(!bm.away)bm.away={id:gi+1,name:gm.away};else bm.away.name=gm.away;}
-  bm.teacher=gm.teacher||'';
-  bm.referee=gm.referee||'';
-  bm.time=gm.time||'';
+  // 점수·상태 동기화 → 대진표에 결과 반영
+  if(gm.homeScore!==null&&gm.homeScore!==undefined){
+    bm.homeScore=+gm.homeScore;
+    bm.awayScore=+gm.awayScore;
+    bm.status=gm.status==='완료'?'done':'scheduled';
+    if(bm.status==='done'){
+      bm.winner=bm.homeScore>bm.awayScore?bm.home:(bm.awayScore>bm.homeScore?bm.away:null);
+    }else{bm.winner=null;}
+    propagate(g);
+  }else{
+    bm.homeScore=null;bm.awayScore=null;
+    bm.status='scheduled';bm.winner=null;
+  }
 }
 
 function fmtDate(d){if(!d)return'-';const p=d.split('-');return(+p[1])+'월 '+(+p[2])+'일';}
@@ -615,11 +637,14 @@ function renderSchedule(g){
     const sc=rnd.status==='완료'?'rsb-done':'rsb-sched';
     const rows=rnd.games.map(function(gm,gi){
       const adm=isAdmin?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>':'';
-      return '<tr><td>'+fmtDate(gm.date)+'</td><td>'+(gm.time||'-')+'</td><td class="vs-cell">'+gm.home+' vs '+gm.away+'</td><td style="font-size:10px;color:var(--text2);">'+gm.note+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.teacher||'')+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'+adm+'</tr>';
+      const hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'-';
+      const as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'-';
+      const resultCell='<td style="font-weight:700;text-align:center;">'+hs+'</td><td style="color:var(--text2);text-align:center;">:</td><td style="font-weight:700;text-align:center;">'+as_+'</td>';
+      return '<tr><td>'+fmtDate(gm.date)+'</td><td>'+(gm.time||'-')+'</td><td class="vs-cell">'+gm.home+' vs '+gm.away+'</td>'+resultCell+'<td style="font-size:10px;color:var(--text2);">'+gm.note+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.teacher||'')+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'+adm+'</tr>';
     }).join('');
     const adminBar=isAdmin?'<div class="admin-game-bar"><button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ 경기</button><button class="del-round-btn" onclick="deleteRound('+g+','+ri+')">라운드 삭제</button></div>':'';
     const thC='th-'+cls;
-    html+='<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>'+rnd.roundName+'</span><span class="rsb '+sc+'">'+rnd.status+'</span><span style="font-size:10px;color:var(--text2);font-weight:400;">'+rnd.games.length+'경기</span></div><span class="rnd-toggle '+(ri===0?'open':'')+'">▼</span></div><div class="rnd-body '+(ri===0?'open':'')+'"><div style="overflow-x:auto;"><table class="sched-table"><thead><tr><th class="'+thC+'">날짜</th><th class="'+thC+'">교시</th><th class="'+thC+'">대전</th><th class="'+thC+'">메모</th><th class="'+thC+'">교사</th><th class="'+thC+'">심판</th>'+(isAdmin?'<th class="'+thC+'">관리</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+adminBar+'</div></div>';
+    html+='<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>'+rnd.roundName+'</span><span class="rsb '+sc+'">'+rnd.status+'</span><span style="font-size:10px;color:var(--text2);font-weight:400;">'+rnd.games.length+'경기</span></div><span class="rnd-toggle '+(ri===0?'open':'')+'">▼</span></div><div class="rnd-body '+(ri===0?'open':'')+'"><div style="overflow-x:auto;"><table class="sched-table"><thead><tr><th class="'+thC+'">날짜</th><th class="'+thC+'">교시</th><th class="'+thC+'">대전</th><th class=\"'+thC+'\">홈점수</th><th class=\"'+thC+'\"></th><th class=\"'+thC+'\">원정점수</th><th class="'+thC+'">메모</th><th class="'+thC+'">교사</th><th class="'+thC+'">심판</th>'+(isAdmin?'<th class="'+thC+'">관리</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+adminBar+'</div></div>';
   });
   if(isAdmin)html+='<button class="add-round-btn '+cls+'" onclick="openAddRound('+g+')" style="margin-top:6px;">📅 라운드 추가</button>';
   return html;
@@ -630,7 +655,8 @@ let _sgMode='add';
 function openAddGame(g,ri){
   _sgMode='add';
   document.getElementById('sgModalTitle').textContent='경기 추가';
-  ['sgDate','sgHome','sgAway','sgNote','sgTeacher','sgReferee'].forEach(function(id){document.getElementById(id).value='';});
+  ['sgDate','sgHome','sgAway','sgNote','sgTeacher','sgReferee','sgHomeScore','sgAwayScore'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('sgStatus').value='예정';
   document.getElementById('sgTime').value='';
   document.getElementById('sgGrade').value=g;
   document.getElementById('sgRoundIdx').value=ri;
@@ -653,12 +679,17 @@ function openEditGame(g,ri,gi){
   document.getElementById('sgNote').value=gm.note||'';
   document.getElementById('sgTeacher').value=gm.teacher||'';
   document.getElementById('sgReferee').value=gm.referee||'';
+  document.getElementById('sgHomeScore').value=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'';
+  document.getElementById('sgAwayScore').value=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'';
+  document.getElementById('sgStatus').value=gm.status||'예정';
   document.getElementById('scheduleGameModal').classList.add('show');
 }
 function saveScheduleGame(){
   const g=+document.getElementById('sgGrade').value;
   const ri=+document.getElementById('sgRoundIdx').value;
   const gi=+document.getElementById('sgGameIdx').value;
+  const hsv=document.getElementById('sgHomeScore').value;
+  const asv=document.getElementById('sgAwayScore').value;
   const gm={
     date:document.getElementById('sgDate').value||'',
     time:document.getElementById('sgTime').value||'',
@@ -667,7 +698,10 @@ function saveScheduleGame(){
     away:document.getElementById('sgAway').value.trim()||'TBD',
     note:document.getElementById('sgNote').value.trim(),
     teacher:document.getElementById('sgTeacher').value.trim(),
-    referee:document.getElementById('sgReferee').value.trim()
+    referee:document.getElementById('sgReferee').value.trim(),
+    homeScore:hsv===''?null:+hsv,
+    awayScore:asv===''?null:+asv,
+    status:document.getElementById('sgStatus').value||'예정'
   };
   if(_sgMode==='add'){schedules[g][ri].games.push(gm);syncSchedToBracket(g,gm,ri,schedules[g][ri].games.length-1);}
   else{schedules[g][ri].games[gi]=gm;syncSchedToBracket(g,gm,ri,gi);}
@@ -933,6 +967,16 @@ function checkAdmin(){
 }
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
+function handleCalClick(e){
+  var el=e.target;
+  while(el&&el!==e.currentTarget){
+    if(el.classList&&el.classList.contains('cal-event')){
+      var id=el.getAttribute('data-evid');
+      if(id){openCalDetail(id);return;}
+    }
+    el=el.parentElement;
+  }
+}
 function openCalDetail(id){
   const allEv = getAllCalEvents();
   const ev = allEv.find(function(e){ return String(e.id) === String(id); });
