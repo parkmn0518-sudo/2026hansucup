@@ -684,16 +684,19 @@ function renderSchedule(g){
     rndColorMap[rnd.roundName]=ri % rndColors.length;
   });
 
-  var rows=allGames.map(function(item){
+  var rows=allGames.map(function(item,idx2){
     var rnd=item.rnd,ri=item.ri,gi=item.gi,gm=item.gm;
     var ci=rndColorMap[rnd.roundName]!==undefined?rndColorMap[rnd.roundName]:0;
     var bg=rndColors[ci];
     var border=rndBorder[ci];
+    // 라운드 변경 시 진한 상단 구분선
+    var isNewRound = idx2===0 || allGames[idx2-1].rnd.roundName !== rnd.roundName;
+    var topBorder = isNewRound && idx2>0 ? 'border-top:2px solid #888;' : '';
     var hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'-';
     var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'-';
     var resultCell='<td style="font-weight:700;text-align:center;">'+hs+'</td><td style="color:var(--text2);text-align:center;">:</td><td style="font-weight:700;text-align:center;">'+as_+'</td>';
     var adm=isAdmin?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>':'';
-    return '<tr style="background:'+bg+';border-left:3px solid '+border+';">'
+    return '<tr style="background:'+bg+';border-left:3px solid '+border+';'+topBorder+'">'
       +'<td style="font-size:10px;font-weight:700;color:var(--text);">'+rnd.roundName+'</td>'
       +'<td>'+fmtDate(gm.date)+'</td>'
       +'<td>'+(gm.time||'-')+'</td>'
@@ -704,15 +707,7 @@ function renderSchedule(g){
       +adm+'</tr>';
   }).join('');
 
-  // ② 라운드 추가 버튼 없음, 경기 추가 버튼만 관리자에게 표시
   var adminBtns='';
-  if(isAdmin){
-    adminBtns='<div class="admin-bar" style="margin-top:8px;flex-wrap:wrap;">';
-    rounds.forEach(function(rnd,ri){
-      adminBtns+='<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ '+rnd.roundName+'</button>';
-    });
-    adminBtns+='</div>';
-  }
 
   return '<div class="round-block">'
     +'<div style="overflow-x:auto;">'
@@ -870,11 +865,7 @@ function matchNodeHTML(m,g){
   const hNm=teamLabel(m.home),aNm=teamLabel(m.away);
   const adminBtn=isAdmin?'<button class="edit-btn-small" onclick="toggleEdit(\''+m.id+'\')">✏️</button>':'';
   const dateDisplay=m.date?'📅 '+fmtDate(m.date):'날짜 미정';
-  const staffParts=[];
-  if(m.time)staffParts.push(m.time);
-  if(m.teacher)staffParts.push('교사: '+m.teacher);
-  if(m.referee)staffParts.push('심판: '+m.referee);
-  const staffRow=staffParts.length?'<div class="match-staff-row">'+staffParts.join(' · ')+'</div>':'';
+  const staffRow='';
   const ep=isAdmin?'<div class="edit-panel" id="edit_'+m.id+'">'+
     '<div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>'+
     '<div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_'+m.id+'" value="'+(hNm==='TBD'?'':hNm)+'" placeholder="예) 3반"></div>'+
