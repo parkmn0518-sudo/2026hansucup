@@ -623,7 +623,7 @@ function deleteCalEvent(id){
 }
 
 /* ── SCHEDULE DATA ── */
-function mkGame(date,time,home,away,note,teacher,hs,as_,ref){return{date:date||'',time:time||'',home:home||'TBD',away:away||'TBD',note:note||'',teacher:teacher||'',referee:ref||'',venue:'체육관',homeScore:hs!==undefined?hs:null,awayScore:as_!==undefined?as_:null,status:'예정'};};}
+function mkGame(date,time,home,away,note,teacher,hs,as_,ref){return{date:date||'',time:time||'',home:home||'TBD',away:away||'TBD',note:note||'',teacher:teacher||'',referee:ref||'',venue:'체육관',homeScore:hs!==undefined?hs:null,awayScore:as_!==undefined?as_:null,status:'예정'};}
 let schedules={
   1:[
     {roundName:'1라운드',status:'예정',games:[]},
@@ -1030,11 +1030,11 @@ function renderBracket(g){
   ${podium}
   <div class="section-title" style="margin-top:0">토너먼트 대진표</div>
   <div class="bracket-wrap"><div class="round-col-grid">
-    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
-    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
-    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
-    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
-    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
+    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
+    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
+    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
+    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
+    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
   </div></div>
   <div class="section-title">${info.schedLabel}</div>`;
 
