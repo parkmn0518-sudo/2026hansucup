@@ -521,7 +521,7 @@ function renderCalendar(){
     const evHtml=evs.slice(0,2).map(function(ev){
       const del=isAdmin&&!ev.auto?'<button class="ev-del" onclick="deleteCalEvent(\''+ev.id+'\');event.stopPropagation()">✕</button>':'';
       const short=ev.title.length>10?ev.title.substring(0,10)+'…':ev.title;
-      return '<div class="cal-event '+ev.type+'" title="'+ev.title+'">'+short+del+'</div>';
+      return '<div class="cal-event '+ev.type+'" onclick="openCalDetail(\'+ev.id+\')" title="'+ev.title+'" style="cursor:pointer">'+short+del+'</div>';
     }).join('');
     const more=evs.length>2?'<div class="cal-more">+'+(evs.length-2)+'개</div>':'';
     const addBtn='<button class="cal-add-cell-btn" onclick="openAddCalEvent(\''+ds+'\')" title="추가">+</button>';
@@ -932,6 +932,38 @@ function checkAdmin(){
   else{document.getElementById('adminError').textContent='초기화 중입니다. 잠시 후 다시 시도해 주세요.';}
 }
 function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function openCalDetail(id){
+  const allEv = getAllCalEvents();
+  const ev = allEv.find(function(e){ return String(e.id) === String(id); });
+  if(!ev) return;
+  // 제목
+  document.getElementById('cdTitle').textContent = ev.title;
+  // 상세 내용 구성
+  const lines = [];
+  // 날짜
+  if(ev.date){
+    const p = ev.date.split('-');
+    lines.push('📅 날짜: ' + (+p[1]) + '월 ' + (+p[2]) + '일');
+  }
+  // 종목/메모
+  if(ev.note) lines.push('🏅 종목: ' + ev.note);
+  // 자동연동 경기면 스케줄에서 추가 정보
+  if(ev.auto){
+    const gm = (schedules[ev.g]||[])[ev.ri] && schedules[ev.g][ev.ri].games[ev.gi];
+    if(gm){
+      if(gm.time)    lines.push('⏰ 교시: ' + gm.time);
+      if(gm.venue)   lines.push('📍 장소: ' + gm.venue);
+      if(gm.teacher) lines.push('👨‍🏫 교사: ' + gm.teacher);
+      if(gm.referee) lines.push('🏁 심판: ' + gm.referee);
+    }
+  }
+  document.getElementById('cdBody').innerHTML = lines.map(function(l){
+    return '<div style="padding:3px 0;border-bottom:1px solid var(--border);">'+l+'</div>';
+  }).join('');
+  document.getElementById('calDetailModal').classList.add('show');
+}
+
 function showPage(name,btn){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');if(['bracket1','bracket2','bracket3'].indexOf(name)>-1)renderBracket(+name.slice(-1));if(name==='home')renderHome();if(name==='board')renderBoard();if(name==='rules')renderRulesCard();}
 function goGrade(g){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t,i){t.classList.remove('active');if(i===g)t.classList.add('active');});document.getElementById('page-bracket'+g).classList.add('active');renderBracket(g);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);}
@@ -982,6 +1014,16 @@ if(TEACHER_MODE){
 </script>
 
 <!-- Firebase SDK -->
+
+<!-- 달력 이벤트 상세 모달 -->
+<div class="modal-bg" id="calDetailModal"><div class="modal" style="max-width:380px;">
+  <h2 id="cdTitle" style="margin-bottom:8px;"></h2>
+  <div id="cdBody" style="font-size:13px;line-height:1.9;color:var(--text2);"></div>
+  <div class="modal-btns" style="margin-top:14px;">
+    <button class="btn-confirm" onclick="closeModal('calDetailModal')">닫기</button>
+  </div>
+</div></div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
