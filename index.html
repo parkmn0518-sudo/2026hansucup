@@ -110,7 +110,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cal-dn{text-align:center;padding:5px 0;font-size:10px;font-weight:700;color:var(--text2);}
 .cal-dn:first-child{color:#dc2626;}.cal-dn:last-child{color:#2563eb;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
-.cal-cell{min-height:62px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:3px;position:relative;}
+.cal-cell{min-height:80px;max-height:140px;overflow-y:auto;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:3px;position:relative;}
 @media(max-width:400px){.cal-cell{min-height:48px;}}
 .cal-cell:nth-child(7n){border-right:none;}
 .cal-cell.empty{background:#f9fafb;}
@@ -502,7 +502,8 @@ function getAllCalEvents(){
       rnd.games.forEach(function(gm,gi){
         if(!gm.date)return;
         /* 달력에는 교시 + 홈vs원정만 표시 */
-        const label=(gm.time?gm.time+' ':'')+gm.home+'vs'+gm.away;
+        var gradeLabel=gradeInfo[g].name;
+        const label=gradeLabel+' '+(gm.time?gm.time+' ':'')+gm.home+'vs'+gm.away;
         auto.push({id:'a_'+g+'_'+ri+'_'+gi,date:gm.date,title:label,type:info.evType,note:info.sport,auto:true,g:g,ri:ri,gi:gi});
       });
     });
@@ -526,12 +527,12 @@ function renderCalendar(){
     const ds=calYear+'-'+pad(calMonth+1)+'-'+pad(d);
     const cls=['cal-cell',ds===todayStr?'today':'',dow===0?'sun':dow===6?'sat':''].filter(Boolean).join(' ');
     const evs=evMap[ds]||[];
-    const evHtml=evs.slice(0,2).map(function(ev){
+    const evHtml=evs.map(function(ev){
       const del=isAdmin&&!ev.auto?'<button class="ev-del" onclick="deleteCalEvent(\''+ev.id+'\');event.stopPropagation()">✕</button>':'';
       const short=ev.title.length>10?ev.title.substring(0,10)+'…':ev.title;
       return '<div class="cal-event '+ev.type+'" data-evid="'+ev.id+'" title="'+ev.title+'" style="cursor:pointer">'+short+del+'</div>';
     }).join('');
-    const more=evs.length>2?'<div class="cal-more">+'+(evs.length-2)+'개</div>':'';
+    const more='';
     const addBtn='<button class="cal-add-cell-btn" onclick="openAddCalEvent(\''+ds+'\')" title="추가">+</button>';
     cells+='<div class="'+cls+'">'+addBtn+'<div class="cal-date">'+d+'</div>'+evHtml+more+'</div>';
   }
@@ -545,10 +546,10 @@ function renderCalendar(){
     '<div class="cal-day-names">'+['일','월','화','수','목','금','토'].map(function(dd){return '<div class="cal-dn">'+dd+'</div>';}).join('')+'</div>'+
     '<div class="cal-grid" onclick="handleCalClick(event)">'+cells+'</div>'+
     '<div class="cal-legend">'+
-    '<div class="leg-item"><div class="leg-dot ev-futsal"></div>풋살</div>'+
-    '<div class="leg-item"><div class="leg-dot ev-tchouk"></div>츄크볼</div>'+
-    '<div class="leg-item"><div class="leg-dot ev-volleyball"></div>배구</div>'+
-    '<div class="leg-item"><div class="leg-dot ev-special"></div>특별</div>'+
+    '<div class="leg-item"><div class="leg-dot ev-futsal"></div>1학년 풋살</div>'+
+    '<div class="leg-item"><div class="leg-dot ev-tchouk"></div>2학년 츄크볼</div>'+
+    '<div class="leg-item"><div class="leg-dot ev-volleyball"></div>3학년 배구</div>'+
+    '<div class="leg-item"><div class="leg-dot ev-special"></div>특별 행사</div>'+
     '</div></div>';
 }
 function calNav(d){calMonth+=d;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderHome();}
@@ -663,24 +664,62 @@ function fmtDate(d){if(!d)return'-';const p=d.split('-');return(+p[1])+'월 '+(+
 
 /* ① 경기일정 테이블 — 심판 컬럼 추가 */
 function renderSchedule(g){
-  const rounds=schedules[g]||[];const cls=gradeInfo[g].cls;
-  if(!rounds.length)return'<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
-  let html='';
+  var rounds=schedules[g]||[];
+  var cls=gradeInfo[g].cls;
+  var thC='th-'+cls;
+  // 전체 경기 모으기
+  var allGames=[];
   rounds.forEach(function(rnd,ri){
-    const sc=rnd.status==='완료'?'rsb-done':'rsb-sched';
-    const rows=rnd.games.map(function(gm,gi){
-      const adm=isAdmin?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>':'';
-      const hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'-';
-      const as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'-';
-      const resultCell='<td style="font-weight:700;text-align:center;">'+hs+'</td><td style="color:var(--text2);text-align:center;">:</td><td style="font-weight:700;text-align:center;">'+as_+'</td>';
-      return '<tr><td>'+fmtDate(gm.date)+'</td><td>'+(gm.time||'-')+'</td><td class="vs-cell">'+gm.home+' vs '+gm.away+'</td>'+resultCell+'<td style="font-size:10px;color:var(--text2);">'+gm.note+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.teacher||'')+'</td><td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'+adm+'</tr>';
-    }).join('');
-    const adminBar=isAdmin?'<div class="admin-game-bar"><button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ 경기</button><button class="del-round-btn" onclick="deleteRound('+g+','+ri+')">라운드 삭제</button></div>':'';
-    const thC='th-'+cls;
-    html+='<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>'+rnd.roundName+'</span><span class="rsb '+sc+'">'+rnd.status+'</span><span style="font-size:10px;color:var(--text2);font-weight:400;">'+rnd.games.length+'경기</span></div><span class="rnd-toggle '+(ri===0?'open':'')+'">▼</span></div><div class="rnd-body '+(ri===0?'open':'')+'"><div style="overflow-x:auto;"><table class="sched-table"><thead><tr><th class="'+thC+'">날짜</th><th class="'+thC+'">교시</th><th class="'+thC+'">대전</th><th class=\"'+thC+'\">홈점수</th><th class=\"'+thC+'\"></th><th class=\"'+thC+'\">원정점수</th><th class="'+thC+'">메모</th><th class="'+thC+'">교사</th><th class="'+thC+'">심판</th>'+(isAdmin?'<th class="'+thC+'">관리</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+adminBar+'</div></div>';
+    rnd.games.forEach(function(gm,gi){
+      allGames.push({rnd:rnd,ri:ri,gi:gi,gm:gm});
+    });
   });
-  if(isAdmin)html+='<button class="add-round-btn '+cls+'" onclick="openAddRound('+g+')" style="margin-top:6px;">📅 라운드 추가</button>';
-  return html;
+  if(!allGames.length) return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
+  var rows=allGames.map(function(item){
+    var rnd=item.rnd,ri=item.ri,gi=item.gi,gm=item.gm;
+    var hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:'-';
+    var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:'-';
+    var resultCell='<td style="font-weight:700;text-align:center;">'+hs+'</td><td style="color:var(--text2);text-align:center;">:</td><td style="font-weight:700;text-align:center;">'+as_+'</td>';
+    var statusBadge='<span class="rsb '+(gm.status==='완료'?'rsb-done':'rsb-sched')+'">'+gm.status+'</span>';
+    var adm=isAdmin?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>':'';
+    return '<tr>'
+      +'<td style="font-size:10px;font-weight:700;color:var(--text2);">'+rnd.roundName+'</td>'
+      +'<td>'+fmtDate(gm.date)+'</td>'
+      +'<td>'+(gm.time||'-')+'</td>'
+      +'<td class="vs-cell">'+gm.home+' vs '+gm.away+'</td>'
+      +resultCell
+      +'<td style="font-size:10px;color:var(--text2);">'+(gm.teacher||'')+'</td>'
+      +'<td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'
+      +adm+'</tr>';
+  }).join('');
+  // 라운드 추가 버튼들
+  var adminBtns='';
+  if(isAdmin){
+    adminBtns='<div class="admin-bar" style="margin-top:8px;flex-wrap:wrap;">';
+    rounds.forEach(function(rnd,ri){
+      adminBtns+='<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ '+rnd.roundName+'</button>';
+    });
+    adminBtns+='<button class="add-round-btn '+cls+'" onclick="openAddRound('+g+')" style="margin-top:0">📅 라운드 추가</button></div>';
+  }
+  return '<div class="round-block">'
+    +'<div style="overflow-x:auto;">'
+    +'<table class="sched-table">'
+    +'<thead><tr>'
+    +'<th class="'+thC+'">라운드</th>'
+    +'<th class="'+thC+'">날짜</th>'
+    +'<th class="'+thC+'">교시</th>'
+    +'<th class="'+thC+'">대전</th>'
+    +'<th class="'+thC+'">홈점수</th>'
+    +'<th class="'+thC+'"></th>'
+    +'<th class="'+thC+'">원정점수</th>'
+    +'<th class="'+thC+'">교사</th>'
+    +'<th class="'+thC+'">심판</th>'
+    +(isAdmin?'<th class="'+thC+'">관리</th>':'')
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'</table></div>'
+    +adminBtns
+    +'</div>';
 }
 function toggleRound(h){const b=h.nextElementSibling,a=h.querySelector('.rnd-toggle');b.classList.toggle('open');a.classList.toggle('open');}
 
