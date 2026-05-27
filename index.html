@@ -359,7 +359,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <button class="nav-tab" onclick="showPage('bracket3',this)">🏐 3학년</button>
     <button class="nav-tab" onclick="showPage('rules',this)">📋 경기 요강</button>
     <button class="nav-tab" onclick="showPage('board',this)">📢 게시판</button>
-    <button class="admin-btn" id="adminToggleBtn" onclick="openAdminModal()" style="display:none">🔒 관리자</button>
+    <button class="admin-btn" id="adminToggleBtn" onclick="openAdminModal()">🔒 관리자</button>
     <span id="teacherBadge" style="display:none;background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex-shrink:0;">📝 교사모드</span>
   </div>
 </div>
@@ -392,12 +392,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       </div>
       <div class="board-section">
         <div class="board-section-header gold"><span class="board-section-title">💬 학생 게시판</span><button class="write-btn-sm" onclick="openWriteModal('student')">+ 글쓰기</button></div>
-        <div style="background:#fff8e1;border-left:3px solid #f59e0b;padding:8px 12px;font-size:11px;color:#92400e;line-height:1.6;">
-          ⚠️ <b>게시판 이용 안내</b><br>
-          욕설·비방·허위사실 등 부적절한 게시글은 즉시 삭제되며,<br>
-          작성자 확인 후 <b>생활지도 조치</b>가 이루어질 수 있습니다.<br>
-          <span style="color:#dc2626;font-weight:700;">익명이라도 작성자 학번이 기록됩니다.</span>
-        </div>
         <div class="post-list-inner" id="studentList"></div>
         <div class="pagination" id="studentPaging"></div>
       </div>
@@ -443,16 +437,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <label>교시</label><select id="sgTime"><option value="">선택</option><option>1교시</option><option>2교시</option><option>3교시</option><option>4교시</option><option>점심시간</option><option>5교시</option><option>6교시</option><option>7교시</option></select>
   <label>홈팀 (예: 3반)</label><input type="text" id="sgHome" placeholder="3반">
   <label>원정팀 (예: 7반)</label><input type="text" id="sgAway" placeholder="7반">
-  <label>점수 (경기 후 입력)</label>
-  <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-    <input type="number" id="sgHomeScore" placeholder="홈" min="0" max="99" style="flex:1;">
-    <span style="font-size:18px;font-weight:700;color:var(--text2);">:</span>
-    <input type="number" id="sgAwayScore" placeholder="원정" min="0" max="99" style="flex:1;">
-  </div>
-  <label>상태</label><select id="sgStatus"><option value="예정">예정</option><option value="완료">완료</option></select>
   <label>메모</label><input type="text" id="sgNote" placeholder="비고">
   <label>담당 교사</label><input type="text" id="sgTeacher" placeholder="홍길동 선생님">
-  <label>심판</label><input type="text" id="sgReferee" placeholder="심판 이름">
   <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div>
 </div></div>
 
@@ -623,236 +609,56 @@ function deleteCalEvent(id){
 }
 
 /* ── SCHEDULE DATA ── */
-function mkGame(date,time,home,away,note,teacher,hs,as_,ref){return{date:date||'',time:time||'',home:home||'TBD',away:away||'TBD',note:note||'',teacher:teacher||'',referee:ref||'',venue:'체육관',homeScore:hs!==undefined?hs:null,awayScore:as_!==undefined?as_:null,status:'예정'};}
+function mkGame(date,time,home,away,note,teacher){return{date,time,home,away,note:note||'',teacher:teacher||'',venue:'체육관'};}
 let schedules={
   1:[
-    {roundName:'1라운드',status:'예정',games:[]},
-    {roundName:'8강',status:'예정',games:[]},
-    {roundName:'4강',status:'예정',games:[]},
-    {roundName:'3·4위전',status:'예정',games:[]},
-    {roundName:'결승전',status:'예정',games:[]},
+    {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-19','2교시','7반','10반','',''),mkGame('2026-05-19','3교시','8반','9반','','')]},
+    {roundName:'8강',status:'예정',games:[mkGame('2026-05-26','2교시','1반','TBD','1R 승자',''),mkGame('2026-05-26','3교시','2반','TBD','1R 승자',''),mkGame('2026-05-26','4교시','3반','6반','',''),mkGame('2026-05-26','5교시','4반','5반','','')]},
+    {roundName:'4강',status:'예정',games:[mkGame('2026-06-02','2교시','TBD','TBD','8강 승자',''),mkGame('2026-06-02','3교시','TBD','TBD','8강 승자','')]},
+    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-09','2교시','TBD','TBD','4강 패자','')]},
+    {roundName:'결승전',status:'예정',games:[mkGame('2026-06-09','3교시','TBD','TBD','4강 승자','')]},
   ],
   2:[
-    {roundName:'1라운드',status:'예정',games:[]},
-    {roundName:'8강',status:'예정',games:[]},
-    {roundName:'4강',status:'예정',games:[]},
-    {roundName:'3·4위전',status:'예정',games:[]},
-    {roundName:'결승전',status:'예정',games:[]},
+    {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-20','5교시','7반','10반','',''),mkGame('2026-05-20','6교시','8반','9반','','')]},
+    {roundName:'8강',status:'예정',games:[mkGame('2026-05-27','5교시','1반','TBD','1R 승자',''),mkGame('2026-05-27','6교시','2반','TBD','1R 승자',''),mkGame('2026-05-27','3교시','3반','6반','',''),mkGame('2026-05-27','4교시','4반','5반','','')]},
+    {roundName:'4강',status:'예정',games:[mkGame('2026-06-03','5교시','TBD','TBD','8강 승자',''),mkGame('2026-06-03','6교시','TBD','TBD','8강 승자','')]},
+    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-10','5교시','TBD','TBD','4강 패자','')]},
+    {roundName:'결승전',status:'예정',games:[mkGame('2026-06-10','6교시','TBD','TBD','4강 승자','')]},
   ],
   3:[
-    {roundName:'1라운드',status:'예정',games:[]},
-    {roundName:'8강',status:'예정',games:[]},
-    {roundName:'4강',status:'예정',games:[]},
-    {roundName:'3·4위전',status:'예정',games:[]},
-    {roundName:'결승전',status:'예정',games:[]},
+    {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-22','5교시','7반','10반','',''),mkGame('2026-05-22','6교시','8반','9반','','')]},
+    {roundName:'8강',status:'예정',games:[mkGame('2026-05-29','5교시','1반','TBD','1R 승자',''),mkGame('2026-05-29','6교시','2반','TBD','1R 승자',''),mkGame('2026-05-29','3교시','3반','6반','',''),mkGame('2026-05-29','4교시','4반','5반','','')]},
+    {roundName:'4강',status:'예정',games:[mkGame('2026-06-05','5교시','TBD','TBD','8강 승자',''),mkGame('2026-06-05','6교시','TBD','TBD','8강 승자','')]},
+    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-12','5교시','TBD','TBD','4강 패자','')]},
+    {roundName:'결승전',status:'예정',games:[mkGame('2026-06-12','6교시','TBD','TBD','4강 승자','')]},
   ]
-}
+};
 function fmtDate(d){if(!d)return'-';const p=d.split('-');return`${+p[1]}월 ${+p[2]}일`;}
 function renderSchedule(g){
-  var rounds = schedules[g] || [];
-  var cls = gradeInfo[g].cls;
-  if(!rounds.length){
-    return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
-  }
-  var html = '';
-  rounds.forEach(function(rnd, ri){
-    var sc = rnd.status === '완료' ? 'rsb-done' : 'rsb-sched';
-    var rows = '';
-    rnd.games.forEach(function(gm, gi){
-      var hs  = (gm.homeScore !== null && gm.homeScore !== undefined) ? gm.homeScore : '-';
-      var as_ = (gm.awayScore !== null && gm.awayScore !== undefined) ? gm.awayScore : '-';
-      var adm = '';
-      if(isAdmin){
-        adm = '<td>'
-          + '<button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> '
-          + '<button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button>'
-          + '</td>';
-      }
-      var tr = '<tr>'
-        + '<td>' + fmtDate(gm.date) + '</td>'
-        + '<td>' + (gm.time || '-') + '</td>'
-        + '<td class="vs-cell">' + (gm.home||'TBD') + ' vs ' + (gm.away||'TBD') + '</td>'
-        + '<td style="font-weight:700;text-align:center;">' + hs + '</td>'
-        + '<td style="color:var(--text2);text-align:center;">:</td>'
-        + '<td style="font-weight:700;text-align:center;">' + as_ + '</td>'
-        + '<td style="font-size:10px;color:var(--text2);">' + (gm.note    || '') + '</td>'
-        + '<td style="font-size:10px;color:var(--text2);">' + (gm.teacher || '') + '</td>'
-        + '<td style="font-size:10px;color:var(--text2);">' + (gm.referee || '') + '</td>'
-        + adm
-        + '</tr>';
-      rows += tr;
-    });
-    var thC = 'th-' + cls;
-    var adminBar = '';
-    if(isAdmin){
-      adminBar = '<div class="admin-game-bar">'
-        + '<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ 경기</button>'
-        + '<button class="del-round-btn" onclick="deleteRound('+g+','+ri+')">라운드 삭제</button>'
-        + '</div>';
-    }
-    var thead = '<thead><tr>'
-      + '<th class="'+thC+'">날짜</th>'
-      + '<th class="'+thC+'">교시</th>'
-      + '<th class="'+thC+'">대전</th>'
-      + '<th class="'+thC+'">홈</th>'
-      + '<th class="'+thC+'"></th>'
-      + '<th class="'+thC+'">원정</th>'
-      + '<th class="'+thC+'">메모</th>'
-      + '<th class="'+thC+'">교사</th>'
-      + '<th class="'+thC+'">심판</th>'
-      + (isAdmin ? '<th class="'+thC+'">관리</th>' : '')
-      + '</tr></thead>';
-    html += '<div class="round-block">'
-      + '<div class="round-block-header" onclick="toggleRound(this)">'
-      + '<div class="round-block-title">'
-      + '<span>' + rnd.roundName + '</span>'
-      + '<span class="rsb ' + sc + '">' + rnd.status + '</span>'
-      + '<span style="font-size:10px;color:var(--text2);font-weight:400;">' + rnd.games.length + '경기</span>'
-      + '</div>'
-      + '<span class="rnd-toggle open">▼</span>'
-      + '</div>'
-      + '<div class="rnd-body open">'
-      + '<div style="overflow-x:auto;">'
-      + '<table class="sched-table">' + thead + '<tbody>' + rows + '</tbody></table>'
-      + '</div>'
-      + adminBar
-      + '</div>'
-      + '</div>';
+  const rounds=schedules[g]||[];const cls=gradeInfo[g].cls;
+  if(!rounds.length)return`<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>`;
+  let html='';
+  rounds.forEach((rnd,ri)=>{
+    const sc=rnd.status==='완료'?'rsb-done':'rsb-sched';
+    const rows=rnd.games.map((gm,gi)=>{
+      const adm=isAdmin?`<td><button class="edit-game-btn" onclick="openEditGame(${g},${ri},${gi});event.stopPropagation()">수정</button> <button class="del-game-btn" onclick="deleteGame(${g},${ri},${gi});event.stopPropagation()">삭제</button></td>`:'';
+      return`<tr><td>${fmtDate(gm.date)}</td><td>${gm.time||'-'}</td><td class="vs-cell">${gm.home} vs ${gm.away}</td><td style="font-size:10px;color:var(--text2);">${gm.note}</td><td style="font-size:10px;color:var(--text2);">${gm.teacher}</td>${adm}</tr>`;
+    }).join('');
+    const adminBar=isAdmin?`<div class="admin-game-bar"><button class="add-game-btn" onclick="openAddGame(${g},${ri})">+ 경기</button><button class="del-round-btn" onclick="deleteRound(${g},${ri})">라운드 삭제</button></div>`:'';
+    html+=`<div class="round-block"><div class="round-block-header" onclick="toggleRound(this)"><div class="round-block-title"><span>${rnd.roundName}</span><span class="rsb ${sc}">${rnd.status}</span><span style="font-size:10px;color:var(--text2);font-weight:400;">${rnd.games.length}경기</span></div><span class="rnd-toggle ${ri===0?'open':''}">▼</span></div><div class="rnd-body ${ri===0?'open':''}"><div style="overflow-x:auto;"><table class="sched-table"><thead><tr><th class="th-${cls}">날짜</th><th class="th-${cls}">교시</th><th class="th-${cls}">대전</th><th class="th-${cls}">메모</th><th class="th-${cls}">교사</th>${isAdmin?`<th class="th-${cls}">관리</th>`:''}</tr></thead><tbody>${rows}</tbody></table></div>${adminBar}</div></div>`;
   });
-  if(isAdmin){
-    html += '<button class="add-round-btn ' + cls + '" onclick="openAddRound('+g+')" style="margin-top:6px;">📅 라운드 추가</button>';
-  }
+  if(isAdmin)html+=`<button class="add-round-btn ${cls}" onclick="openAddRound(${g})" style="margin-top:6px;">📅 라운드 추가</button>`;
   return html;
 }
 function toggleRound(h){const b=h.nextElementSibling,a=h.querySelector('.rnd-toggle');b.classList.toggle('open');a.classList.toggle('open');}
 let _sgMode='add';
-function openAddGame(g,ri){
-  _sgMode='add';
-  document.getElementById('sgModalTitle').textContent='경기 추가';
-  ['sgDate','sgHome','sgAway','sgNote','sgTeacher','sgReferee','sgHomeScore','sgAwayScore'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('sgTime').value='';
-  document.getElementById('sgStatus').value='예정';
-  document.getElementById('sgGrade').value=g;
-  document.getElementById('sgRoundIdx').value=ri;
-  document.getElementById('sgGameIdx').value=-1;
-  document.getElementById('sgRoundName').value=schedules[g][ri].roundName;
-  document.getElementById('scheduleGameModal').classList.add('show');
-}
-function openEditGame(g,ri,gi){
-  _sgMode='edit';
-  var gm=schedules[g][ri].games[gi];
-  document.getElementById('sgModalTitle').textContent='경기 수정';
-  document.getElementById('sgGrade').value=g;
-  document.getElementById('sgRoundIdx').value=ri;
-  document.getElementById('sgGameIdx').value=gi;
-  document.getElementById('sgRoundName').value=schedules[g][ri].roundName;
-  document.getElementById('sgDate').value=gm.date||'';
-  document.getElementById('sgTime').value=gm.time||'';
-  document.getElementById('sgHome').value=gm.home||'';
-  document.getElementById('sgAway').value=gm.away||'';
-  document.getElementById('sgHomeScore').value=gm.homeScore!==null&&gm.homeScore!==undefined?gm.homeScore:'';
-  document.getElementById('sgAwayScore').value=gm.awayScore!==null&&gm.awayScore!==undefined?gm.awayScore:'';
-  document.getElementById('sgStatus').value=gm.status==='완료'?'완료':'예정';
-  document.getElementById('sgNote').value=gm.note||'';
-  document.getElementById('sgTeacher').value=gm.teacher||'';
-  document.getElementById('sgReferee').value=gm.referee||'';
-  document.getElementById('scheduleGameModal').classList.add('show');
-}
+function openAddGame(g,ri){_sgMode='add';document.getElementById('sgModalTitle').textContent='경기 추가';['sgDate','sgHome','sgAway','sgNote','sgTeacher'].forEach(id=>document.getElementById(id).value='');document.getElementById('sgTime').value='';document.getElementById('sgGrade').value=g;document.getElementById('sgRoundIdx').value=ri;document.getElementById('sgGameIdx').value=-1;document.getElementById('sgRoundName').value=schedules[g][ri].roundName;document.getElementById('scheduleGameModal').classList.add('show');}
+function openEditGame(g,ri,gi){_sgMode='edit';const gm=schedules[g][ri].games[gi];document.getElementById('sgModalTitle').textContent='경기 수정';document.getElementById('sgGrade').value=g;document.getElementById('sgRoundIdx').value=ri;document.getElementById('sgGameIdx').value=gi;document.getElementById('sgRoundName').value=schedules[g][ri].roundName;document.getElementById('sgDate').value=gm.date;document.getElementById('sgTime').value=gm.time;document.getElementById('sgHome').value=gm.home;document.getElementById('sgAway').value=gm.away;document.getElementById('sgNote').value=gm.note;document.getElementById('sgTeacher').value=gm.teacher||'';document.getElementById('scheduleGameModal').classList.add('show');}
 function saveScheduleGame(){
-  var g=+document.getElementById('sgGrade').value;
-  var ri=+document.getElementById('sgRoundIdx').value;
-  var gi=+document.getElementById('sgGameIdx').value;
-  var hsVal=document.getElementById('sgHomeScore').value;
-  var asVal=document.getElementById('sgAwayScore').value;
-  var hs=hsVal===''?null:+hsVal;
-  var as_=asVal===''?null:+asVal;
-  var status=document.getElementById('sgStatus').value||'예정';
-  var gm={
-    date:document.getElementById('sgDate').value||'',
-    time:document.getElementById('sgTime').value||'',
-    venue:'체육관',
-    home:document.getElementById('sgHome').value.trim()||'TBD',
-    away:document.getElementById('sgAway').value.trim()||'TBD',
-    homeScore:hs, awayScore:as_, status:status,
-    note:document.getElementById('sgNote').value.trim(),
-    teacher:document.getElementById('sgTeacher').value.trim(),
-    referee:document.getElementById('sgReferee').value.trim()
-  };
-  if(_sgMode==='add') schedules[g][ri].games.push(gm);
-  else schedules[g][ri].games[gi]=gm;
-
-  // 대진표 자동 반영: 같은 라운드명의 경기 찾아서 날짜/팀/점수 업데이트
-  syncSchedToBracket(g, gm, ri, gi);
-
-  closeModal('scheduleGameModal');
-  renderBracket(g);
-  renderHome();
-  _saveToFirebase('schedule');
-  showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
-}
-
-// ── 경기일정 → 대진표 자동 동기화 ──
-function syncSchedToBracket(g, gm, ri, gi) {
-  var rndName = schedules[g][ri].roundName;
-  var R = tournaments[g].rounds;
-  var bracketRounds = {
-    '1라운드': R.r1, '8강': R.qf, '4강': R.sf, '3·4위전': R.third, '결승전': R.final
-  };
-  var arr = bracketRounds[rndName];
-  if (!arr || gi >= arr.length) return;
-  var bm = arr[gi];
-  if (!bm) return;
-
-  // 날짜
-  if (gm.date) bm.date = gm.date;
-  // 팀명
-  if (gm.home && gm.home !== 'TBD') { if (!bm.home) bm.home = {id:gi+1,name:gm.home}; else bm.home.name = gm.home; }
-  if (gm.away && gm.away !== 'TBD') { if (!bm.away) bm.away = {id:gi+1,name:gm.away}; else bm.away.name = gm.away; }
-  // 교사·심판
-  bm.teacher  = gm.teacher  || bm.teacher  || '';
-  bm.referee  = gm.referee  || bm.referee  || '';
-  // 점수·상태
-  if (gm.homeScore !== null && gm.homeScore !== undefined && gm.homeScore !== '') {
-    bm.homeScore = +gm.homeScore;
-    bm.awayScore = +gm.awayScore;
-    bm.status    = gm.status === '완료' ? 'done' : 'scheduled';
-    if (bm.status === 'done') {
-      bm.winner = bm.homeScore > bm.awayScore ? bm.home
-                : bm.awayScore > bm.homeScore ? bm.away : null;
-    } else { bm.winner = null; }
-    propagate(g);
-  } else {
-    bm.homeScore = null; bm.awayScore = null;
-    bm.status = 'scheduled'; bm.winner = null;
-  }
-}
-
-// ── 달력 자동 생성 (schedules 기반) ──
-function getAllCalEvents(){
-  var auto=[];
-  [1,2,3].forEach(function(g){
-    var info=gradeInfo[g];
-    (schedules[g]||[]).forEach(function(rnd,ri){
-      rnd.games.forEach(function(gm,gi){
-        if(!gm.date) return;
-        var timeLabel=gm.time?gm.time+' ':'';
-        var scoreLabel='';
-        if(gm.homeScore!==null&&gm.homeScore!==undefined&&gm.awayScore!==null){
-          scoreLabel=' ('+gm.homeScore+':'+gm.awayScore+')';
-        }
-        var label=timeLabel+gm.home+' vs '+gm.away+scoreLabel;
-        auto.push({
-          id:'a_'+g+'_'+ri+'_'+gi,
-          date:gm.date,
-          title:label,
-          type:info.evType,
-          note:info.sport+(gm.teacher?' 교사:'+gm.teacher:'')+(gm.referee?' 심판:'+gm.referee:''),
-          auto:true, g:g, ri:ri, gi:gi
-        });
-      });
-    });
-  });
-  return [].concat(calManualEvents, auto);
+  const g=+document.getElementById('sgGrade').value,ri=+document.getElementById('sgRoundIdx').value,gi=+document.getElementById('sgGameIdx').value;
+  const gm={date:document.getElementById('sgDate').value||'',time:document.getElementById('sgTime').value||'',venue:'체육관',home:document.getElementById('sgHome').value.trim()||'TBD',away:document.getElementById('sgAway').value.trim()||'TBD',note:document.getElementById('sgNote').value.trim(),teacher:document.getElementById('sgTeacher').value.trim()};
+  if(_sgMode==='add')schedules[g][ri].games.push(gm);else schedules[g][ri].games[gi]=gm;
+  closeModal('scheduleGameModal');renderBracket(g);renderHome();_saveToFirebase('schedule');showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
 }
 function deleteGame(g,ri,gi){schedules[g][ri].games.splice(gi,1);renderBracket(g);renderHome();_saveToFirebase('schedule');showToast('삭제됨.');}
 function openAddRound(g){document.getElementById('arGrade').value=g;document.getElementById('addRoundModal').classList.add('show');}
@@ -891,130 +697,32 @@ function updateAdminInfoBtns(){['safety','award','emergency'].forEach(t=>documen
 
 /* ── TOURNAMENT ── */
 function makeTeams(g){return Array.from({length:10},(_,i)=>({id:i+1,name:`${i+1}반`}));}
-function initTournament(g){const t=makeTeams(g);return{teams:t,rounds:{r1:[{id:`${g}_r1_1`,round:'1라운드',home:t[6],away:t[9],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''},{id:`${g}_r1_2`,round:'1라운드',home:t[7],away:t[8],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''}],qf:[{id:`${g}_qf_1`,round:'8강',home:t[0],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''},{id:`${g}_qf_2`,round:'8강',home:t[1],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''},{id:`${g}_qf_3`,round:'8강',home:t[2],away:t[5],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''},{id:`${g}_qf_4`,round:'8강',home:t[3],away:t[4],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''}],sf:[{id:`${g}_sf_1`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''},{id:`${g}_sf_2`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''}],third:[{id:`${g}_3rd_1`,round:'3·4위전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''}],final:[{id:`${g}_f_1`,round:'결승전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:''}]}};}
+function initTournament(g){const t=makeTeams(g);return{teams:t,rounds:{r1:[{id:`${g}_r1_1`,round:'1라운드',home:t[6],away:t[9],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_r1_2`,round:'1라운드',home:t[7],away:t[8],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],qf:[{id:`${g}_qf_1`,round:'8강',home:t[0],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_2`,round:'8강',home:t[1],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_3`,round:'8강',home:t[2],away:t[5],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_qf_4`,round:'8강',home:t[3],away:t[4],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],sf:[{id:`${g}_sf_1`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''},{id:`${g}_sf_2`,round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],third:[{id:`${g}_3rd_1`,round:'3·4위전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}],final:[{id:`${g}_f_1`,round:'결승전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:''}]}};}
 let tournaments={1:initTournament(1),2:initTournament(2),3:initTournament(3)};
 function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner||null;R.qf[1].away=R.r1[0].winner||null;R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;const l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;const l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;R.third[0].home=l0;R.third[0].away=l1;}
 function countStats(){let done=0,sched=0;[1,2,3].forEach(g=>{const R=tournaments[g].rounds;[...R.r1,...R.qf,...R.sf,...R.third,...R.final].forEach(m=>{if(m.status==='done')done++;else sched++;});});return{total:done+sched,done,sched};}
 function teamLabel(t){return t?t.name:'TBD';}
 function matchNodeHTML(m,g){
-  try{
-    var cls      = gradeInfo[g].cls;
-    var hWin     = m.status==='done' && m.winner===m.home;
-    var aWin     = m.status==='done' && m.winner===m.away;
-    var statusTxt= m.status==='done' ? '완료' : '예정';
-    var pillCls  = m.status==='done' ? 'pill-done' : 'pill-scheduled';
-    var hNm      = teamLabel(m.home);
-    var aNm      = teamLabel(m.away);
-    var hScore   = m.homeScore !== null && m.homeScore !== undefined ? m.homeScore : '-';
-    var aScore   = m.awayScore !== null && m.awayScore !== undefined ? m.awayScore : '-';
-    var dateDisp = m.date ? '📅 ' + fmtDate(m.date) : '날짜 미정';
-    var dateColor= m.date ? '' : 'color:#c8c8d4;';
-    var teacher  = m.teacher  || '';
-    var referee  = m.referee  || '';
-
-    // 교사·심판 행
-    var staffRow = '';
-    if(teacher || referee){
-      staffRow = '<div style="font-size:9px;color:var(--text2);padding:2px 7px;background:#f8f9fc;border-bottom:1px solid var(--border);">'
-        + (teacher ? '👨‍🏫 ' + teacher : '')
-        + (teacher && referee ? ' · ' : '')
-        + (referee ? '🏁 ' + referee : '')
-        + '</div>';
-    }
-
-    // 관리자 수정 버튼
-    var adminBtn = '';
-    if(isAdmin){
-      adminBtn = '<button class="edit-btn-small" onclick="toggleEdit('' + m.id + '')">✏️</button>';
-    }
-
-    // 관리자 수정 패널
-    var ep = '';
-    if(isAdmin){
-      ep = '<div class="edit-panel" id="edit_' + m.id + '">'
-        + '<div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>'
-        + '<div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_' + m.id + '" value="' + (hNm==='TBD'?'':hNm) + '" placeholder="예) 3반"></div>'
-        + '<div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an_' + m.id + '" value="' + (aNm==='TBD'?'':aNm) + '" placeholder="예) 7반"></div>'
-        + '<div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc_' + m.id + '" value="' + teacher + '" placeholder="담당 교사"></div>'
-        + '<div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf_' + m.id + '" value="' + referee + '" placeholder="심판 이름"></div>'
-        + '<div class="edit-divider">날짜 / 점수 / 상태</div>'
-        + '<div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt_' + m.id + '" value="' + (m.date||'') + '"></div>'
-        + '<div class="edit-row">'
-        + '<span class="edit-label">' + hNm + '</span>'
-        + '<input class="sc-inp" type="number" min="0" max="99" id="hs_' + m.id + '" value="' + (m.homeScore!==null&&m.homeScore!==undefined?m.homeScore:'') + '">'
-        + '<span style="font-weight:700;color:var(--text2)">:</span>'
-        + '<input class="sc-inp" type="number" min="0" max="99" id="as_' + m.id + '" value="' + (m.awayScore!==null&&m.awayScore!==undefined?m.awayScore:'') + '">'
-        + '<span class="edit-label">' + aNm + '</span>'
-        + '<select class="st-sel" id="st_' + m.id + '">'
-        + '<option value="scheduled"' + (m.status==='scheduled'?' selected':'') + '>예정</option>'
-        + '<option value="done"'      + (m.status==='done'?     ' selected':'') + '>완료</option>'
-        + '</select>'
-        + '</div>'
-        + '<div class="edit-row" style="justify-content:flex-end;">'
-        + '<button class="save-btn" onclick="saveMatch('' + m.id + '',' + g + ')">💾 저장</button>'
-        + '</div>'
-        + '</div>';
-    }
-
-    var hRowCls = hWin ? 'winner' : (m.status==='done' ? 'loser' : '');
-    var aRowCls = aWin ? 'winner' : (m.status==='done' ? 'loser' : '');
-
-    return '<div class="match-node ' + cls + '-node" id="node_' + m.id + '">'
-      + '<div class="match-top ' + cls + '">'
-      + '<div class="match-round-row">'
-      + '<span class="match-round-label ' + cls + '">' + m.round + '</span>'
-      + '<span style="display:flex;align-items:center;gap:3px;">'
-      + '<span class="match-status-pill ' + pillCls + '">' + statusTxt + '</span>'
-      + adminBtn
-      + '</span>'
-      + '</div>'
-      + '<div class="match-date-row" style="' + dateColor + '">' + dateDisp + '</div>'
-      + '</div>'
-      + staffRow
-      + '<div class="team-row ' + hRowCls + '">'
-      + '<div class="team-nm">' + hNm + '</div>'
-      + '<div class="team-sc ' + (hWin?'win-sc':'') + '">' + hScore + '</div>'
-      + '</div>'
-      + '<div class="team-row ' + aRowCls + '">'
-      + '<div class="team-nm">' + aNm + '</div>'
-      + '<div class="team-sc ' + (aWin?'win-sc':'') + '">' + aScore + '</div>'
-      + '</div>'
-      + ep
-      + '</div>';
-  } catch(e){
-    console.error('matchNodeHTML 오류:', e, m);
-    return '<div class="match-node" style="padding:8px;color:red;font-size:11px;">오류: ' + e.message + '</div>';
-  }
+  const cls=gradeInfo[g].cls;
+  const hWin=m.status==='done'&&m.winner===m.home,aWin=m.status==='done'&&m.winner===m.away;
+  const statusTxt=m.status==='done'?'완료':'예정';
+  const pillCls=m.status==='done'?'pill-done':'pill-scheduled';
+  const hNm=teamLabel(m.home),aNm=teamLabel(m.away);
+  const adminBtn=isAdmin?`<button class="edit-btn-small" onclick="toggleEdit('${m.id}')">✏️</button>`:'';
+  const ep=isAdmin?`<div class="edit-panel" id="edit_${m.id}">
+    <div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>
+    <div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_${m.id}" value="${hNm==='TBD'?'':hNm}" placeholder="예) 3반"></div>
+    <div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an_${m.id}" value="${aNm==='TBD'?'':aNm}" placeholder="예) 7반"></div>
+    <div class="edit-divider">날짜 / 점수 / 상태</div>
+    <div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt_${m.id}" value="${m.date||''}"></div>
+    <div class="edit-row"><span class="edit-label">${hNm}</span><input class="sc-inp" type="number" min="0" max="99" id="hs_${m.id}" value="${m.homeScore??''}"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as_${m.id}" value="${m.awayScore??''}"><span class="edit-label">${aNm}</span><select class="st-sel" id="st_${m.id}"><option value="scheduled" ${m.status==='scheduled'?'selected':''}>예정</option><option value="done" ${m.status==='done'?'selected':''}>완료</option></select></div>
+    <div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch('${m.id}',${g})">💾 저장</button></div>
+  </div>`:'';
+  const dateDisplay=m.date?`📅 ${fmtDate(m.date)}`:'날짜 미정';
+  return`<div class="match-node ${cls}-node" id="node_${m.id}"><div class="match-top ${cls}"><div class="match-round-row"><span class="match-round-label ${cls}">${m.round}</span><span style="display:flex;align-items:center;gap:3px;"><span class="match-status-pill ${pillCls}">${statusTxt}</span>${adminBtn}</span></div><div class="match-date-row" style="${!m.date?'color:#c8c8d4':''}">${dateDisplay}</div></div><div class="team-row ${hWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${hNm}</div><div class="team-sc ${hWin?'win-sc':''}">${m.homeScore!==null?m.homeScore:'-'}</div></div><div class="team-row ${aWin?'winner':m.status==='done'?'loser':''}"><div class="team-nm">${aNm}</div><div class="team-sc ${aWin?'win-sc':''}">${m.awayScore!==null?m.awayScore:'-'}</div></div>${ep}</div>`;
 }
 function toggleEdit(id){document.getElementById('edit_'+id)?.classList.toggle('show');}
-
-// 대진표 → 경기일정 역방향 동기화
-function syncBracketToSched(g, bm, matchId) {
-  // matchId 형식: "1_r1_0", "1_qf_2" 등
-  var parts = matchId.split('_');
-  var rndKey = parts[1];   // r1, qf, sf, third, final
-  var gi     = +parts[2];  // 경기 인덱스
-  var rndNameMap = {r1:'1라운드', qf:'8강', sf:'4강', third:'3·4위전', final:'결승전'};
-  var rndName = rndNameMap[rndKey];
-  if (!rndName || !schedules[g]) return;
-  // schedules에서 같은 라운드 찾기
-  var ri = -1;
-  schedules[g].forEach(function(r, i){ if(r.roundName === rndName) ri = i; });
-  if (ri < 0 || !schedules[g][ri].games[gi]) return;
-  var gm = schedules[g][ri].games[gi];
-
-  if (bm.date)    gm.date    = bm.date;
-  if (bm.home && bm.home.name !== 'TBD') gm.home = bm.home.name;
-  if (bm.away && bm.away.name !== 'TBD') gm.away = bm.away.name;
-  if (bm.teacher !== undefined) gm.teacher = bm.teacher;
-  if (bm.referee !== undefined) gm.referee = bm.referee;
-  if (bm.homeScore !== null && bm.homeScore !== undefined) {
-    gm.homeScore = bm.homeScore;
-    gm.awayScore = bm.awayScore;
-    gm.status    = bm.status === 'done' ? '완료' : '예정';
-  }
-}
-function saveMatch(id,g){const R=tournaments[g].rounds,allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],m=allM.find(x=>x.id===id);if(!m)return;const hn=document.getElementById('hn_'+id)?.value.trim(),an=document.getElementById('an_'+id)?.value.trim();if(hn&&m.home)m.home.name=hn;if(an&&m.away)m.away.name=an;m.date=document.getElementById('dt_'+id).value;const hs=document.getElementById('hs_'+id).value,as=document.getElementById('as_'+id).value,st=document.getElementById('st_'+id).value;m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;if(st==='done'&&m.homeScore!==null&&m.awayScore!==null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);else m.winner=null;syncBracketToSched(g,m,id);propagate(g);renderBracket(g);renderHome();_saveToFirebase('match');showToast('저장됨!');}
+function saveMatch(id,g){const R=tournaments[g].rounds,allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],m=allM.find(x=>x.id===id);if(!m)return;const hn=document.getElementById('hn_'+id)?.value.trim(),an=document.getElementById('an_'+id)?.value.trim();if(hn&&m.home)m.home.name=hn;if(an&&m.away)m.away.name=an;m.date=document.getElementById('dt_'+id).value;const hs=document.getElementById('hs_'+id).value,as=document.getElementById('as_'+id).value,st=document.getElementById('st_'+id).value;m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;if(st==='done'&&m.homeScore!==null&&m.awayScore!==null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);else m.winner=null;propagate(g);renderBracket(g);renderHome();_saveToFirebase('match');showToast('저장됨!');}
 function renderBracket(g){
   propagate(g);const T=tournaments[g],R=T.rounds,info=gradeInfo[g],cls=info.cls;
   const allM=[...R.r1,...R.qf,...R.sf,...R.third,...R.final],done=allM.filter(m=>m.status==='done').length;
@@ -1024,32 +732,30 @@ function renderBracket(g){
   const podium=(champ||second||third)?`<div class="podium-grid">${champ?`<div class="podium-card gold-b"><div style="font-size:18px;">🥇</div><div class="podium-name">${champ}</div><div class="podium-lbl">우승</div></div>`:''} ${second?`<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">${second}</div><div class="podium-lbl">준우승</div></div>`:''} ${third?`<div class="podium-card"><div style="font-size:18px;">🥉</div><div class="podium-name">${third}</div><div class="podium-lbl">3위</div></div>`:''}</div>`:'';
   // ALL round labels use sport color (no special final color)
   const rl=s=>`<div class="round-col-label ${cls}">${s==='결승전'?'🏆 결승전':s}</div>`;
-  // 대진표 메인 HTML 먼저 렌더
-  var bracketHTML = `
+  document.getElementById('page-bracket'+g).innerHTML=`
   <div class="bracket-header"><div class="grade-badge ${cls}">${info.icon} ${info.name}</div><div class="sport-badge ${cls}">${info.sport}</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">${done}/9 완료</div></div>
   ${podium}
   <div class="section-title" style="margin-top:0">토너먼트 대진표</div>
   <div class="bracket-wrap"><div class="round-col-grid">
-    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
-    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
-    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
-    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
-    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(function(m){return matchNodeHTML(m,g);}).join('')}</div></div>
+    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
   </div></div>
-  <div class="section-title">${info.schedLabel}</div>`;
-
-  // 경기일정 HTML 별도 생성 (에러 격리)
-  var schedHTML = '';
-  try { schedHTML = renderSchedule(g); }
-  catch(e) { console.error('renderSchedule 오류:', e); schedHTML = '<p style="color:red;">경기일정 로드 오류: '+e.message+'</p>'; }
-
-  document.getElementById('page-bracket'+g).innerHTML = bracketHTML + schedHTML;
+  <div class="section-title">${info.schedLabel}</div>
+  ${renderSchedule(g)}`;
 }
 
 /* ── BOARD / NOTICES ── */
-// 초기값 빈 배열 → 캐시 or Firebase에서 채워짐 (기본값이 화면에 잠깐 뜨는 현상 방지)
-let noticePosts=[];
-let studentPosts=[];
+let noticePosts=[
+  {id:1,type:'notice',cat:'공지',field1:'2026 한수컵 대회 일정 최종 안내',field2:'체육부',field3:'1학년 풋살: 체육관\n2학년 츄크볼: 체육관\n3학년 배구: 체육관\n경기 15분 전까지 집합 바랍니다.',date:'2026-05-01'},
+  {id:2,type:'notice',cat:'안내',field1:'선수 명단 제출 마감 안내',field2:'체육부',field3:'각 반 담임 선생님께서는 선수 명단을 5월 15일까지 제출해 주세요.',date:'2026-05-05'}
+];
+let studentPosts=[
+  {id:101,type:'student',cat:'응원',field1:'10301',field2:'김민준',field3:'1학년 3반 풋살 파이팅!! 🔥',date:'2026-05-10'},
+  {id:102,type:'student',cat:'응원',field1:'30702',field2:'박서윤',field3:'3학년 7반 배구 화이팅!!',date:'2026-05-11'}
+];
 let nextNoticeId=10,nextStudentId=200,_writeTarget='student';
 let noticePage=1,studentPage=1;
 const PAGE_SIZE=5;
@@ -1162,36 +868,6 @@ function showPage(name,btn){document.querySelectorAll('.page').forEach(p=>p.clas
 function goGrade(g){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach((t,i)=>{t.classList.remove('active');if(i===g)t.classList.add('active');});document.getElementById('page-bracket'+g).classList.add('active');renderBracket(g);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.display='none';},2500);}
 
-// 캐시된 데이터로 즉시 렌더 (Firebase 응답 전 로딩 없애기)
-(function loadCache(){
-  try {
-    var cached = localStorage.getItem('hansucup_cache');
-    if(!cached) return;
-    var d = JSON.parse(cached);
-    if(d.tournaments){
-      var T=JSON.parse(d.tournaments);
-      [1,2,3].forEach(function(g){
-        if(!T[g]) return;
-        var R=T[g].rounds;
-        var allM=[].concat(R.r1,R.qf,R.sf,R.third,R.final);
-        allM.forEach(function(m){
-          if(!m||!m.winner) return;
-          if(m.home&&m.winner.id===m.home.id) m.winner=m.home;
-          else if(m.away&&m.winner.id===m.away.id) m.winner=m.away;
-          else m.winner=null;
-        });
-        tournaments[g]=T[g]; propagate(g);
-      });
-    }
-    if(d.schedules)       Object.assign(schedules,      JSON.parse(d.schedules));
-    if(d.noticePosts)     noticePosts     = JSON.parse(d.noticePosts);
-    if(d.studentPosts)    studentPosts    = JSON.parse(d.studentPosts);
-    if(d.overviewData)    overviewData    = JSON.parse(d.overviewData);
-    if(d.rulesData)       rulesData       = JSON.parse(d.rulesData);
-    if(d.infoData)        Object.assign(infoData, JSON.parse(d.infoData));
-    if(d.calManualEvents) calManualEvents = JSON.parse(d.calManualEvents);
-  } catch(e){ localStorage.removeItem('hansucup_cache'); }
-})();
 renderHome();
 renderRulesCard();
 ['safety','award','emergency'].forEach(t=>renderInfoCard(t));
@@ -1258,8 +934,6 @@ function startFirebase() {
     var d = snap.val();
     if (!d) { console.log('[Firebase] DB 비어있음'); return; }
     console.log('[Firebase] 데이터 수신:', Object.keys(d));
-    // 캐시 저장 (다음 방문 시 즉시 표시)
-    try { localStorage.setItem('hansucup_cache', JSON.stringify(d)); } catch(e){}
 
     try {
       if (d.tournaments) {
@@ -1326,12 +1000,8 @@ function fbCheckAdmin(pin) {
   errEl.textContent = '확인 중...';
   // 이메일은 고정, PIN이 비밀번호
   FBAUTH.signInWithEmailAndPassword('parkmn0518@goedu.kr', pin)
-    .then(function(result) {
+    .then(function() {
       console.log('[Firebase] 교사 로그인 성공');
-      // onAuthStateChanged 백업 — 바로 활성화
-      if (TEACHER_MODE) {
-        _activateAdmin();
-      }
     })
     .catch(function(e) {
       console.warn('[Firebase] 로그인 실패:', e.code);
@@ -1406,20 +1076,14 @@ function _deactivateAdmin() {
 }
 
 // ── 교사 모드 UI ──
-// 관리자 버튼: 교사 모드일 때만 표시
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('adminToggleBtn');
-  if (TEACHER_MODE) {
-    if (btn) btn.style.display = 'block';
+if (TEACHER_MODE) {
+  document.addEventListener('DOMContentLoaded', function() {
     var nav = document.querySelector('.nav-bar, .nav-inner');
     if (nav) nav.style.background = '#1a4a2a';
     var badge = document.getElementById('teacherBadge');
     if (badge) badge.style.display = 'inline';
-  } else {
-    // 학생 모드: 관리자 버튼 완전히 숨김
-    if (btn) btn.style.display = 'none';
-  }
-});
+  });
+}
 
 // ── Firebase 시작 ──
 // SDK 스크립트가 위에서 동기적으로 로드되므로 바로 실행 가능
