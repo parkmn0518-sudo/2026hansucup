@@ -974,19 +974,26 @@ function renderBracket(g){
   const podium=(champ||second||third)?`<div class="podium-grid">${champ?`<div class="podium-card gold-b"><div style="font-size:18px;">🥇</div><div class="podium-name">${champ}</div><div class="podium-lbl">우승</div></div>`:''} ${second?`<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">${second}</div><div class="podium-lbl">준우승</div></div>`:''} ${third?`<div class="podium-card"><div style="font-size:18px;">🥉</div><div class="podium-name">${third}</div><div class="podium-lbl">3위</div></div>`:''}</div>`:'';
   // ALL round labels use sport color (no special final color)
   const rl=s=>`<div class="round-col-label ${cls}">${s==='결승전'?'🏆 결승전':s}</div>`;
-  document.getElementById('page-bracket'+g).innerHTML=`
+  // 대진표 메인 HTML 먼저 렌더
+  var bracketHTML = `
   <div class="bracket-header"><div class="grade-badge ${cls}">${info.icon} ${info.name}</div><div class="sport-badge ${cls}">${info.sport}</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">${done}/9 완료</div></div>
   ${podium}
   <div class="section-title" style="margin-top:0">토너먼트 대진표</div>
   <div class="bracket-wrap"><div class="round-col-grid">
-    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
-    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
-    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
-    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
-    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(m=>matchNodeHTML(m,g)).join('')}</div></div>
+    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode r1 오류:',e,m);return '<div class="match-node">오류</div>';}}).join('')}</div></div>
+    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode qf 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
+    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode sf 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
+    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode third 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
+    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode final 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
   </div></div>
-  <div class="section-title">${info.schedLabel}</div>
-  ${renderSchedule(g)}`;
+  <div class="section-title">${info.schedLabel}</div>`;
+
+  // 경기일정 HTML 별도 생성 (에러 격리)
+  var schedHTML = '';
+  try { schedHTML = renderSchedule(g); }
+  catch(e) { console.error('renderSchedule 오류:', e); schedHTML = '<p style="color:red;">경기일정 로드 오류: '+e.message+'</p>'; }
+
+  document.getElementById('page-bracket'+g).innerHTML = bracketHTML + schedHTML;
 }
 
 /* ── BOARD / NOTICES ── */
