@@ -626,6 +626,39 @@ function syncSchedToBracket(g,gm,ri,gi){
   }
 }
 
+// 대진표 → 경기일정 역방향 동기화
+function syncBracketToSched(g, m, matchId){
+  // matchId 형식: "1_r1_1", "1_qf_2", "1_sf_1", "1_3rd_1", "1_f_1"
+  var parts = matchId.split('_');
+  // parts[0]=grade, parts[1]=round key, parts[2]=index
+  var rndKey = parts[1];
+  var matchIdx = +parts[2] - 1; // 1-based → 0-based
+  var rndNameMap = {r1:'1라운드', qf:'8강', sf:'4강', '3rd':'3·4위전', f:'결승전'};
+  var rndName = rndNameMap[rndKey];
+  if(!rndName || !schedules[g]) return;
+
+  // schedules에서 같은 라운드명 찾기
+  var ri = -1;
+  schedules[g].forEach(function(r, i){ if(r.roundName === rndName) ri = i; });
+  if(ri < 0) return;
+
+  // matchIdx로 경기 찾기 (없으면 새로 추가)
+  while(schedules[g][ri].games.length <= matchIdx){
+    schedules[g][ri].games.push({date:'',time:'',home:'TBD',away:'TBD',note:'',teacher:'',referee:'',homeScore:null,awayScore:null,status:'예정',venue:'체육관'});
+  }
+  var gm = schedules[g][ri].games[matchIdx];
+
+  // 날짜·팀명 동기화
+  if(m.date) gm.date = m.date;
+  if(m.home && m.home.name !== 'TBD') gm.home = m.home.name;
+  if(m.away && m.away.name !== 'TBD') gm.away = m.away.name;
+  // 점수·상태 동기화
+  gm.homeScore = m.homeScore;
+  gm.awayScore = m.awayScore;
+  gm.status    = m.status === 'done' ? '완료' : '예정';
+}
+
+
 function fmtDate(d){if(!d)return'-';const p=d.split('-');return(+p[1])+'월 '+(+p[2])+'일';}
 
 /* ① 경기일정 테이블 — 심판 컬럼 추가 */
@@ -824,6 +857,8 @@ function saveMatch(id,g){
   m.homeScore=hs===''?null:+hs;m.awayScore=as===''?null:+as;m.status=st;
   if(st==='done'&&m.homeScore!=null&&m.awayScore!=null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);
   else m.winner=null;
+  // 대진표 → 경기일정 역방향 동기화
+  syncBracketToSched(g, m, id);
   propagate(g);renderBracket(g);renderHome();_saveToFirebase('match');showToast('저장됨!');
 }
 function renderBracket(g){
