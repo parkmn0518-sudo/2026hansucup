@@ -649,62 +649,79 @@ let schedules={
 }
 function fmtDate(d){if(!d)return'-';const p=d.split('-');return`${+p[1]}월 ${+p[2]}일`;}
 function renderSchedule(g){
-  var rounds=schedules[g]||[];
-  var cls=gradeInfo[g].cls;
-  if(!rounds.length) return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
-  var html='';
-  rounds.forEach(function(rnd,ri){
-    var sc=rnd.status==='완료'?'rsb-done':'rsb-sched';
-    var rows=rnd.games.map(function(gm,gi){
-      var hs=gm.homeScore!==null&&gm.homeScore!==undefined?gm.homeScore:'-';
-      var as_=gm.awayScore!==null&&gm.awayScore!==undefined?gm.awayScore:'-';
-      var adm=isAdmin
-        ?'<td><button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> '
-         +'<button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button></td>'
-        :'';
-      return '<tr>'
-        +'<td>'+fmtDate(gm.date)+'</td>'
-        +'<td>'+(gm.time||'-')+'</td>'
-        +'<td class="vs-cell">'+gm.home+' vs '+gm.away+'</td>'
-        +'<td style="font-weight:700;text-align:center;">'+hs+'</td>'
-        +'<td style="color:var(--text2);text-align:center;">:</td>'
-        +'<td style="font-weight:700;text-align:center;">'+as_+'</td>'
-        +'<td style="font-size:10px;color:var(--text2);">'+(gm.note||'')+'</td>'
-        +'<td style="font-size:10px;color:var(--text2);">'+(gm.teacher||'')+'</td>'
-        +'<td style="font-size:10px;color:var(--text2);">'+(gm.referee||'')+'</td>'
-        +adm
-        +'</tr>';
-    }).join('');
-    var thC='th-'+cls;
-    var adminBar=isAdmin
-      ?'<div class="admin-game-bar">'
-       +'<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ 경기</button>'
-       +'<button class="del-round-btn" onclick="deleteRound('+g+','+ri+')">라운드 삭제</button>'
-       +'</div>'
-      :'';
-    html+='<div class="round-block">'
-      +'<div class="round-block-header" onclick="toggleRound(this)">'
-      +'<div class="round-block-title">'
-      +'<span>'+rnd.roundName+'</span>'
-      +'<span class="rsb '+sc+'">'+rnd.status+'</span>'
-      +'<span style="font-size:10px;color:var(--text2);font-weight:400;">'+rnd.games.length+'경기</span>'
-      +'</div><span class="rnd-toggle open">▼</span></div>'
-      +'<div class="rnd-body open"><div style="overflow-x:auto;">'
-      +'<table class="sched-table"><thead><tr>'
-      +'<th class="'+thC+'">날짜</th>'
-      +'<th class="'+thC+'">교시</th>'
-      +'<th class="'+thC+'">대전</th>'
-      +'<th class="'+thC+'">홈점수</th>'
-      +'<th class="'+thC+'"></th>'
-      +'<th class="'+thC+'">원정점수</th>'
-      +'<th class="'+thC+'">메모</th>'
-      +'<th class="'+thC+'">교사</th>'
-      +'<th class="'+thC+'">심판</th>'
-      +(isAdmin?'<th class="'+thC+'">관리</th>':'')
-      +'</tr></thead><tbody>'+rows+'</tbody></table>'
-      +'</div>'+adminBar+'</div></div>';
+  var rounds = schedules[g] || [];
+  var cls = gradeInfo[g].cls;
+  if(!rounds.length){
+    return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
+  }
+  var html = '';
+  rounds.forEach(function(rnd, ri){
+    var sc = rnd.status === '완료' ? 'rsb-done' : 'rsb-sched';
+    var rows = '';
+    rnd.games.forEach(function(gm, gi){
+      var hs  = (gm.homeScore !== null && gm.homeScore !== undefined) ? gm.homeScore : '-';
+      var as_ = (gm.awayScore !== null && gm.awayScore !== undefined) ? gm.awayScore : '-';
+      var adm = '';
+      if(isAdmin){
+        adm = '<td>'
+          + '<button class="edit-game-btn" onclick="openEditGame('+g+','+ri+','+gi+');event.stopPropagation()">수정</button> '
+          + '<button class="del-game-btn" onclick="deleteGame('+g+','+ri+','+gi+');event.stopPropagation()">삭제</button>'
+          + '</td>';
+      }
+      var tr = '<tr>'
+        + '<td>' + fmtDate(gm.date) + '</td>'
+        + '<td>' + (gm.time || '-') + '</td>'
+        + '<td class="vs-cell">' + (gm.home||'TBD') + ' vs ' + (gm.away||'TBD') + '</td>'
+        + '<td style="font-weight:700;text-align:center;">' + hs + '</td>'
+        + '<td style="color:var(--text2);text-align:center;">:</td>'
+        + '<td style="font-weight:700;text-align:center;">' + as_ + '</td>'
+        + '<td style="font-size:10px;color:var(--text2);">' + (gm.note    || '') + '</td>'
+        + '<td style="font-size:10px;color:var(--text2);">' + (gm.teacher || '') + '</td>'
+        + '<td style="font-size:10px;color:var(--text2);">' + (gm.referee || '') + '</td>'
+        + adm
+        + '</tr>';
+      rows += tr;
+    });
+    var thC = 'th-' + cls;
+    var adminBar = '';
+    if(isAdmin){
+      adminBar = '<div class="admin-game-bar">'
+        + '<button class="add-game-btn" onclick="openAddGame('+g+','+ri+')">+ 경기</button>'
+        + '<button class="del-round-btn" onclick="deleteRound('+g+','+ri+')">라운드 삭제</button>'
+        + '</div>';
+    }
+    var thead = '<thead><tr>'
+      + '<th class="'+thC+'">날짜</th>'
+      + '<th class="'+thC+'">교시</th>'
+      + '<th class="'+thC+'">대전</th>'
+      + '<th class="'+thC+'">홈</th>'
+      + '<th class="'+thC+'"></th>'
+      + '<th class="'+thC+'">원정</th>'
+      + '<th class="'+thC+'">메모</th>'
+      + '<th class="'+thC+'">교사</th>'
+      + '<th class="'+thC+'">심판</th>'
+      + (isAdmin ? '<th class="'+thC+'">관리</th>' : '')
+      + '</tr></thead>';
+    html += '<div class="round-block">'
+      + '<div class="round-block-header" onclick="toggleRound(this)">'
+      + '<div class="round-block-title">'
+      + '<span>' + rnd.roundName + '</span>'
+      + '<span class="rsb ' + sc + '">' + rnd.status + '</span>'
+      + '<span style="font-size:10px;color:var(--text2);font-weight:400;">' + rnd.games.length + '경기</span>'
+      + '</div>'
+      + '<span class="rnd-toggle open">▼</span>'
+      + '</div>'
+      + '<div class="rnd-body open">'
+      + '<div style="overflow-x:auto;">'
+      + '<table class="sched-table">' + thead + '<tbody>' + rows + '</tbody></table>'
+      + '</div>'
+      + adminBar
+      + '</div>'
+      + '</div>';
   });
-  if(isAdmin) html+='<button class="add-round-btn '+cls+'" onclick="openAddRound('+g+')" style="margin-top:6px;">📅 라운드 추가</button>';
+  if(isAdmin){
+    html += '<button class="add-round-btn ' + cls + '" onclick="openAddRound('+g+')" style="margin-top:6px;">📅 라운드 추가</button>';
+  }
   return html;
 }
 function toggleRound(h){const b=h.nextElementSibling,a=h.querySelector('.rnd-toggle');b.classList.toggle('open');a.classList.toggle('open');}
@@ -880,61 +897,94 @@ function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner|
 function countStats(){let done=0,sched=0;[1,2,3].forEach(g=>{const R=tournaments[g].rounds;[...R.r1,...R.qf,...R.sf,...R.third,...R.final].forEach(m=>{if(m.status==='done')done++;else sched++;});});return{total:done+sched,done,sched};}
 function teamLabel(t){return t?t.name:'TBD';}
 function matchNodeHTML(m,g){
-  const cls=gradeInfo[g].cls;
-  const hWin=m.status==='done'&&m.winner===m.home;
-  const aWin=m.status==='done'&&m.winner===m.away;
-  const statusTxt=m.status==='done'?'완료':'예정';
-  const pillCls=m.status==='done'?'pill-done':'pill-scheduled';
-  const hNm=teamLabel(m.home), aNm=teamLabel(m.away);
-  const adminBtn=isAdmin?`<button class="edit-btn-small" onclick="toggleEdit('${m.id}')">✏️</button>`:'';
-  const dateDisplay=m.date?`📅 ${fmtDate(m.date)}`:'날짜 미정';
-  // 교사·심판 표시
-  const staffRow=(m.teacher||m.referee)?
-    `<div style="font-size:9px;color:var(--text2);padding:2px 7px;background:#f8f9fc;border-bottom:1px solid var(--border);">`+
-    (m.teacher?`👨‍🏫 ${m.teacher}`:'')+
-    (m.teacher&&m.referee?' · ':'')+
-    (m.referee?`🏁 ${m.referee}`:'')+
-    `</div>` : '';
-  const ep=isAdmin?`<div class="edit-panel" id="edit_${m.id}">
-    <div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>
-    <div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_${m.id}" value="${hNm==='TBD'?'':hNm}" placeholder="예) 3반"></div>
-    <div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an_${m.id}" value="${aNm==='TBD'?'':aNm}" placeholder="예) 7반"></div>
-    <div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc_${m.id}" value="${m.teacher||''}" placeholder="담당 교사"></div>
-    <div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf_${m.id}" value="${m.referee||''}" placeholder="심판 이름"></div>
-    <div class="edit-divider">날짜 / 점수 / 상태</div>
-    <div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt_${m.id}" value="${m.date||''}"></div>
-    <div class="edit-row">
-      <span class="edit-label">${hNm}</span>
-      <input class="sc-inp" type="number" min="0" max="99" id="hs_${m.id}" value="${m.homeScore??''}">
-      <span style="font-weight:700;color:var(--text2)">:</span>
-      <input class="sc-inp" type="number" min="0" max="99" id="as_${m.id}" value="${m.awayScore??''}">
-      <span class="edit-label">${aNm}</span>
-      <select class="st-sel" id="st_${m.id}">
-        <option value="scheduled" ${m.status==='scheduled'?'selected':''}>예정</option>
-        <option value="done" ${m.status==='done'?'selected':''}>완료</option>
-      </select>
-    </div>
-    <div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch('${m.id}',${g})">💾 저장</button></div>
-  </div>`:'';
-  return `<div class="match-node ${cls}-node" id="node_${m.id}">
-    <div class="match-top ${cls}">
-      <div class="match-round-row">
-        <span class="match-round-label ${cls}">${m.round}</span>
-        <span style="display:flex;align-items:center;gap:3px;"><span class="match-status-pill ${pillCls}">${statusTxt}</span>${adminBtn}</span>
-      </div>
-      <div class="match-date-row" style="${!m.date?'color:#c8c8d4':''}">${dateDisplay}</div>
-    </div>
-    ${staffRow}
-    <div class="team-row ${hWin?'winner':m.status==='done'?'loser':''}">
-      <div class="team-nm">${hNm}</div>
-      <div class="team-sc ${hWin?'win-sc':''}">${m.homeScore!==null?m.homeScore:'-'}</div>
-    </div>
-    <div class="team-row ${aWin?'winner':m.status==='done'?'loser':''}">
-      <div class="team-nm">${aNm}</div>
-      <div class="team-sc ${aWin?'win-sc':''}">${m.awayScore!==null?m.awayScore:'-'}</div>
-    </div>
-    ${ep}
-  </div>`;
+  try{
+    var cls      = gradeInfo[g].cls;
+    var hWin     = m.status==='done' && m.winner===m.home;
+    var aWin     = m.status==='done' && m.winner===m.away;
+    var statusTxt= m.status==='done' ? '완료' : '예정';
+    var pillCls  = m.status==='done' ? 'pill-done' : 'pill-scheduled';
+    var hNm      = teamLabel(m.home);
+    var aNm      = teamLabel(m.away);
+    var hScore   = m.homeScore !== null && m.homeScore !== undefined ? m.homeScore : '-';
+    var aScore   = m.awayScore !== null && m.awayScore !== undefined ? m.awayScore : '-';
+    var dateDisp = m.date ? '📅 ' + fmtDate(m.date) : '날짜 미정';
+    var dateColor= m.date ? '' : 'color:#c8c8d4;';
+    var teacher  = m.teacher  || '';
+    var referee  = m.referee  || '';
+
+    // 교사·심판 행
+    var staffRow = '';
+    if(teacher || referee){
+      staffRow = '<div style="font-size:9px;color:var(--text2);padding:2px 7px;background:#f8f9fc;border-bottom:1px solid var(--border);">'
+        + (teacher ? '👨‍🏫 ' + teacher : '')
+        + (teacher && referee ? ' · ' : '')
+        + (referee ? '🏁 ' + referee : '')
+        + '</div>';
+    }
+
+    // 관리자 수정 버튼
+    var adminBtn = '';
+    if(isAdmin){
+      adminBtn = '<button class="edit-btn-small" onclick="toggleEdit('' + m.id + '')">✏️</button>';
+    }
+
+    // 관리자 수정 패널
+    var ep = '';
+    if(isAdmin){
+      ep = '<div class="edit-panel" id="edit_' + m.id + '">'
+        + '<div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>'
+        + '<div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_' + m.id + '" value="' + (hNm==='TBD'?'':hNm) + '" placeholder="예) 3반"></div>'
+        + '<div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an_' + m.id + '" value="' + (aNm==='TBD'?'':aNm) + '" placeholder="예) 7반"></div>'
+        + '<div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc_' + m.id + '" value="' + teacher + '" placeholder="담당 교사"></div>'
+        + '<div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf_' + m.id + '" value="' + referee + '" placeholder="심판 이름"></div>'
+        + '<div class="edit-divider">날짜 / 점수 / 상태</div>'
+        + '<div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt_' + m.id + '" value="' + (m.date||'') + '"></div>'
+        + '<div class="edit-row">'
+        + '<span class="edit-label">' + hNm + '</span>'
+        + '<input class="sc-inp" type="number" min="0" max="99" id="hs_' + m.id + '" value="' + (m.homeScore!==null&&m.homeScore!==undefined?m.homeScore:'') + '">'
+        + '<span style="font-weight:700;color:var(--text2)">:</span>'
+        + '<input class="sc-inp" type="number" min="0" max="99" id="as_' + m.id + '" value="' + (m.awayScore!==null&&m.awayScore!==undefined?m.awayScore:'') + '">'
+        + '<span class="edit-label">' + aNm + '</span>'
+        + '<select class="st-sel" id="st_' + m.id + '">'
+        + '<option value="scheduled"' + (m.status==='scheduled'?' selected':'') + '>예정</option>'
+        + '<option value="done"'      + (m.status==='done'?     ' selected':'') + '>완료</option>'
+        + '</select>'
+        + '</div>'
+        + '<div class="edit-row" style="justify-content:flex-end;">'
+        + '<button class="save-btn" onclick="saveMatch('' + m.id + '',' + g + ')">💾 저장</button>'
+        + '</div>'
+        + '</div>';
+    }
+
+    var hRowCls = hWin ? 'winner' : (m.status==='done' ? 'loser' : '');
+    var aRowCls = aWin ? 'winner' : (m.status==='done' ? 'loser' : '');
+
+    return '<div class="match-node ' + cls + '-node" id="node_' + m.id + '">'
+      + '<div class="match-top ' + cls + '">'
+      + '<div class="match-round-row">'
+      + '<span class="match-round-label ' + cls + '">' + m.round + '</span>'
+      + '<span style="display:flex;align-items:center;gap:3px;">'
+      + '<span class="match-status-pill ' + pillCls + '">' + statusTxt + '</span>'
+      + adminBtn
+      + '</span>'
+      + '</div>'
+      + '<div class="match-date-row" style="' + dateColor + '">' + dateDisp + '</div>'
+      + '</div>'
+      + staffRow
+      + '<div class="team-row ' + hRowCls + '">'
+      + '<div class="team-nm">' + hNm + '</div>'
+      + '<div class="team-sc ' + (hWin?'win-sc':'') + '">' + hScore + '</div>'
+      + '</div>'
+      + '<div class="team-row ' + aRowCls + '">'
+      + '<div class="team-nm">' + aNm + '</div>'
+      + '<div class="team-sc ' + (aWin?'win-sc':'') + '">' + aScore + '</div>'
+      + '</div>'
+      + ep
+      + '</div>';
+  } catch(e){
+    console.error('matchNodeHTML 오류:', e, m);
+    return '<div class="match-node" style="padding:8px;color:red;font-size:11px;">오류: ' + e.message + '</div>';
+  }
 }
 function toggleEdit(id){document.getElementById('edit_'+id)?.classList.toggle('show');}
 
@@ -980,11 +1030,11 @@ function renderBracket(g){
   ${podium}
   <div class="section-title" style="margin-top:0">토너먼트 대진표</div>
   <div class="bracket-wrap"><div class="round-col-grid">
-    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode r1 오류:',e,m);return '<div class="match-node">오류</div>';}}).join('')}</div></div>
-    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode qf 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
-    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode sf 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
-    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode third 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
-    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(m=>{try{return matchNodeHTML(m,g);}catch(e){console.error('matchNode final 오류:',e,m);return '<div class="match-node">오류</div>';}  }).join('')}</div></div>
+    <div>${rl('1라운드')}<div style="padding:3px;">${R.r1.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
+    <div>${rl('8강')}<div style="padding:3px;">${R.qf.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
+    <div>${rl('4강')}<div style="padding:3px;">${R.sf.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
+    <div>${rl('3·4위전')}<div style="padding:3px;">${R.third.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
+    <div>${rl('결승전')}<div style="padding:3px;">${R.final.map(function(m){return matchNodeHTML(m,g);}).join('')</div></div>
   </div></div>
   <div class="section-title">${info.schedLabel}</div>`;
 
