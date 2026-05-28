@@ -19,6 +19,8 @@
   --special-bg:#f3e8ff;--special-text:#6b21a8;
   --general-bg:#e0e4f0;--general-text:#1a2a5e;
   --max:860px;
+  --dodgeball-color:#ea580c;--dodgeball-bg:#fff7ed;--dodgeball-border:#fdba74;
+  --futsal2-color:#7c3aed;--futsal2-bg:#f5f3ff;--futsal2-border:#c4b5fd;
 }
 html{font-size:16px;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
@@ -137,28 +139,40 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .grade-badge.futsal{background:var(--futsal-text);}
 .grade-badge.tchouk{background:var(--tchouk-text);}
 .grade-badge.volleyball{background:var(--volley-text);}
+.grade-badge.dodgeball{background:var(--dodgeball-color);}
+.grade-badge.futsal2{background:var(--futsal2-color);}
 .sport-badge{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;}
 .sport-badge.futsal{background:var(--futsal-text);color:#fff;}
 .sport-badge.tchouk{background:var(--tchouk-text);color:#fff;}
 .sport-badge.volleyball{background:var(--volley-text);color:#fff;}
+.sport-badge.dodgeball{background:var(--dodgeball-color);color:#fff;}
+.sport-badge.futsal2{background:var(--futsal2-color);color:#fff;}
 .bracket-wrap{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
 .round-col-grid{display:grid;grid-template-columns:repeat(5,minmax(158px,1fr));align-items:start;}
 .round-col-label{text-align:center;font-size:11px;font-weight:700;padding:5px 7px;border-radius:6px 6px 0 0;margin:0 4px;}
 .round-col-label.futsal{background:var(--futsal-text);color:#fff;}
 .round-col-label.tchouk{background:var(--tchouk-text);color:#fff;}
 .round-col-label.volleyball{background:var(--volley-text);color:#fff;}
+.round-col-label.dodgeball{background:var(--dodgeball-color);color:#fff;}
+.round-col-label.futsal2{background:var(--futsal2-color);color:#fff;}
 .match-node{background:var(--card);border:1.5px solid var(--border);border-radius:7px;margin:4px;overflow:hidden;}
 .match-node.futsal-node{border-color:var(--futsal-border);}
 .match-node.tchouk-node{border-color:var(--tchouk-border);}
 .match-node.volleyball-node{border-color:var(--volley-border);}
+.match-node.dodgeball-node{border-color:var(--dodgeball-border);}
+.match-node.futsal2-node{border-color:var(--futsal2-border);}
 .match-top{border-bottom:1px solid var(--border);padding:4px 7px;}
 .match-top.futsal{background:var(--futsal-bg);}
 .match-top.tchouk{background:var(--tchouk-bg);}
 .match-top.volleyball{background:var(--volley-bg);}
+.match-top.dodgeball{background:var(--dodgeball-bg);}
+.match-top.futsal2{background:var(--futsal2-bg);}
 .match-round-row{display:flex;align-items:center;justify-content:space-between;}
 .match-round-label.futsal{font-size:10px;font-weight:700;color:var(--futsal-text);}
 .match-round-label.tchouk{font-size:10px;font-weight:700;color:var(--tchouk-text);}
 .match-round-label.volleyball{font-size:10px;font-weight:700;color:var(--volley-text);}
+.match-round-label.dodgeball{font-size:10px;font-weight:700;color:var(--dodgeball-color);}
+.match-round-label.futsal2{font-size:10px;font-weight:700;color:var(--futsal2-color);}
 .match-status-pill{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;}
 .pill-scheduled{background:#e0e4f0;color:var(--navy);}
 .pill-done{background:#dcfce7;color:#14532d;}
@@ -298,23 +312,29 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ── 서브탭 ── */
 .subtab-bar{display:flex;gap:6px;padding:10px 0 6px;margin-bottom:4px;}
 .subtab-btn{padding:7px 18px;border-radius:20px;border:2px solid var(--navy);color:var(--navy);font-size:13px;font-weight:700;background:none;cursor:pointer;transition:all .15s;flex-shrink:0;}
-/* 1학년 대표색: 파란색 */
-.subtab-btn.g1-pdk,.subtab-btn.g1-fts{border-color:var(--futsal-text);color:var(--futsal-text);}
+/* 피구: 주황색 (모든 학년 공통) */
+.subtab-btn.pdk{border-color:var(--dodgeball-color);color:var(--dodgeball-color);background:var(--dodgeball-bg);}
+.subtab-btn.pdk:hover,.subtab-btn.pdk.active{background:var(--dodgeball-color);color:#fff;border-color:var(--dodgeball-color);}
+/* 풋살: 보라색 (모든 학년 공통) */
+.subtab-btn.fts{border-color:var(--futsal2-color);color:var(--futsal2-color);background:var(--futsal2-bg);}
+.subtab-btn.fts:hover,.subtab-btn.fts.active{background:var(--futsal2-color);color:#fff;border-color:var(--futsal2-color);}
+/* 하위 호환 — 학년별 클래스는 유지하되 종목색으로 덮어씀 */
+.subtab-btn.g1-pdk,.subtab-btn.g2-pdk,.subtab-btn.g3-pdk{border-color:var(--dodgeball-color);color:var(--dodgeball-color);background:var(--dodgeball-bg);}
 .subtab-btn.g1-pdk:hover,.subtab-btn.g1-pdk.active,
-.subtab-btn.g1-fts:hover,.subtab-btn.g1-fts.active{background:var(--futsal-text);color:#fff;}
-/* 2학년 대표색: 초록색 */
-.subtab-btn.g2-pdk,.subtab-btn.g2-fts{border-color:var(--tchouk-text);color:var(--tchouk-text);}
 .subtab-btn.g2-pdk:hover,.subtab-btn.g2-pdk.active,
-.subtab-btn.g2-fts:hover,.subtab-btn.g2-fts.active{background:var(--tchouk-text);color:#fff;}
-/* 3학년 대표색: 노란색/갈색 */
-.subtab-btn.g3-pdk,.subtab-btn.g3-fts{border-color:var(--volley-text);color:var(--volley-text);}
-.subtab-btn.g3-pdk:hover,.subtab-btn.g3-pdk.active,
-.subtab-btn.g3-fts:hover,.subtab-btn.g3-fts.active{background:var(--volley-text);color:#fff;}
+.subtab-btn.g3-pdk:hover,.subtab-btn.g3-pdk.active{background:var(--dodgeball-color);color:#fff;border-color:var(--dodgeball-color);}
+.subtab-btn.g1-fts,.subtab-btn.g2-fts,.subtab-btn.g3-fts{border-color:var(--futsal2-color);color:var(--futsal2-color);background:var(--futsal2-bg);}
+.subtab-btn.g1-fts:hover,.subtab-btn.g1-fts.active,
+.subtab-btn.g2-fts:hover,.subtab-btn.g2-fts.active,
+.subtab-btn.g3-fts:hover,.subtab-btn.g3-fts.active{background:var(--futsal2-color);color:#fff;border-color:var(--futsal2-color);}
 
 /* th 헤더 학년별 */
 .th-g1{background:var(--futsal-text);}
 .th-g2{background:var(--tchouk-text);}
 .th-g3{background:var(--volley-text);}
+/* th 헤더 종목별 */
+.th-dodgeball{background:var(--dodgeball-color);}
+.th-futsal2{background:var(--futsal2-color);}
 </style>
 </head>
 <body>
@@ -445,6 +465,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 </div></div>
 
 <div class="modal-bg" id="addRoundModal"><div class="modal"><h2>📅 라운드 추가</h2><input type="hidden" id="arGrade"><input type="hidden" id="arSport"><label>라운드명</label><select id="arName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>상태</label><select id="arStatus"><option value="예정">예정</option><option value="완료">완료</option></select><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('addRoundModal')">취소</button><button class="btn-confirm" onclick="saveNewRound()">추가</button></div></div></div>
+
+<div class="modal-bg" id="gamesListModal"><div class="modal" style="max-width:560px;padding:0;border-radius:14px 14px 0 0;">
+  <div style="background:var(--navy);padding:14px 16px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:15px;font-weight:700;color:#fff;" id="glModalTitle">전체 경기 목록</span>
+    <button onclick="closeModal('gamesListModal')" style="background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+  </div>
+  <div style="display:flex;gap:0;border-bottom:2px solid var(--border);background:#f4f5f8;">
+    <button class="gl-filter-btn active" id="glTab-all"  onclick="setGlFilter('all')"   style="flex:1;padding:9px 4px;border:none;background:none;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;border-bottom:3px solid var(--navy);">전체</button>
+    <button class="gl-filter-btn"        id="glTab-done" onclick="setGlFilter('done')"  style="flex:1;padding:9px 4px;border:none;background:none;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;">완료</button>
+    <button class="gl-filter-btn"        id="glTab-sched" onclick="setGlFilter('sched')" style="flex:1;padding:9px 4px;border:none;background:none;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;">예정</button>
+  </div>
+  <div id="glBody" style="max-height:70vh;overflow-y:auto;padding:10px 12px 16px;"></div>
+</div></div>
 
 <div class="modal-bg" id="confirmModal"><div class="modal"><h2>삭제 확인</h2><p id="confirmMsg" style="font-size:13px;color:var(--text2);margin-bottom:14px;"></p><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('confirmModal')">취소</button><button class="btn-danger" id="confirmOkBtn">삭제</button></div></div></div>
 <div class="toast" id="toast"></div>
@@ -1218,7 +1251,7 @@ function matchNodeHTML2(m, g, sport){
     '<div class="edit-row"><span class="edit-label">'+hNm+'</span><input class="sc-inp" type="number" min="0" max="99" id="hs2_'+m.id+'" value="'+(m.homeScore!=null?m.homeScore:'')+'"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as2_'+m.id+'" value="'+(m.awayScore!=null?m.awayScore:'')+'"><span class="edit-label">'+aNm+'</span><select class="st-sel" id="st2_'+m.id+'"><option value="scheduled" '+(m.status==='scheduled'?'selected':'')+'>예정</option><option value="done" '+(m.status==='done'?'selected':'')+'>완료</option></select></div>'+
     '<div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch2(\''+m.id+'\','+g+',\''+sport+'\')">💾 저장</button></div>'+
     '</div>':'';
-  // 학년별 색상 테마 적용
+  // 대진표 카드: 학년별 색상 테마 유지
   var gt=gradeTheme[g]||gradeTheme[1];
   var nCls=gt.nodeCls;
   var tCls=gt.topCls;
@@ -1262,7 +1295,8 @@ function saveMatch2(id, g, sport){
 function renderSchedule2(g, sport){
   var rounds=schedules2[g][sport]||[];
   var sm=sportMeta[sport];
-  var thC=(gradeTheme[g]||gradeTheme[1]).thCls;
+  var thCMap={dodgeball:'th-dodgeball',futsal:'th-futsal2'};
+  var thC=thCMap[sport]||'th-dodgeball';
   var allGames=[];
   rounds.forEach(function(rnd,ri){rnd.games.forEach(function(gm,gi){allGames.push({rnd:rnd,ri:ri,gi:gi,gm:gm});});});
   if(!allGames.length) return '<p style="font-size:12px;color:var(--text2);padding:6px 0;">등록된 일정이 없습니다.</p>';
@@ -1364,8 +1398,8 @@ function renderBracket2(g, sport){
     (second?'<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">'+second+'</div><div class="podium-lbl">준우승</div></div>':'')+
     (third_?'<div class="podium-card"><div style="font-size:18px;">🥉</div><div class="podium-name">'+third_+'</div><div class="podium-lbl">3위</div></div>':'')+
     '</div>':'';
-  var lClsMap={dodgeball:'tchouk', futsal:'futsal'};
-  var lCls=lClsMap[sport]||'futsal';
+  var lClsMap={dodgeball:'dodgeball', futsal:'futsal2'};
+  var lCls=lClsMap[sport]||'dodgeball';
   var rl=function(s){return '<div class="round-col-label '+lCls+'">'+(s==='결승전'?'🏆 결승전':s)+'</div>';};
   // 서브탭 버튼
   var tabBar='<div class="subtab-bar">'+
@@ -1420,9 +1454,9 @@ function renderHome(){
   }).join(''):'<div class="empty-msg">공지사항이 없습니다.</div>';
   document.getElementById('page-home').innerHTML=
     '<div class="stat-grid" style="margin-top:4px;">'+
-    '<div class="stat-card total-card"><div class="num">'+st.total+'</div><div class="lbl">전체 경기</div></div>'+
-    '<div class="stat-card done-card"><div class="num">'+st.done+'</div><div class="lbl">완료</div></div>'+
-    '<div class="stat-card"><div class="num">'+st.sched+'</div><div class="lbl">예정</div></div>'+
+    '<div class="stat-card total-card" style="cursor:pointer" onclick="openGamesModal(\'all\')"><div class="num">'+st.total+'</div><div class="lbl">전체 경기 ›</div></div>'+
+    '<div class="stat-card done-card" style="cursor:pointer" onclick="openGamesModal(\'done\')"><div class="num">'+st.done+'</div><div class="lbl">완료 ›</div></div>'+
+    '<div class="stat-card" style="cursor:pointer" onclick="openGamesModal(\'sched\')"><div class="num">'+st.sched+'</div><div class="lbl">예정 ›</div></div>'+
     '</div>'+
     '<div class="section-title">학년별 종목 및 경기일정</div>'+
     '<div class="sport-cards">'+
@@ -1529,6 +1563,94 @@ function openCalDetail(id){
 function showPage(name,btn){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');if(['bracket1','bracket2','bracket3'].indexOf(name)>-1)renderBracket2(+name.slice(-1));if(name==='home')renderHome();if(name==='board')renderBoard();if(name==='rules')renderRulesCard();}
 function goGrade(g){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t,i){t.classList.remove('active');if(i===g)t.classList.add('active');});document.getElementById('page-bracket'+g).classList.add('active');renderBracket2(g);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);}
+
+/* ── 경기 목록 모달 ── */
+var _glFilter='all';
+function openGamesModal(filter){
+  _glFilter=filter||'all';
+  document.getElementById('gamesListModal').classList.add('show');
+  setGlFilter(_glFilter);
+}
+function setGlFilter(f){
+  _glFilter=f;
+  ['all','done','sched'].forEach(function(k){
+    var btn=document.getElementById('glTab-'+k);
+    if(!btn)return;
+    var isActive=k===f;
+    btn.style.fontWeight=isActive?'700':'600';
+    btn.style.color=isActive?'var(--navy)':'var(--text2)';
+    btn.style.borderBottom=isActive?'3px solid var(--navy)':'3px solid transparent';
+    btn.style.background=isActive?'#fff':'none';
+  });
+  var titleMap={all:'전체 경기 목록',done:'완료된 경기',sched:'예정된 경기'};
+  document.getElementById('glModalTitle').textContent=titleMap[f]||'경기 목록';
+  renderGlBody();
+}
+function renderGlBody(){
+  var gradeNames={1:'1학년',2:'2학년',3:'3학년'};
+  var sportNames={dodgeball:'피구',futsal:'풋살'};
+  var sportColors={
+    dodgeball:{bg:'#fff7ed',border:'var(--dodgeball-color)',text:'var(--dodgeball-color)',badge:'#ea580c'},
+    futsal:   {bg:'#f5f3ff',border:'var(--futsal2-color)',  text:'var(--futsal2-color)',  badge:'#7c3aed'}
+  };
+  var gradeColors={
+    1:{bg:'var(--futsal-bg)',  border:'var(--futsal-text)',  text:'var(--futsal-text)'},
+    2:{bg:'var(--tchouk-bg)', border:'var(--tchouk-text)', text:'var(--tchouk-text)'},
+    3:{bg:'var(--volley-bg)', border:'var(--volley-text)', text:'var(--volley-text)'}
+  };
+  var html='';
+  var totalCount=0;
+  [1,2,3].forEach(function(g){
+    ['dodgeball','futsal'].forEach(function(sport){
+      var rounds=schedules2[g][sport]||[];
+      var sc=sportColors[sport];
+      var gc=gradeColors[g];
+      var allGames=[];
+      rounds.forEach(function(rnd){
+        (rnd.games||[]).forEach(function(gm){
+          var statusOk=(_glFilter==='all')||
+            (_glFilter==='done'&&(gm.status==='완료'))||
+            (_glFilter==='sched'&&(gm.status!=='완료'));
+          if(statusOk) allGames.push({rnd:rnd,gm:gm});
+        });
+      });
+      if(!allGames.length) return;
+      totalCount+=allGames.length;
+      // Section header
+      html+='<div style="margin-top:12px;margin-bottom:4px;display:flex;align-items:center;gap:6px;">'
+        +'<span style="background:'+gc.border+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">'+gradeNames[g]+'</span>'
+        +'<span style="background:'+(sport==='dodgeball'?'var(--dodgeball-color)':'var(--futsal2-color)')+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">'+(sport==='dodgeball'?'🤾‍♂️ 피구':'⚽ 풋살')+'</span>'
+        +'</div>';
+      // Game rows
+      html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2px;">';
+      allGames.forEach(function(item,idx){
+        var gm=item.gm,rnd=item.rnd;
+        var isDone=gm.status==='완료';
+        var hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:null;
+        var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:null;
+        var scoreStr=(hs!==null&&as_!==null)?(hs+' : '+as_):'';
+        var bb=idx>0?'border-top:1px solid var(--border);':'';
+        html+='<div style="padding:8px 10px;'+bb+'">'
+          +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
+          +'<span style="font-size:10px;font-weight:700;background:'+(isDone?'#dcfce7':'#e0e4f0')+';color:'+(isDone?'#14532d':'var(--navy)')+';padding:1px 7px;border-radius:8px;">'+(isDone?'✅ 완료':'🕐 예정')+'</span>'
+          +'<span style="font-size:10px;color:var(--text2);font-weight:600;">'+rnd.roundName+'</span>'
+          +(scoreStr?'<span style="font-size:13px;font-weight:700;color:var(--navy);margin-left:auto;">'+scoreStr+'</span>':'')
+          +'</div>'
+          +'<div style="font-size:13px;font-weight:700;color:var(--text);">'+gm.home+' <span style="color:var(--text2);font-weight:400;font-size:12px;">vs</span> '+gm.away+'</div>'
+          +'<div style="font-size:11px;color:var(--text2);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;">'
+          +(gm.date?'<span>📅 '+fmtDate(gm.date)+'</span>':'')
+          +(gm.time?'<span>⏰ '+gm.time+'</span>':'')
+          +'</div>'
+          +'</div>';
+      });
+      html+='</div>';
+    });
+  });
+  if(!totalCount){
+    html='<div style="text-align:center;padding:32px 0;font-size:13px;color:var(--text2);">해당하는 경기가 없습니다.</div>';
+  }
+  document.getElementById('glBody').innerHTML=html;
+}
 
 /* ④ localStorage 캐시 즉시 로드 (Firebase 응답 전 빈 화면 방지) */
 (function loadCache(){
