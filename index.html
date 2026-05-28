@@ -949,7 +949,7 @@ function initTournament(g){
 }
 let tournaments={1:initTournament(1),2:initTournament(2),3:initTournament(3)};
 function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner||null;R.qf[1].away=R.r1[0].winner||null;R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;const l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;const l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;R.third[0].home=l0;R.third[0].away=l1;}
-function countStats(){let done=0,sched=0;[1,2,3].forEach(function(g){const R=tournaments[g].rounds;[].concat(R.r1,R.qf,R.sf,R.third,R.final).forEach(function(m){if(m.status==='done')done++;else sched++;});});return{total:60,done:done,sched:60-done};}
+function countStats(){var done=0,total=0;[1,2,3].forEach(function(g){['dodgeball','futsal'].forEach(function(sport){(schedules2[g][sport]||[]).forEach(function(rnd){(rnd.games||[]).forEach(function(gm){total++;if(gm.status==='완료')done++;});});});});return{total:total,done:done,sched:total-done};}
 function teamLabel(t){return t?t.name:'TBD';}
 
 /* ② 대진표 카드 — 교사/심판/교시 표시 */
