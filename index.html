@@ -607,8 +607,8 @@ function syncSchedToBracket(g,gm,ri,gi){
   if(!bm)return;
   // 날짜·교시·교사·심판 동기화
   if(gm.date)bm.date=gm.date;
-  bm.teacher=gm.teacher||bm.teacher||'';
-  bm.referee=gm.referee||bm.referee||'';
+  bm.teacher=(gm.teacher!==undefined&&gm.teacher!==null)?gm.teacher:(bm.teacher||'');
+  bm.referee=(gm.referee!==undefined&&gm.referee!==null)?gm.referee:(bm.referee||'');
   bm.time=gm.time||bm.time||'';
   if(gm.home&&gm.home!=='TBD'){if(!bm.home)bm.home={id:gi+1,name:gm.home};else bm.home.name=gm.home;}
   if(gm.away&&gm.away!=='TBD'){if(!bm.away)bm.away={id:gi+1,name:gm.away};else bm.away.name=gm.away;}
@@ -894,7 +894,12 @@ function matchNodeHTML(m,g){
   const hNm=teamLabel(m.home),aNm=teamLabel(m.away);
   const adminBtn=isAdmin?'<button class="edit-btn-small" onclick="toggleEdit(\''+m.id+'\')">✏️</button>':'';
   const dateDisplay=m.date?'📅 '+fmtDate(m.date):'날짜 미정';
-  const staffRow='';
+  var teacher=m.teacher||'';
+  var referee=m.referee||'';
+  var staffParts=[];
+  if(teacher)staffParts.push('👨‍🏫 '+teacher);
+  if(referee)staffParts.push('🏁 '+referee);
+  var staffRow=staffParts.length?'<div class="match-staff-row">'+staffParts.join(' · ')+'</div>':'';
   const ep=isAdmin?'<div class="edit-panel" id="edit_'+m.id+'">'+
     '<div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>'+
     '<div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn_'+m.id+'" value="'+(hNm==='TBD'?'':hNm)+'" placeholder="예) 3반"></div>'+
