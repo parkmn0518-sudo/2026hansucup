@@ -1247,6 +1247,9 @@ function syncBracketToSched2(g, sport, m, matchId){
   }
   var gm=schedules2[g][sport][ri].games[matchIdx];
   if(m.date) gm.date=m.date;
+  if(m.time!==undefined) gm.time=m.time;
+  if(m.teacher!==undefined) gm.teacher=m.teacher;
+  if(m.referee!==undefined) gm.referee=m.referee;
   if(m.home&&m.home.name!=='TBD') gm.home=m.home.name;
   if(m.away&&m.away.name!=='TBD') gm.away=m.away.name;
   gm.homeScore=m.homeScore; gm.awayScore=m.awayScore;
@@ -1269,8 +1272,13 @@ function matchNodeHTML2(m, g, sport){
     '<div class="edit-row"><span style="font-size:11px;font-weight:700;color:var(--navy);">팀 수정</span></div>'+
     '<div class="edit-row"><span class="edit-label">홈</span><input class="team-inp" type="text" id="hn2_'+m.id+'" value="'+(hNm==='TBD'?'':hNm)+'" placeholder="예) 3반"></div>'+
     '<div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an2_'+m.id+'" value="'+(aNm==='TBD'?'':aNm)+'" placeholder="예) 7반"></div>'+
-    '<div class="edit-divider">날짜 / 점수 / 상태</div>'+
+    '<div class="edit-divider">날짜 / 교시 / 교사 / 심판</div>'+
     '<div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt2_'+m.id+'" value="'+(m.date||'')+'"></div>'+
+    '<div class="edit-row"><span class="edit-label">교시</span><input class="team-inp" type="text" id="tm2_'+m.id+'" value="'+(m.time||'')+'">'+
+    '</div>'+
+    '<div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc2_'+m.id+'" value="'+(m.teacher||'')+'"></div>'+
+    '<div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf2_'+m.id+'" value="'+(m.referee||'')+'"></div>'+
+    '<div class="edit-divider">점수 / 상태</div>'+
     '<div class="edit-row"><span class="edit-label">'+hNm+'</span><input class="sc-inp" type="number" min="0" max="99" id="hs2_'+m.id+'" value="'+(m.homeScore!=null?m.homeScore:'')+'"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as2_'+m.id+'" value="'+(m.awayScore!=null?m.awayScore:'')+'"><span class="edit-label">'+aNm+'</span><select class="st-sel" id="st2_'+m.id+'"><option value="scheduled" '+(m.status==='scheduled'?'selected':'')+'>예정</option><option value="done" '+(m.status==='done'?'selected':'')+'>완료</option></select></div>'+
     '<div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch2(\''+m.id+'\','+g+',\''+sport+'\')">💾 저장</button></div>'+
     '</div>':'';
@@ -1303,6 +1311,9 @@ function saveMatch2(id, g, sport){
   if(hn&&hn.value.trim()&&m.home)m.home.name=hn.value.trim();
   if(an&&an.value.trim()&&m.away)m.away.name=an.value.trim();
   m.date=document.getElementById('dt2_'+id).value;
+  var tmEl=document.getElementById('tm2_'+id); if(tmEl)m.time=tmEl.value.trim();
+  var tcEl=document.getElementById('tc2_'+id); if(tcEl)m.teacher=tcEl.value.trim();
+  var rfEl=document.getElementById('rf2_'+id); if(rfEl)m.referee=rfEl.value.trim();
   var hs=document.getElementById('hs2_'+id).value, as_=document.getElementById('as2_'+id).value, st=document.getElementById('st2_'+id).value;
   m.homeScore=hs===''?null:+hs; m.awayScore=as_===''?null:+as_; m.status=st;
   if(st==='done'&&m.homeScore!=null&&m.awayScore!=null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);
