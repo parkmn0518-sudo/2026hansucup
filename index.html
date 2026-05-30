@@ -922,7 +922,7 @@ let rulesData=[
   {title:'🤾‍♂️ 피구 경기 요강',body:'■ 경기 방식\n• 학년별 10반 토너먼트 — 총 9경기\n• 전·후반 각 5분, 하프타임 3분\n• 연장전 없음 — 동점 시 서든데스\n\n■ 참가 인원\n• 10명 + 교체 가능\n\n■ 경기 규칙\n• 상대 팀 선수를 공으로 맞히면 아웃\n• 아웃된 선수는 외야로 이동\n• 외야에서 상대를 맞히면 부활 가능\n• 머리·목 부위 직접 타격 시 타격한 팀 반칙\n\n■ 주의사항\n• 운동화 착용 필수\n• 심판 판정 이의 제기 금지'},
   {title:'⚽ 풋살 경기 요강',body:'■ 경기 방식\n• 학년별 10반 토너먼트 — 총 9경기\n• 전·후반 각 10분, 하프타임 5분\n• 연장전 없음 — 동점 시 승부차기 (3명)\n\n■ 참가 인원\n• 5명 (골키퍼 포함) + 교체 3명\n\n■ 경기 규칙\n• 슬라이딩 태클 금지\n• 킥인 (아웃 시 발로 인플레이)\n• 골키퍼 패스백 4초 이내 처리\n\n■ 주의사항\n• 운동화 착용 필수\n• 심판 판정 이의 제기 금지'},
   {title:'(미사용)',body:''},
-  {title:'📋 공통 규정',body:'■ 토너먼트 진행\n• 시드 1~6: 직접 8강 진출\n• 시드 7~10: 1라운드 (7vs10, 8vs9) 후 진출\n• 패배팀 탈락 / 3위 결정전 있음\n\n■ 공통 규정\n• 경기 시작 5분 전까지 경기장 집합\n• 무단 불참 시 해당 경기 몰수패 처리\n• 부상 발생 시 즉시 교사에게 보고\n• 모든 학생 페어플레이 정신 준수\n\n■ 시상\n• 각 학년 우승·준우승·3위 시상\n• 페어플레이상: 각 학년 1팀'}
+  {title:'📋 공통 규정',body:'■ 토너먼트 진행\n• 시드 1~6: 직접 8강 진출\n• 시드 7~10: 1라운드 (7vs10, 8vs9) 후 진출\n• 패배팀 탈락 (3·4위전 없음)\n\n■ 공통 규정\n• 경기 시작 5분 전까지 경기장 집합\n• 무단 불참 시 해당 경기 몰수패 처리\n• 부상 발생 시 즉시 교사에게 보고\n• 모든 학생 페어플레이 정신 준수\n\n■ 시상\n• 각 학년 우승·준우승·3위 시상\n• 페어플레이상: 각 학년 1팀'}
 ];
 let activeRulesIdx=3;
 function renderRulesCard(){
@@ -1048,7 +1048,7 @@ function renderBracket(g){
     (third?'<div class="podium-card"><div style="font-size:18px;">🥉</div><div class="podium-name">'+third+'</div><div class="podium-lbl">3위</div></div>':'')+
     '</div>':'';
   const rl=function(s){return '<div class="round-col-label '+cls+'">'+(s==='결승전'?'🏆 결승전':s)+'</div>';};
-  const bracketHTML='<div class="bracket-header"><div class="grade-badge '+cls+'">'+info.name+'</div><div class="sport-badge '+cls+'">'+info.sport+'</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">'+done+'/10 완료</div></div>'+
+  const bracketHTML='<div class="bracket-header"><div class="grade-badge '+cls+'">'+info.name+'</div><div class="sport-badge '+cls+'">'+info.sport+'</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">'+done+'/9 완료</div></div>'+
     podium+
     '<div class="section-title" style="margin-top:0">토너먼트 대진표</div>'+
     '<div class="bracket-wrap"><div class="round-col-grid">'+
@@ -1431,7 +1431,7 @@ function renderBracket2(g, sport){
     '<button class="subtab-btn fts '+(sport==='futsal'?'active':'')+'" onclick="renderBracket2('+g+',\'futsal\')">⚽ 풋살</button>'+
     '</div>';
   var bracketHTML=
-    '<div class="bracket-header"><div class="grade-badge '+lCls+'">'+info.name+'</div><div class="sport-badge '+lCls+'">'+sm.icon+' '+sm.name+'</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">'+done+'/10 완료</div></div>'+
+    '<div class="bracket-header"><div class="grade-badge '+lCls+'">'+info.name+'</div><div class="sport-badge '+lCls+'">'+sm.icon+' '+sm.name+'</div><div style="font-size:12px;color:var(--text2);margin-left:auto;">'+done+'/9 완료</div></div>'+
     podium+
     '<div class="section-title" style="margin-top:0">토너먼트 대진표</div>'+
     '<div class="bracket-wrap"><div class="round-col-grid">'+
@@ -1978,11 +1978,19 @@ function startFirebase(){
       if(d.noticePosts)noticePosts=JSON.parse(d.noticePosts);
       if(d.studentPosts)studentPosts=JSON.parse(d.studentPosts);
       if(d.overviewData)overviewData=JSON.parse(d.overviewData);
-      if(d.rulesData)rulesData=JSON.parse(d.rulesData);
+      // rulesData: Firebase 저장값 무시, 코드 기본값 항상 사용
+      // if(d.rulesData)rulesData=JSON.parse(d.rulesData);
       if(d.infoData)Object.assign(infoData,JSON.parse(d.infoData));
       if(d.calManualEvents)calManualEvents=JSON.parse(d.calManualEvents);
       if(d.tournaments2){try{const T2=JSON.parse(d.tournaments2);[1,2,3].forEach(function(g){if(T2[g])tournaments2[g]=T2[g];});} catch(e){}}
-      if(d.schedules2){try{const S2=JSON.parse(d.schedules2);[1,2,3].forEach(function(g){if(S2[g])Object.assign(schedules2[g],S2[g]);});}catch(e){}}
+      if(d.schedules2){try{const S2=JSON.parse(d.schedules2);[1,2,3].forEach(function(g){
+          if(!S2[g])return;
+          ['dodgeball','futsal'].forEach(function(sport){
+            if(!S2[g][sport])return;
+            S2[g][sport]=S2[g][sport].filter(function(r){return r.roundName!=='3·4위전';});
+          });
+          Object.assign(schedules2[g],S2[g]);
+        });}catch(e){}}
     }catch(e){console.error('[Firebase] 파싱 오류:',e);return;}
     const pid=(document.querySelector('.page.active')||{}).id||'';
     if(pid==='page-home')renderHome();
