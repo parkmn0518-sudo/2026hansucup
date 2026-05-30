@@ -19,8 +19,8 @@
   --special-bg:#f3e8ff;--special-text:#6b21a8;
   --general-bg:#e0e4f0;--general-text:#1a2a5e;
   --max:860px;
-  --dodgeball-color:#ea580c;--dodgeball-bg:#fff7ed;--dodgeball-border:#fdba74;
-  --futsal2-color:#7c3aed;--futsal2-bg:#f5f3ff;--futsal2-border:#c4b5fd;
+  --dodgeball-color:#f97316;--dodgeball-bg:#fff4ed;--dodgeball-border:#fcd5b0;
+  --futsal2-color:#a78bfa;--futsal2-bg:#f3f0ff;--futsal2-border:#d8b4fe;
 }
 html{font-size:16px;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
@@ -445,7 +445,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div class="modal-bg" id="scheduleGameModal"><div class="modal">
   <h2 id="sgModalTitle">경기 추가</h2>
   <input type="hidden" id="sgGrade"><input type="hidden" id="sgSport"><input type="hidden" id="sgRoundIdx"><input type="hidden" id="sgGameIdx">
-  <label>라운드</label><select id="sgRoundName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select>
+  <label>라운드</label><select id="sgRoundName"><option>1라운드</option><option>8강</option><option>4강</option><option>결승전</option></select>
   <label>날짜</label><input type="date" id="sgDate">
   <label>교시</label><select id="sgTime"><option value="">선택</option><option>1교시</option><option>2교시</option><option>3교시</option><option>4교시</option><option>점심시간</option><option>5교시</option><option>6교시</option><option>7교시</option></select>
   <label>홈팀 (예: 3반)</label><input type="text" id="sgHome" placeholder="3반">
@@ -464,7 +464,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div>
 </div></div>
 
-<div class="modal-bg" id="addRoundModal"><div class="modal"><h2>📅 라운드 추가</h2><input type="hidden" id="arGrade"><input type="hidden" id="arSport"><label>라운드명</label><select id="arName"><option>1라운드</option><option>8강</option><option>4강</option><option>3·4위전</option><option>결승전</option></select><label>상태</label><select id="arStatus"><option value="예정">예정</option><option value="완료">완료</option></select><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('addRoundModal')">취소</button><button class="btn-confirm" onclick="saveNewRound()">추가</button></div></div></div>
+<div class="modal-bg" id="addRoundModal"><div class="modal"><h2>📅 라운드 추가</h2><input type="hidden" id="arGrade"><input type="hidden" id="arSport"><label>라운드명</label><select id="arName"><option>1라운드</option><option>8강</option><option>4강</option><option>결승전</option></select><label>상태</label><select id="arStatus"><option value="예정">예정</option><option value="완료">완료</option></select><div class="modal-btns"><button class="btn-cancel" onclick="closeModal('addRoundModal')">취소</button><button class="btn-confirm" onclick="saveNewRound()">추가</button></div></div></div>
 
 <div class="modal-bg" id="gamesListModal"><div class="modal" style="max-width:560px;padding:0;border-radius:14px 14px 0 0;">
   <div style="background:var(--navy);padding:14px 16px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
@@ -636,21 +636,18 @@ let schedules={
     {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-19','2교시','7반','10반','','',''),mkGame('2026-05-19','3교시','8반','9반','','','')]},
     {roundName:'8강',status:'예정',games:[mkGame('2026-05-26','2교시','1반','TBD','1R 승자','',''),mkGame('2026-05-26','3교시','2반','TBD','1R 승자','',''),mkGame('2026-05-26','4교시','3반','6반','','',''),mkGame('2026-05-26','5교시','4반','5반','','','')]},
     {roundName:'4강',status:'예정',games:[mkGame('2026-06-02','2교시','TBD','TBD','8강 승자','',''),mkGame('2026-06-02','3교시','TBD','TBD','8강 승자','','')]},
-    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-09','2교시','TBD','TBD','4강 패자','','')]},
     {roundName:'결승전',status:'예정',games:[mkGame('2026-06-09','3교시','TBD','TBD','4강 승자','','')]},
   ],
   2:[
     {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-20','5교시','7반','10반','','',''),mkGame('2026-05-20','6교시','8반','9반','','','')]},
     {roundName:'8강',status:'예정',games:[mkGame('2026-05-27','5교시','1반','TBD','1R 승자','',''),mkGame('2026-05-27','6교시','2반','TBD','1R 승자','',''),mkGame('2026-05-27','3교시','3반','6반','','',''),mkGame('2026-05-27','4교시','4반','5반','','','')]},
     {roundName:'4강',status:'예정',games:[mkGame('2026-06-03','5교시','TBD','TBD','8강 승자','',''),mkGame('2026-06-03','6교시','TBD','TBD','8강 승자','','')]},
-    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-10','5교시','TBD','TBD','4강 패자','','')]},
     {roundName:'결승전',status:'예정',games:[mkGame('2026-06-10','6교시','TBD','TBD','4강 승자','','')]},
   ],
   3:[
     {roundName:'1라운드',status:'예정',games:[mkGame('2026-05-22','5교시','7반','10반','','',''),mkGame('2026-05-22','6교시','8반','9반','','','')]},
     {roundName:'8강',status:'예정',games:[mkGame('2026-05-29','5교시','1반','TBD','1R 승자','',''),mkGame('2026-05-29','6교시','2반','TBD','1R 승자','',''),mkGame('2026-05-29','3교시','3반','6반','','',''),mkGame('2026-05-29','4교시','4반','5반','','','')]},
     {roundName:'4강',status:'예정',games:[mkGame('2026-06-05','5교시','TBD','TBD','8강 승자','',''),mkGame('2026-06-05','6교시','TBD','TBD','8강 승자','','')]},
-    {roundName:'3·4위전',status:'예정',games:[mkGame('2026-06-12','5교시','TBD','TBD','4강 패자','','')]},
     {roundName:'결승전',status:'예정',games:[mkGame('2026-06-12','6교시','TBD','TBD','4강 승자','','')]},
   ]
 };
@@ -659,7 +656,7 @@ let schedules={
 function syncSchedToBracket(g,gm,ri,gi){
   const rndName=schedules[g][ri].roundName;
   const R=tournaments[g].rounds;
-  const map={'1라운드':R.r1,'8강':R.qf,'4강':R.sf,'3·4위전':R.third,'결승전':R.final};
+  const map={'1라운드':R.r1,'8강':R.qf,'4강':R.sf,'결승전':R.final};
   const arr=map[rndName];
   if(!arr||gi>=arr.length)return;
   const bm=arr[gi];
@@ -693,7 +690,7 @@ function syncBracketToSched(g, m, matchId){
   // parts[0]=grade, parts[1]=round key, parts[2]=index
   var rndKey = parts[1];
   var matchIdx = +parts[2] - 1; // 1-based → 0-based
-  var rndNameMap = {r1:'1라운드', qf:'8강', sf:'4강', '3rd':'3·4위전', f:'결승전'};
+  var rndNameMap = {r1:'1라운드', qf:'8강', sf:'4강',  f:'결승전'};
   var rndName = rndNameMap[rndKey];
   if(!rndName || !schedules[g]) return;
 
@@ -735,7 +732,7 @@ function getMatchNum(matchId){
 // schedules에서 라운드+인덱스 → 경기번호
 function getSchedMatchNum(g, ri, gi){
   var rndKey = {
-    '1라운드':'r1', '8강':'qf', '4강':'sf', '3·4위전':'3rd', '결승전':'f'
+    '1라운드':'r1', '8강':'qf', '4강':'sf',  '결승전':'f'
   };
   var rnd = schedules[g][ri];
   if(!rnd) return '';
@@ -943,12 +940,12 @@ function initTournament(g){
       {id:g+'_sf_1',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:g+'_sf_2',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
-    third:[{id:g+'_3rd_1',round:'3·4위전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}],
+    third:[],
     final:[{id:g+'_f_1',round:'결승전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}]
   }};
 }
 let tournaments={1:initTournament(1),2:initTournament(2),3:initTournament(3)};
-function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner||null;R.qf[1].away=R.r1[0].winner||null;R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;const l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;const l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;R.third[0].home=l0;R.third[0].away=l1;}
+function propagate(g){const R=tournaments[g].rounds;R.qf[0].away=R.r1[1].winner||null;R.qf[1].away=R.r1[0].winner||null;R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;const l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;const l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;}
 function countStats(){var done=0,total=0;[1,2,3].forEach(function(g){['dodgeball','futsal'].forEach(function(sport){(schedules2[g][sport]||[]).forEach(function(rnd){(rnd.games||[]).forEach(function(gm){total++;if(gm.status==='완료')done++;});});});});return{total:total,done:done,sched:total-done};}
 function teamLabel(t){return t?t.name:'TBD';}
 
@@ -992,7 +989,7 @@ function matchNodeHTML(m,g){
 }
 function toggleEdit(id){const el=document.getElementById('edit_'+id);if(el)el.classList.toggle('show');}
 function saveMatch(id,g){
-  const R=tournaments[g].rounds,allM=[].concat(R.r1,R.qf,R.sf,R.third,R.final),m=allM.find(function(x){return x.id===id;});
+  const R=tournaments[g].rounds,allM=[].concat(R.r1,R.qf,R.sf,R.final),m=allM.find(function(x){return x.id===id;});
   if(!m)return;
   const hn=document.getElementById('hn_'+id);const an=document.getElementById('an_'+id);
   if(hn&&hn.value.trim()&&m.home)m.home.name=hn.value.trim();
@@ -1009,11 +1006,11 @@ function saveMatch(id,g){
 function renderBracket(g){
   propagate(g);
   const T=tournaments[g],R=T.rounds,info=gradeInfo[g],cls=info.cls;
-  const allM=[].concat(R.r1,R.qf,R.sf,R.third,R.final);
+  const allM=[].concat(R.r1,R.qf,R.sf,R.final);
   const done=allM.filter(function(m){return m.status==='done';}).length;
   const f=R.final[0];let champ='',second='',third='';
   if(f.status==='done'&&f.winner){champ=f.winner.name;second=(f.winner===f.home?f.away:f.home)?((f.winner===f.home?f.away:f.home).name||''):'';} 
-  if(R.third[0].status==='done'&&R.third[0].winner)third=R.third[0].winner.name;
+  if([0].status==='done'&&[0].winner)third=[0].winner.name;
   const podium=(champ||second||third)?'<div class="podium-grid">'+
     (champ?'<div class="podium-card gold-b"><div style="font-size:18px;">🥇</div><div class="podium-name">'+champ+'</div><div class="podium-lbl">우승</div></div>':'')+
     (second?'<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">'+second+'</div><div class="podium-lbl">준우승</div></div>':'')+
@@ -1027,7 +1024,6 @@ function renderBracket(g){
     '<div>'+rl('1라운드')+'<div style="padding:3px;">'+R.r1.map(function(m){return matchNodeHTML(m,g);}).join('')+'</div></div>'+
     '<div>'+rl('8강')+'<div style="padding:3px;">'+R.qf.map(function(m){return matchNodeHTML(m,g);}).join('')+'</div></div>'+
     '<div>'+rl('4강')+'<div style="padding:3px;">'+R.sf.map(function(m){return matchNodeHTML(m,g);}).join('')+'</div></div>'+
-    '<div>'+rl('3·4위전')+'<div style="padding:3px;">'+R.third.map(function(m){return matchNodeHTML(m,g);}).join('')+'</div></div>'+
     '<div>'+rl('결승전')+'<div style="padding:3px;">'+R.final.map(function(m){return matchNodeHTML(m,g);}).join('')+'</div></div>'+
     '</div></div>'+
     '<div class="section-title">'+info.schedLabel+'</div>';
@@ -1128,7 +1124,7 @@ function initTournament2(g, sport) {
       {id:prefix+'sf_1',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:prefix+'sf_2',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
-    third:[{id:prefix+'3rd_1',round:'3·4위전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}],
+    third:[],
     final:[{id:prefix+'f_1',round:'결승전',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}]
   }};
 }
@@ -1140,9 +1136,6 @@ function propagate2(g, sport) {
   R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;
   R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;
   R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;
-  var l0=R.sf[0].status==='done'?(R.sf[0].winner===R.sf[0].home?R.sf[0].away:R.sf[0].home):null;
-  var l1=R.sf[1].status==='done'?(R.sf[1].winner===R.sf[1].home?R.sf[1].away:R.sf[1].home):null;
-  R.third[0].home=l0; R.third[0].away=l1;
 }
 
 /* 서브탭 tournament 데이터 */
@@ -1153,28 +1146,27 @@ var tournaments2 = {
 };
 
 /* 서브탭 schedule 데이터 */
-function mkSchedRounds(dateBase1, dateBase2, dateBase3, dateBase4, dateBase5, p1, p2, p3, p4) {
+function mkSchedRounds(dateBase1, dateBase2, dateBase3, dateBase4, p1, p2, p3, p4) {
   return [
     {roundName:'1라운드',status:'예정',games:[mkGame(dateBase1,p1,'7반','10반','','',''),mkGame(dateBase1,p2,'8반','9반','','','')]},
     {roundName:'8강',status:'예정',games:[mkGame(dateBase2,p3,'1반','TBD','1R 승자','',''),mkGame(dateBase2,p4,'2반','TBD','1R 승자','',''),mkGame(dateBase2,p3,'3반','6반','','',''),mkGame(dateBase2,p4,'4반','5반','','','')]},
     {roundName:'4강',status:'예정',games:[mkGame(dateBase3,p3,'TBD','TBD','8강 승자','',''),mkGame(dateBase3,p4,'TBD','TBD','8강 승자','','')]},
-    {roundName:'3·4위전',status:'예정',games:[mkGame(dateBase4,p3,'TBD','TBD','4강 패자','','')]},
-    {roundName:'결승전',status:'예정',games:[mkGame(dateBase5,p4,'TBD','TBD','4강 승자','','')]},
+    {roundName:'결승전',status:'예정',games:[mkGame(dateBase4,p4,'TBD','TBD','4강 승자','','')]},
   ];
 }
 
 var schedules2 = {
   1: {
-    dodgeball: mkSchedRounds('2026-05-19','2026-05-26','2026-06-02','2026-06-09','2026-06-09','2교시','3교시','4교시','5교시'),
-    futsal:    mkSchedRounds('2026-05-19','2026-05-26','2026-06-02','2026-06-09','2026-06-09','2교시','3교시','4교시','5교시')
+    dodgeball: mkSchedRounds('2026-05-19','2026-05-26','2026-06-02','2026-06-09','2교시','3교시','4교시','5교시'),
+    futsal:    mkSchedRounds('2026-05-19','2026-05-26','2026-06-02','2026-06-09','2교시','3교시','4교시','5교시')
   },
   2: {
-    dodgeball: mkSchedRounds('2026-05-20','2026-05-27','2026-06-03','2026-06-10','2026-06-10','5교시','6교시','5교시','6교시'),
-    futsal:    mkSchedRounds('2026-05-20','2026-05-27','2026-06-03','2026-06-10','2026-06-10','5교시','6교시','5교시','6교시')
+    dodgeball: mkSchedRounds('2026-05-20','2026-05-27','2026-06-03','2026-06-10','5교시','6교시','5교시','6교시'),
+    futsal:    mkSchedRounds('2026-05-20','2026-05-27','2026-06-03','2026-06-10','5교시','6교시','5교시','6교시')
   },
   3: {
-    dodgeball: mkSchedRounds('2026-05-22','2026-05-29','2026-06-05','2026-06-12','2026-06-12','5교시','6교시','5교시','6교시'),
-    futsal:    mkSchedRounds('2026-05-22','2026-05-29','2026-06-05','2026-06-12','2026-06-12','5교시','6교시','5교시','6교시')
+    dodgeball: mkSchedRounds('2026-05-22','2026-05-29','2026-06-05','2026-06-12','5교시','6교시','5교시','6교시'),
+    futsal:    mkSchedRounds('2026-05-22','2026-05-29','2026-06-05','2026-06-12','5교시','6교시','5교시','6교시')
   }
 };
 
@@ -1191,7 +1183,7 @@ function getMatchNum2(matchId, sport){
 function syncSchedToBracket2(g, sport, gm, ri, gi){
   var rndName = schedules2[g][sport][ri].roundName;
   var R = tournaments2[g][sport].rounds;
-  var map = {'1라운드':R.r1,'8강':R.qf,'4강':R.sf,'3·4위전':R.third,'결승전':R.final};
+  var map = {'1라운드':R.r1,'8강':R.qf,'4강':R.sf,'결승전':R.final};
   var arr = map[rndName];
   if(!arr||gi>=arr.length) return;
   var bm = arr[gi]; if(!bm) return;
@@ -1213,7 +1205,7 @@ function syncBracketToSched2(g, sport, m, matchId){
   var parts=matchId.split('_');
   var rndKey=parts[parts.length-2];
   var matchIdx=+parts[parts.length-1]-1;
-  var rndNameMap={r1:'1라운드',qf:'8강',sf:'4강','3rd':'3·4위전',f:'결승전'};
+  var rndNameMap={r1:'1라운드',qf:'8강',sf:'4강',f:'결승전'};
   var rndName=rndNameMap[rndKey];
   if(!rndName||!schedules2[g][sport]) return;
   var ri=-1;
@@ -1273,7 +1265,7 @@ function matchNodeHTML2(m, g, sport){
 function toggleEdit2(id, sport){var el=document.getElementById('edit2_'+id);if(el)el.classList.toggle('show');}
 function saveMatch2(id, g, sport){
   var R=tournaments2[g][sport].rounds;
-  var allM=[].concat(R.r1,R.qf,R.sf,R.third,R.final);
+  var allM=[].concat(R.r1,R.qf,R.sf,R.final);
   var m=allM.find(function(x){return x.id===id;});
   if(!m) return;
   var hn=document.getElementById('hn2_'+id), an=document.getElementById('an2_'+id);
@@ -1337,7 +1329,7 @@ function renderSchedule2(g, sport){
     '</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
 }
 function getSchedMatchNum2(g, sport, ri, gi){
-  var rndKey={'1라운드':'r1','8강':'qf','4강':'sf','3·4위전':'3rd','결승전':'f'};
+  var rndKey={'1라운드':'r1','8강':'qf','4강':'sf','결승전':'f'};
   var rnd=schedules2[g][sport][ri];
   if(!rnd) return '';
   var k=rndKey[rnd.roundName];
@@ -1388,11 +1380,11 @@ function renderBracket2(g, sport){
   var sm=sportMeta[sport];
   var info=gradeInfo[g];
   var cls=sm.cls;
-  var allM=[].concat(R.r1,R.qf,R.sf,R.third,R.final);
+  var allM=[].concat(R.r1,R.qf,R.sf,R.final);
   var done=allM.filter(function(m){return m.status==='done';}).length;
   var f=R.final[0];var champ='',second='',third_='';
   if(f.status==='done'&&f.winner){champ=f.winner.name;second=(f.winner===f.home?f.away:f.home)?((f.winner===f.home?f.away:f.home).name||''):'';} 
-  if(R.third[0].status==='done'&&R.third[0].winner)third_=R.third[0].winner.name;
+  if([0].status==='done'&&[0].winner)third_=[0].winner.name;
   var podium=(champ||second||third_)?'<div class="podium-grid">'+
     (champ?'<div class="podium-card gold-b"><div style="font-size:18px;">🥇</div><div class="podium-name">'+champ+'</div><div class="podium-lbl">우승</div></div>':'')+
     (second?'<div class="podium-card"><div style="font-size:18px;">🥈</div><div class="podium-name">'+second+'</div><div class="podium-lbl">준우승</div></div>':'')+
@@ -1414,7 +1406,6 @@ function renderBracket2(g, sport){
     '<div>'+rl('1라운드')+'<div style="padding:3px;">'+R.r1.map(function(m){return matchNodeHTML2(m,g,sport);}).join('')+'</div></div>'+
     '<div>'+rl('8강')+'<div style="padding:3px;">'+R.qf.map(function(m){return matchNodeHTML2(m,g,sport);}).join('')+'</div></div>'+
     '<div>'+rl('4강')+'<div style="padding:3px;">'+R.sf.map(function(m){return matchNodeHTML2(m,g,sport);}).join('')+'</div></div>'+
-    '<div>'+rl('3·4위전')+'<div style="padding:3px;">'+R.third.map(function(m){return matchNodeHTML2(m,g,sport);}).join('')+'</div></div>'+
     '<div>'+rl('결승전')+'<div style="padding:3px;">'+R.final.map(function(m){return matchNodeHTML2(m,g,sport);}).join('')+'</div></div>'+
     '</div></div>'+
     '<div class="section-title">'+sm.schedLabel+'</div>';
@@ -1663,7 +1654,7 @@ function renderGlBody(){
       [1,2,3].forEach(function(g){
         if(!T[g])return;
         const R=T[g].rounds;
-        [].concat(R.r1,R.qf,R.sf,R.third,R.final).forEach(function(m){
+        [].concat(R.r1,R.qf,R.sf,R.final).forEach(function(m){
           if(!m||!m.winner)return;
           if(m.home&&m.winner.id===m.home.id)m.winner=m.home;
           else if(m.away&&m.winner.id===m.away.id)m.winner=m.away;
@@ -1747,7 +1738,7 @@ function startFirebase(){
         [1,2,3].forEach(function(g){
           if(!T[g])return;
           const R=T[g].rounds;
-          [].concat(R.r1,R.qf,R.sf,R.third,R.final).forEach(function(m){
+          [].concat(R.r1,R.qf,R.sf,R.final).forEach(function(m){
             if(!m||!m.winner)return;
             if(m.home&&m.winner.id===m.home.id)m.winner=m.home;
             else if(m.away&&m.winner.id===m.away.id)m.winner=m.away;
