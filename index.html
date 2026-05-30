@@ -20,7 +20,7 @@
   --general-bg:#e0e4f0;--general-text:#1a2a5e;
   --max:860px;
   --dodgeball-color:#f97316;--dodgeball-bg:#fff4ed;--dodgeball-border:#fcd5b0;
-  --futsal2-color:#a78bfa;--futsal2-bg:#f3f0ff;--futsal2-border:#d8b4fe;
+  --futsal2-color:#8b5cf6;--futsal2-bg:#f3f0ff;--futsal2-border:#d8b4fe;
 }
 html{font-size:16px;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
@@ -335,6 +335,36 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* th 헤더 종목별 */
 .th-dodgeball{background:var(--dodgeball-color);}
 .th-futsal2{background:var(--futsal2-color);}
+
+/* ── 전체 경기 세로 대진표 ── */
+.ag-page{padding:12px 10px 30px;}
+.ag-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.ag-grid{grid-template-columns:1fr;}}
+.ag-bracket-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.ag-bracket-header{padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#fff;}
+.ag-bracket-header.dodgeball{background:var(--dodgeball-color);}
+.ag-bracket-header.futsal2{background:var(--futsal2-color);}
+.vbracket{padding:10px 8px;overflow-x:auto;}
+.vb-rounds{display:flex;flex-direction:column;gap:0;}
+.vb-round{display:flex;flex-direction:column;}
+.vb-round-label{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;text-align:center;margin:6px auto 4px;width:fit-content;}
+.vb-round-label.dodgeball{background:var(--dodgeball-bg);color:var(--dodgeball-color);border:1px solid var(--dodgeball-border);}
+.vb-round-label.futsal2{background:var(--futsal2-bg);color:var(--futsal2-color);border:1px solid var(--futsal2-border);}
+.vb-matches{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 4px 6px;}
+.vb-match{background:#fff;border:1.5px solid var(--border);border-radius:8px;min-width:110px;flex:0 0 auto;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.vb-match.dodgeball-node{border-color:var(--dodgeball-border);}
+.vb-match.futsal2-node{border-color:var(--futsal2-border);}
+.vb-match-header{padding:3px 8px;font-size:9px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+.vb-match-header.dodgeball{background:var(--dodgeball-bg);color:var(--dodgeball-color);}
+.vb-match-header.futsal2{background:var(--futsal2-bg);color:var(--futsal2-color);}
+.vb-team{padding:5px 8px;font-size:12px;font-weight:600;color:var(--text);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.vb-team:last-child{border-bottom:none;}
+.vb-team.winner{font-weight:800;color:var(--navy);}
+.vb-score{font-size:12px;font-weight:700;color:var(--navy);min-width:16px;text-align:right;}
+.vb-divider{height:1px;background:var(--border);margin:2px 0;}
+.vb-connector{display:flex;justify-content:center;align-items:center;height:14px;}
+.vb-connector::after{content:'▼';font-size:11px;color:var(--text2);}
+.ag-grade-title{font-size:13px;font-weight:700;color:var(--text2);padding:8px 4px 4px;text-align:center;letter-spacing:1px;}
 </style>
 </head>
 <body>
@@ -363,6 +393,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div class="nav-bar">
   <div class="nav-inner">
     <button class="nav-tab active" onclick="showPage('home',this)">🏠 홈</button>
+    <button class="nav-tab" onclick="showPage('allgames',this)">📊 전체 경기</button>
     <button class="nav-tab" onclick="showPage('bracket1',this)">1학년</button>
     <button class="nav-tab" onclick="showPage('bracket2',this)">2학년</button>
     <button class="nav-tab" onclick="showPage('bracket3',this)">3학년</button>
@@ -374,6 +405,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <div class="page active" id="page-home"></div>
+<div class="page" id="page-allgames"></div>
 <div class="page" id="page-bracket1"></div>
 <div class="page" id="page-bracket2"></div>
 <div class="page" id="page-bracket3"></div>
@@ -721,8 +753,7 @@ var MATCH_NUM_MAP = {
   r1_1:1, r1_2:2,
   qf_1:3, qf_2:4, qf_3:5, qf_4:6,
   sf_1:7, sf_2:8,
-  '3rd_1':9,
-  f_1:10
+  f_1:9
 };
 function getMatchNum(matchId){
   // matchId: "1_r1_1" → key: "r1_1"
@@ -873,7 +904,7 @@ function saveScheduleGame(){
       if(_sgMode==='add'){schedules2[g][sportVal][ri].games.push(gm);syncSchedToBracket2(g,sportVal,gm,ri,schedules2[g][sportVal][ri].games.length-1);}
       else{schedules2[g][sportVal][ri].games[gi]=gm;syncSchedToBracket2(g,sportVal,gm,ri,gi);}
     }
-    closeModal('scheduleGameModal');renderBracket2(g,sportVal);renderHome();_saveToFirebase('schedule2');showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
+    closeModal('scheduleGameModal');renderBracket2(g,sportVal);renderHome();if(document.getElementById('page-allgames').classList.contains('active'))renderAllGames();_saveToFirebase('schedule2');showToast(_sgMode==='add'?'경기 추가됨!':'경기 수정됨!');
   } else {
     if(_sgMode==='add'){schedules[g][ri].games.push(gm);syncSchedToBracket(g,gm,ri,schedules[g][ri].games.length-1);}
     else{schedules[g][ri].games[gi]=gm;syncSchedToBracket(g,gm,ri,gi);}
@@ -1280,6 +1311,7 @@ function saveMatch2(id, g, sport){
   propagate2(g, sport);
   renderBracket2(g, sport);
   renderHome();
+  if(document.getElementById('page-allgames').classList.contains('active'))renderAllGames();
   _saveToFirebase('match2');
   showToast('저장됨!');
 }
@@ -1551,8 +1583,203 @@ function openCalDetail(id){
   document.getElementById('calDetailModal').classList.add('show');
 }
 
-function showPage(name,btn){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');if(['bracket1','bracket2','bracket3'].indexOf(name)>-1)renderBracket2(+name.slice(-1));if(name==='home')renderHome();if(name==='board')renderBoard();if(name==='rules')renderRulesCard();}
+function showPage(name,btn){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');if(['bracket1','bracket2','bracket3'].indexOf(name)>-1)renderBracket2(+name.slice(-1));if(name==='home')renderHome();if(name==='board')renderBoard();if(name==='rules')renderRulesCard();if(name==='allgames')renderAllGames();}
 function goGrade(g){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-tab').forEach(function(t,i){t.classList.remove('active');if(i===g)t.classList.add('active');});document.getElementById('page-bracket'+g).classList.add('active');renderBracket2(g);}
+
+/* ── 전체 경기 SVG 라인 대진표 ── */
+function renderAllGames(){
+  var sportLabel={dodgeball:'🤾‍♂️ 피구',futsal:'⚽ 풋살'};
+  var sportColor={dodgeball:'#f97316',futsal:'#8b5cf6'};
+  var gradeNames={1:'1학년',2:'2학년',3:'3학년'};
+  // 학년별 대표색 (토너먼트 내부 박스/라인 색상)
+  var gradeNodeColor={1:'#3b82f6',2:'#22c55e',3:'#eab308'};
+  var gradeNodeBorder={1:'#93c5fd',2:'#86efac',3:'#fde047'};
+  var gradeNodeBg={1:'#eff6ff',2:'#f0fdf4',3:'#fefce8'};
+
+  // 박스 크기
+  var BW=118, BH=72;
+  var GAP_X=18;   // 박스 간 가로 여백
+  var GAP_Y=36;   // 라운드 간 세로 여백
+  var LABEL_H=22;
+  var PAD_X=14, PAD_Y=16;
+
+  function tn(t){return t?t.name:'TBD';}
+
+  function matchBox(x,y,m,color,nodeBg,num){
+    var isDone=m.status==='done';
+    var hs=(m.homeScore!==null&&m.homeScore!==undefined)?String(m.homeScore):'-';
+    var as_=(m.awayScore!==null&&m.awayScore!==undefined)?String(m.awayScore):'-';
+    var hwin=isDone&&m.winner&&m.home&&m.winner.id===m.home.id;
+    var awin=isDone&&m.winner&&m.away&&m.winner.id===m.away.id;
+    var sBg=isDone?'#dcfce7':'#f1f5f9';
+    var sCol=isDone?'#15803d':'#64748b';
+    var sTxt=isDone?'완료':'예정';
+    var hn=tn(m.home); if(hn.length>5)hn=hn.slice(0,5);
+    var an=tn(m.away); if(an.length>5)an=an.slice(0,5);
+    // 날짜 포맷
+    var dateStr='날짜 미정';
+    if(m.date){var dp=m.date.split('-');dateStr=(+dp[1])+'월 '+(+dp[2])+'일'+(m.time?' '+m.time:'');}
+    else if(m.time){dateStr=m.time;}
+    var infoStr='';
+    if(m.teacher)infoStr+='[교사] '+m.teacher;
+    if(m.referee)infoStr+=(infoStr?' | ':'')+'[심판] '+m.referee;
+    // 레이아웃: 날짜(위) → 홈팀 → 어웨이팀
+    var dateH=18; // 날짜 행 높이
+    var teamH=22; // 팀 행 높이
+    var div1=y+dateH;       // 날짜|홈팀 구분선
+    var div2=y+dateH+teamH; // 홈팀|어웨이팀 구분선
+    return ''
+      // 전체 박스
+      +'<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="'+nodeBg+'" stroke="'+color+'" stroke-width="1.8"/>'
+      // 날짜 영역 배경
+      +'<rect x="'+(x+1)+'" y="'+(y+1)+'" width="'+(BW-2)+'" height="'+(dateH-1)+'" rx="5" fill="'+color+'" opacity="0.12"/>'
+      // 경기 번호 뱃지 (왼쪽)
+      +(num?'<rect x="'+(x+4)+'" y="'+(y+3)+'" width="14" height="12" rx="3" fill="'+color+'" opacity="0.85"/><text x="'+(x+11)+'" y="'+(y+12)+'" font-size="8" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans KR,sans-serif">'+num+'</text>':'')
+      // 날짜/교시 텍스트 (맨 위, 번호 뱃지 오른쪽)
+      +'<text x="'+(x+(num?20:7))+'" y="'+(y+12)+'" font-size="8.5" font-weight="700" fill="'+color+'" font-family="Noto Sans KR,sans-serif">'+dateStr+'</text>'
+      // 교사/심판 (어웨이팀 아래, 있을 때만)
+      +(infoStr?'<text x="'+(x+7)+'" y="'+(div2+BH-dateH-teamH+10)+'" font-size="7.5" fill="#94a3b8" font-family="Noto Sans KR,sans-serif">'+infoStr+'</text>':'')
+      // 구분선1 (날짜↔홈팀)
+      +'<line x1="'+(x+1)+'" y1="'+div1+'" x2="'+(x+BW-1)+'" y2="'+div1+'" stroke="'+color+'" stroke-width="0.8" opacity="0.3"/>'
+      // 홈팀 이름 + 점수
+      +'<text x="'+(x+7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:600)+'" fill="'+(hwin?'#1d4ed8':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+hn+'</text>'
+      +'<text x="'+(x+BW-7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:700)+'" fill="'+(hwin?'#1d4ed8':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+hs+'</text>'
+      // 구분선2 (홈팀↔어웨이팀)
+      +'<line x1="'+(x+1)+'" y1="'+div2+'" x2="'+(x+BW-1)+'" y2="'+div2+'" stroke="#e2e8f0" stroke-width="0.8"/>'
+      // 어웨이팀 이름 + 점수
+      +'<text x="'+(x+7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:600)+'" fill="'+(awin?'#1d4ed8':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+an+'</text>'
+      +'<text x="'+(x+BW-7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:700)+'" fill="'+(awin?'#1d4ed8':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+as_+'</text>'
+      // 상태 배지 (날짜 행 오른쪽 끝, 맨 위)
+      +'<rect x="'+(x+BW-32)+'" y="'+(y+3)+'" width="28" height="12" rx="4" fill="'+sBg+'"/>'
+      +'<text x="'+(x+BW-18)+'" y="'+(y+12)+'" font-size="8" fill="'+sCol+'" text-anchor="middle" font-weight="700" font-family="Noto Sans KR,sans-serif">'+sTxt+'</text>';
+  }
+
+  function buildSVG(g, sport){
+    var R=tournaments2[g][sport].rounds;
+    var color=sportColor[sport];        // 헤더 색 (피구=주황, 풋살=보라)
+    var nodeColor=gradeNodeColor[g];    // 박스 테두리 색 (학년별)
+    var nodeBg=gradeNodeBg[g];          // 박스 배경 색 (학년별)
+    var nodeLine=gradeNodeBorder[g];    // 연결선 색 (학년별)
+
+    /*
+      레이아웃 (위→아래):
+        row0: 결승   — 1경기, 중앙
+        row1: 4강    — 2경기, 각각 8강 [0,1] 중앙 / [2,3] 중앙
+        row2: 8강    — 4경기, 균등 배치
+        row3: 1라운드 — 2경기, 8강[0] 중앙 / 8강[1] 중앙
+      
+      연결:
+        결승 ↔ 4강[0], 4강[1]
+        4강[0] ↔ 8강[0], 8강[1]
+        4강[1] ↔ 8강[2], 8강[3]
+        8강[0] ↔ 1라운드[1]  (propagate: qf[0].away = r1[1].winner)
+        8강[1] ↔ 1라운드[0]  (propagate: qf[1].away = r1[0].winner)
+    */
+
+    // 8강 4개 박스를 기준으로 전체 폭 결정
+    var slot = BW + GAP_X; // 각 슬롯 폭
+    var totalW = 4*slot - GAP_X + PAD_X*2;
+    var innerW = 4*slot - GAP_X; // 실제 콘텐츠 폭
+
+    // 8강 x좌표 (0~3)
+    function qfX(i){ return PAD_X + i*slot; }
+
+    // 4강: 8강[0,1] 중앙 / 8강[2,3] 중앙
+    function sfX(i){
+      if(i===0) return (qfX(0)+qfX(1))/2;  // 8강[0]과[1] 사이
+      else      return (qfX(2)+qfX(3))/2;  // 8강[2]과[3] 사이
+    }
+
+    // 결승: 전체 중앙
+    function finX(){ return PAD_X + innerW/2 - BW/2; }
+
+    // 1라운드: 1경기=8강[1] 아래, 2경기=8강[3] 아래
+    function r1X(i){
+      if(i===0) return qfX(1); // 8강 2경기 아래
+      else      return qfX(3); // 8강 4경기 아래
+    }
+
+    var rowH = LABEL_H + BH + GAP_Y;
+    var totalH = 4*rowH + PAD_Y*2;
+
+    function rowY(ri){ return PAD_Y + ri*rowH; }
+    function boxY(ri){ return rowY(ri) + LABEL_H + 4; }
+
+    var rounds=[
+      {label:'결승전', ri:0},
+      {label:'4강',   ri:1},
+      {label:'8강',   ri:2},
+      {label:'1라운드',ri:3}
+    ];
+
+    var svgLines='', svgBoxes='', svgLabels='';
+
+    // 라운드 라벨 (각 행 중앙에)
+    rounds.forEach(function(rnd){
+      var ly=rowY(rnd.ri);
+      var cx=PAD_X+innerW/2;
+      svgLabels+='<rect x="'+(cx-28)+'" y="'+ly+'" width="56" height="'+LABEL_H+'" rx="6" fill="'+nodeColor+'" opacity="0.15"/>'
+        +'<text x="'+cx+'" y="'+(ly+14)+'" font-size="10" font-weight="700" fill="'+nodeColor+'" text-anchor="middle" font-family="Noto Sans KR,sans-serif">'+rnd.label+'</text>';
+    });
+
+    // 경기 박스 그리기 (학년색 적용, 경기 번호 포함)
+    // 결승
+    svgBoxes+=matchBox(finX(), boxY(0), R.final[0], nodeColor, nodeBg, getMatchNum2(R.final[0].id, sport));
+    // 4강
+    [0,1].forEach(function(i){ svgBoxes+=matchBox(sfX(i), boxY(1), R.sf[i], nodeColor, nodeBg, getMatchNum2(R.sf[i].id, sport)); });
+    // 8강
+    [0,1,2,3].forEach(function(i){ svgBoxes+=matchBox(qfX(i), boxY(2), R.qf[i], nodeColor, nodeBg, getMatchNum2(R.qf[i].id, sport)); });
+    // 1라운드
+    [0,1].forEach(function(i){ svgBoxes+=matchBox(r1X(i), boxY(3), R.r1[i], nodeColor, nodeBg, getMatchNum2(R.r1[i].id, sport)); });
+
+    // 라인 연결 (각 박스 중심 x, 위쪽/아래쪽 y)
+    function cx(x){ return x+BW/2; }
+    function top(ri){ return boxY(ri); }
+    function bot(ri){ return boxY(ri)+BH; }
+
+    function connect(x1,y1,x2,y2){
+      var my=(y1+y2)/2;
+      svgLines+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x1+'" y2="'+my+'" stroke="'+nodeLine+'" stroke-width="1.5"/>'
+        +'<line x1="'+x1+'" y1="'+my+'" x2="'+x2+'" y2="'+my+'" stroke="'+nodeLine+'" stroke-width="1.5"/>'
+        +'<line x1="'+x2+'" y1="'+my+'" x2="'+x2+'" y2="'+y2+'" stroke="'+nodeLine+'" stroke-width="1.5"/>';
+    }
+
+    // 결승 ↔ 4강[0], 4강[1]
+    connect(cx(finX()), bot(0), cx(sfX(0)), top(1));
+    connect(cx(finX()), bot(0), cx(sfX(1)), top(1));
+
+    // 4강[0] ↔ 8강[0], 8강[1]
+    connect(cx(sfX(0)), bot(1), cx(qfX(0)), top(2));
+    connect(cx(sfX(0)), bot(1), cx(qfX(1)), top(2));
+
+    // 4강[1] ↔ 8강[2], 8강[3]
+    connect(cx(sfX(1)), bot(1), cx(qfX(2)), top(2));
+    connect(cx(sfX(1)), bot(1), cx(qfX(3)), top(2));
+
+    // 8강[1] ↔ 1라운드[0], 8강[3] ↔ 1라운드[1]
+    connect(cx(qfX(1)), bot(2), cx(r1X(0)), top(3));
+    connect(cx(qfX(3)), bot(2), cx(r1X(1)), top(3));
+
+    return '<div style="overflow-x:auto;padding:8px 4px;">'
+      +'<svg width="'+totalW+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg">'
+      +svgLines+svgBoxes+svgLabels
+      +'</svg></div>';
+  }
+
+  var html='<div class="ag-page">';
+  [1,2,3].forEach(function(g){
+    ['dodgeball','futsal'].forEach(function(sport){
+      var sCls=sport==='dodgeball'?'dodgeball':'futsal2';
+      var title=gradeNames[g]+' '+sportLabel[sport];
+      html+='<div class="ag-bracket-card" style="margin-bottom:20px;">';
+      html+='<div class="ag-bracket-header '+sCls+'">'+title+'</div>';
+      html+=buildSVG(g,sport);
+      html+='</div>';
+    });
+  });
+  html+='</div>';
+  document.getElementById('page-allgames').innerHTML=html;
+}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);}
 
 /* ── 경기 목록 모달 ── */
@@ -1764,6 +1991,7 @@ function startFirebase(){
     else if(pid==='page-bracket3')renderBracket2(3);
     else if(pid==='page-board')renderBoard();
     else if(pid==='page-rules')renderRulesCard();
+    else if(pid==='page-allgames')renderAllGames();
     ['safety','award','emergency'].forEach(function(t){renderInfoCard(t);});
   },function(err){console.error('[Firebase] 수신 오류:',err);});
 
