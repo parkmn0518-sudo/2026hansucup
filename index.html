@@ -180,7 +180,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .match-staff-row{font-size:9px;color:var(--text2);margin-top:1px;}
 .team-row{display:flex;align-items:center;padding:8px 9px;border-bottom:1px solid var(--border);}
 .team-row:last-of-type{border-bottom:none;}
-.team-row.winner{background:#f0fdf4;}
+.team-row.winner{background:#f0fdf4;}.team-row.winner .team-nm{font-weight:800;color:#15803d;}.team-row.winner .team-sc{font-weight:800;color:#15803d;}.team-row.loser{background:#f8f8fa;}.team-row.loser .team-nm{color:#aaa;}.team-row.loser .team-sc{color:#aaa;}
 .team-row.loser{opacity:.5;}
 .team-nm{font-size:13px;font-weight:700;color:var(--text);flex:1;}
 .team-sc{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);min-width:20px;text-align:right;line-height:1;}
@@ -1277,8 +1277,8 @@ function syncBracketToSched2(g, sport, m, matchId){
 function matchNodeHTML2(m, g, sport){
   var sm = sportMeta[sport];
   var cls = sm.cls;
-  var hWin=m.status==='done'&&m.winner===m.home;
-  var aWin=m.status==='done'&&m.winner===m.away;
+  var hWin=m.status==='done'&&m.winner&&m.home&&(m.winner===m.home||(m.winner.id&&m.home.id&&m.winner.id===m.home.id)||(m.homeScore!=null&&m.awayScore!=null&&m.homeScore>m.awayScore));
+  var aWin=m.status==='done'&&m.winner&&m.away&&(m.winner===m.away||(m.winner.id&&m.away.id&&m.winner.id===m.away.id)||(m.homeScore!=null&&m.awayScore!=null&&m.awayScore>m.homeScore));
   var statusTxt=m.status==='done'?'완료':'예정';
   var pillCls=m.status==='done'?'pill-done':'pill-scheduled';
   var hNm=teamLabel(m.home), aNm=teamLabel(m.away);
@@ -1511,6 +1511,40 @@ function renderHome(){
     '<div class="stat-card done-card" style="cursor:pointer" onclick="openGamesModal(\'done\')"><div class="num">'+st.done+'</div><div class="lbl">완료 ›</div></div>'+
     '<div class="stat-card" style="cursor:pointer" onclick="openGamesModal(\'sched\')"><div class="num">'+st.sched+'</div><div class="lbl">예정 ›</div></div>'+
     '</div>'+
+    (function(){
+      var doneGames=[];
+      [1,2,3].forEach(function(g){
+        ['dodgeball','futsal'].forEach(function(sport){
+          (schedules2[g][sport]||[]).forEach(function(rnd){
+            (rnd.games||[]).forEach(function(gm){
+              if(gm.status==='완료')doneGames.push({g:g,sport:sport,gm:gm});
+            });
+          });
+        });
+      });
+      if(!doneGames.length)return '';
+      var sportIcon={dodgeball:'🤾\u200d♂️',futsal:'⚽'};
+      var gradeColor={1:'#3b82f6',2:'#22c55e',3:'#eab308'};
+      var items=doneGames.slice(-3).reverse().map(function(d){
+        var gm=d.gm;
+        var hs=gm.homeScore!=null?gm.homeScore:'-';
+        var as_=gm.awayScore!=null?gm.awayScore:'-';
+        var hwin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore);
+        var awin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore);
+        return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);">'
+          +'<span style="font-size:10px;background:'+gradeColor[d.g]+';color:#fff;border-radius:8px;padding:1px 6px;font-weight:700;">'+gradeInfo[d.g].name+'</span>'
+          +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'var(--navy)':'var(--text)')+'">'+gm.home+'</span>'
+          +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
+          +'<span style="font-size:11px;color:var(--text2);">:</span>'
+          +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'var(--navy)':'var(--text)')+'">'+gm.away+'</span>'
+          +(hwin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.home+' 승</span>':'')
+          +(awin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.away+' 승</span>':'')
+          +'</div>';
+      }).join('');
+      return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
+    })()+
     '<div class="section-title">학년별 종목 및 경기일정</div>'+
     '<div class="sport-cards">'+
     '<div class="sport-card futsal" onclick="goGrade(1)"><div class="s-icon">🤾‍♂️⚽</div><div class="s-grade">1학년</div><div class="s-sport">피구 · 풋살</div></div>'+
@@ -1924,8 +1958,9 @@ function renderGlBody(){
     if(d.noticePosts)noticePosts=JSON.parse(d.noticePosts);
     if(d.studentPosts)studentPosts=JSON.parse(d.studentPosts);
     if(d.overviewData)overviewData=JSON.parse(d.overviewData);
-    if(d.rulesData)rulesData=JSON.parse(d.rulesData);
-    if(d.infoData)Object.assign(infoData,JSON.parse(d.infoData));
+    // rulesData/infoData: Firebase 저장값 무시, 코드 기본값 사용
+    // if(d.rulesData)rulesData=JSON.parse(d.rulesData);
+    // if(d.infoData)Object.assign(infoData,JSON.parse(d.infoData));
     if(d.calManualEvents)calManualEvents=JSON.parse(d.calManualEvents);
     if(d.tournaments2){try{const T2=JSON.parse(d.tournaments2);[1,2,3].forEach(function(g){if(T2[g])tournaments2[g]=T2[g];});}catch(e){}}
     if(d.schedules2){try{const S2=JSON.parse(d.schedules2);[1,2,3].forEach(function(g){if(S2[g])Object.assign(schedules2[g],S2[g]);});}catch(e){}}
@@ -2008,9 +2043,9 @@ function startFirebase(){
       if(d.noticePosts)noticePosts=JSON.parse(d.noticePosts);
       if(d.studentPosts)studentPosts=JSON.parse(d.studentPosts);
       if(d.overviewData)overviewData=JSON.parse(d.overviewData);
-      // rulesData: Firebase 저장값 무시, 코드 기본값 항상 사용
+      // rulesData/infoData: Firebase 저장값 무시, 코드 기본값 사용
       // if(d.rulesData)rulesData=JSON.parse(d.rulesData);
-      if(d.infoData)Object.assign(infoData,JSON.parse(d.infoData));
+      // if(d.infoData)Object.assign(infoData,JSON.parse(d.infoData));
       if(d.calManualEvents)calManualEvents=JSON.parse(d.calManualEvents);
       if(d.tournaments2){try{const T2=JSON.parse(d.tournaments2);[1,2,3].forEach(function(g){if(T2[g])tournaments2[g]=T2[g];});} catch(e){}}
       if(d.schedules2){try{const S2=JSON.parse(d.schedules2);[1,2,3].forEach(function(g){
