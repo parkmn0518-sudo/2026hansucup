@@ -12,7 +12,7 @@
   --gold:#c9952a;--gold-light:#f0c050;
   --white:#fff;--bg:#f4f5f8;--card:#fff;
   --text:#1a1a2e;--text2:#4a5580;--border:#d8dce8;
-  --win:#16a34a;--radius:10px;
+  --win:#e11d48;--radius:10px;
   --futsal-bg:#dbeafe;--futsal-text:#1e3a8a;--futsal-border:#93c5fd;
   --tchouk-bg:#dcfce7;--tchouk-text:#14532d;--tchouk-border:#86efac;
   --volley-bg:#fef9c3;--volley-text:#713f12;--volley-border:#fde047;
@@ -180,7 +180,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .match-staff-row{font-size:9px;color:var(--text2);margin-top:1px;}
 .team-row{display:flex;align-items:center;padding:8px 9px;border-bottom:1px solid var(--border);}
 .team-row:last-of-type{border-bottom:none;}
-.team-row.winner{background:#f0fdf4;}.team-row.winner .team-nm{font-weight:800;color:#15803d;}.team-row.winner .team-sc{font-weight:800;color:#15803d;}.team-row.loser{background:#f8f8fa;}.team-row.loser .team-nm{color:#aaa;}.team-row.loser .team-sc{color:#aaa;}
+.team-row.winner{background:#fff1f2;}.team-row.winner .team-nm{font-weight:800;color:#e11d48;}.team-row.winner .team-sc{font-weight:800;color:#e11d48;}.team-row.loser{background:#f8f8fa;}.team-row.loser .team-nm{color:#aaa;}.team-row.loser .team-sc{color:#aaa;}
 .team-row.loser{opacity:.5;}
 .team-nm{font-size:13px;font-weight:700;color:var(--text);flex:1;}
 .team-sc{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);min-width:20px;text-align:right;line-height:1;}
@@ -497,6 +497,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   </div>
   <label>경기 상태</label>
   <select id="sgStatus"><option value="예정">예정</option><option value="완료">완료</option></select>
+  <div style="margin-top:8px;"><label style="font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:4px;">승자 (동점 승부차기 시 직접 선택)</label>
+  <select id="sgWinner" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"><option value="">— 자동판정 (점수 기준) —</option><option value="home">홈팀 승</option><option value="away">원정팀 승</option></select></div>
   <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('scheduleGameModal')">취소</button><button class="btn-confirm" onclick="saveScheduleGame()">저장</button></div>
 </div></div>
 
@@ -905,18 +907,34 @@ function saveScheduleGame(){
   const gi=+document.getElementById('sgGameIdx').value;
   const hsv=document.getElementById('sgHomeScore').value;
   const asv=document.getElementById('sgAwayScore').value;
+  var hs=hsv===''?null:+hsv, as_=asv===''?null:+asv;
+  var st=document.getElementById('sgStatus').value||'예정';
+  // 점수 모두 입력 시 자동 완료
+  if(hs!==null&&as_!==null&&st==='예정') st='완료';
+  // 승자 판정
+  var wnEl=document.getElementById('sgWinner');
+  var wnVal=wnEl?wnEl.value:'';
+  var homeNm=document.getElementById('sgHome').value.trim()||'TBD';
+  var awayNm=document.getElementById('sgAway').value.trim()||'TBD';
+  var winnerName=null;
+  if(st==='완료'){
+    if(wnVal==='home') winnerName=homeNm;
+    else if(wnVal==='away') winnerName=awayNm;
+    else if(hs!==null&&as_!==null) winnerName=hs>as_?homeNm:(as_>hs?awayNm:null);
+  }
   const gm={
     date:document.getElementById('sgDate').value||'',
     time:document.getElementById('sgTime').value||'',
     venue:'체육관',
-    home:document.getElementById('sgHome').value.trim()||'TBD',
-    away:document.getElementById('sgAway').value.trim()||'TBD',
+    home:homeNm,
+    away:awayNm,
     note:document.getElementById('sgNote').value.trim(),
     teacher:document.getElementById('sgTeacher').value.trim(),
     referee:document.getElementById('sgReferee').value.trim(),
-    homeScore:hsv===''?null:+hsv,
-    awayScore:asv===''?null:+asv,
-    status:document.getElementById('sgStatus').value||'예정'
+    homeScore:hs,
+    awayScore:as_,
+    status:st,
+    winner:winnerName
   };
   if(sportVal==='dodgeball'||sportVal==='futsal'){
     if(_sgMode==='add'||_sgMode==='edit2'){
@@ -1298,7 +1316,17 @@ function matchNodeHTML2(m, g, sport){
     '<div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc2_'+m.id+'" value="'+(m.teacher||'')+'"></div>'+
     '<div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf2_'+m.id+'" value="'+(m.referee||'')+'"></div>'+
     '<div class="edit-divider">점수 / 상태</div>'+
-    '<div class="edit-row"><span class="edit-label">'+hNm+'</span><input class="sc-inp" type="number" min="0" max="99" id="hs2_'+m.id+'" value="'+(m.homeScore!=null?m.homeScore:'')+'"><span style="font-weight:700;color:var(--text2)">:</span><input class="sc-inp" type="number" min="0" max="99" id="as2_'+m.id+'" value="'+(m.awayScore!=null?m.awayScore:'')+'"><span class="edit-label">'+aNm+'</span><select class="st-sel" id="st2_'+m.id+'"><option value="scheduled" '+(m.status==='scheduled'?'selected':'')+'>예정</option><option value="done" '+(m.status==='done'?'selected':'')+'>완료</option></select></div>'+
+    '<div class="edit-row"><span class="edit-label">'+hNm+'</span>'+
+    '<input class="sc-inp" type="number" min="0" max="99" id="hs2_'+m.id+'" value="'+(m.homeScore!=null?m.homeScore:'')+'">'+
+    '<span style="font-weight:700;color:var(--text2)">:</span>'+
+    '<input class="sc-inp" type="number" min="0" max="99" id="as2_'+m.id+'" value="'+(m.awayScore!=null?m.awayScore:'')+'">'+
+    '<span class="edit-label">'+aNm+'</span></div>'+
+    '<div class="edit-row"><span class="edit-label">상태</span><select class="st-sel" id="st2_'+m.id+'"><option value="scheduled" '+(m.status==='scheduled'?'selected':'')+'>예정</option><option value="done" '+(m.status==='done'?'selected':'')+'>완료</option></select></div>'+
+    '<div class="edit-row"><span class="edit-label">승자</span><select class="st-sel" id="wn2_'+m.id+'">'+
+    '<option value="" '+((!m.winner)?'selected':'')+'>— 자동판정 —</option>'+
+    '<option value="home" '+(m.winner&&m.home&&m.winner.id===m.home.id?'selected':'')+'>'+hNm+'</option>'+
+    '<option value="away" '+(m.winner&&m.away&&m.winner.id===m.away.id?'selected':'')+'>'+aNm+'</option>'+
+    '</select><span style="font-size:10px;color:var(--text2);margin-left:4px;">동점 승부차기 시 직접 선택</span></div>'+
     '<div class="edit-row" style="justify-content:flex-end;"><button class="save-btn" onclick="saveMatch2(\''+m.id+'\','+g+',\''+sport+'\')">💾 저장</button></div>'+
     '</div>':'';
   // 대진표 카드: 학년별 색상 테마 유지
@@ -1334,9 +1362,19 @@ function saveMatch2(id, g, sport){
   var tcEl=document.getElementById('tc2_'+id); if(tcEl)m.teacher=tcEl.value.trim();
   var rfEl=document.getElementById('rf2_'+id); if(rfEl)m.referee=rfEl.value.trim();
   var hs=document.getElementById('hs2_'+id).value, as_=document.getElementById('as2_'+id).value, st=document.getElementById('st2_'+id).value;
-  m.homeScore=hs===''?null:+hs; m.awayScore=as_===''?null:+as_; m.status=st;
-  if(st==='done'&&m.homeScore!=null&&m.awayScore!=null)m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);
-  else m.winner=null;
+  m.homeScore=hs===''?null:+hs; m.awayScore=as_===''?null:+as_;
+  // 점수가 모두 입력되면 자동으로 완료 처리
+  if(m.homeScore!==null&&m.awayScore!==null&&st==='scheduled') st='done';
+  m.status=st;
+  // 승자 결정: 승자 드롭다운 우선, 없으면 점수 비교
+  var wnEl=document.getElementById('wn2_'+id);
+  var wnVal=wnEl?wnEl.value:'';
+  if(st==='done'){
+    if(wnVal==='home') m.winner=m.home;
+    else if(wnVal==='away') m.winner=m.away;
+    else if(m.homeScore!=null&&m.awayScore!=null) m.winner=m.homeScore>m.awayScore?m.home:(m.awayScore>m.homeScore?m.away:null);
+    else m.winner=null;
+  } else { m.winner=null; }
   syncBracketToSched2(g, sport, m, id);
   propagate2(g, sport);
   renderBracket2(g, sport);
@@ -1539,8 +1577,8 @@ function renderHome(){
           +'<span style="font-size:11px;color:var(--text2);">:</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
           +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'var(--navy)':'var(--text)')+'">'+gm.away+'</span>'
-          +(hwin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.home+' 승</span>':'')
-          +(awin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.away+' 승</span>':'')
+          +(hwin?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.home+' 승</span>':'')
+          +(awin?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;">'+gm.away+' 승</span>':'')
           +'</div>';
       }).join('');
       return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
@@ -1687,11 +1725,11 @@ function matchBox(x,y,m,color,nodeBg,num){
     +'<rect x="'+(x+BW-32)+'" y="'+(y+3)+'" width="28" height="12" rx="4" fill="'+sBg+'"/>'
     +'<text x="'+(x+BW-18)+'" y="'+(y+12)+'" font-size="8" fill="'+sCol+'" text-anchor="middle" font-weight="700" font-family="Noto Sans KR,sans-serif">'+sTxt+'</text>'
     +'<line x1="'+(x+1)+'" y1="'+div1+'" x2="'+(x+BW-1)+'" y2="'+div1+'" stroke="'+color+'" stroke-width="0.8" opacity="0.3"/>'
-    +'<text x="'+(x+7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:600)+'" fill="'+(hwin?'#15803d':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+hn+'</text>'
-    +'<text x="'+(x+BW-7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:700)+'" fill="'+(hwin?'#15803d':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+hs+'</text>'
+    +'<text x="'+(x+7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:600)+'" fill="'+(hwin?'#e11d48':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+hn+'</text>'
+    +'<text x="'+(x+BW-7)+'" y="'+(div1+15)+'" font-size="11" font-weight="'+(hwin?800:700)+'" fill="'+(hwin?'#e11d48':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+hs+'</text>'
     +'<line x1="'+(x+1)+'" y1="'+div2+'" x2="'+(x+BW-1)+'" y2="'+div2+'" stroke="#e2e8f0" stroke-width="0.8"/>'
-    +'<text x="'+(x+7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:600)+'" fill="'+(awin?'#15803d':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+an+'</text>'
-    +'<text x="'+(x+BW-7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:700)+'" fill="'+(awin?'#15803d':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+as_+'</text>'
+    +'<text x="'+(x+7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:600)+'" fill="'+(awin?'#e11d48':'#374151')+'" font-family="Noto Sans KR,sans-serif">'+an+'</text>'
+    +'<text x="'+(x+BW-7)+'" y="'+(div2+15)+'" font-size="11" font-weight="'+(awin?800:700)+'" fill="'+(awin?'#e11d48':'#4b5563')+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+as_+'</text>'
     +(infoStr?'<text x="'+(x+7)+'" y="'+(div2+BH-dateH-teamH+10)+'" font-size="7.5" fill="#94a3b8" font-family="Noto Sans KR,sans-serif">'+infoStr+'</text>':'');
 }
 
