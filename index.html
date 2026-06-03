@@ -1291,6 +1291,9 @@ function syncBracketToSched2(g, sport, m, matchId){
   if(m.away&&m.away.name!=='TBD') gm.away=m.away.name;
   gm.homeScore=m.homeScore; gm.awayScore=m.awayScore;
   gm.status=m.status==='done'?'완료':'예정';
+  // 승자 이름도 동기화 (승부차기 등 직접 지정된 경우 포함)
+  if(m.winner) gm.winner=m.winner.name||null;
+  else gm.winner=null;
 }
 function matchNodeHTML2(m, g, sport){
   var sm = sportMeta[sport];
@@ -1567,8 +1570,8 @@ function renderHome(){
         var gm=d.gm;
         var hs=gm.homeScore!=null?gm.homeScore:'-';
         var as_=gm.awayScore!=null?gm.awayScore:'-';
-        var hwin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore);
-        var awin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore);
+        var hwin=(gm.winner?gm.winner===gm.home:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore));
+        var awin=(gm.winner?gm.winner===gm.away:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore));
         return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);">'
           +'<span style="font-size:10px;background:'+(d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)')+';color:'+(d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)')+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+(d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)')+';">'+gradeInfo[d.g].name+'</span>'
           +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
@@ -1873,8 +1876,8 @@ function renderGlBody(){
         var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:null;
         var scoreStr=(hs!==null&&as_!==null)?(hs+' : '+as_):'';
         var bb=idx>0?'border-top:1px solid var(--border);':'';
-        var hwin=isDone&&gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore);
-        var awin=isDone&&gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore);
+        var hwin=isDone&&(gm.winner?gm.winner===gm.home:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore));
+        var awin=isDone&&(gm.winner?gm.winner===gm.away:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore));
         var winnerBadge=hwin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 7px;border-radius:8px;font-weight:700;">'+gm.home+' 승</span>':awin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 7px;border-radius:8px;font-weight:700;">'+gm.away+' 승</span>':'';
         html+='<div style="padding:8px 10px;'+bb+'">'
           +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
