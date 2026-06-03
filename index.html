@@ -1570,7 +1570,7 @@ function renderHome(){
         var hwin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore);
         var awin=gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore);
         return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);">'
-          +'<span style="font-size:10px;background:'+gradeColor[d.g]+';color:#fff;border-radius:8px;padding:1px 6px;font-weight:700;">'+gradeInfo[d.g].name+'</span>'
+          +'<span style="font-size:10px;background:'+(d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)')+';color:'+(d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)')+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+(d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)')+';">'+gradeInfo[d.g].name+'</span>'
           +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
           +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'var(--navy)':'var(--text)')+'">'+gm.home+'</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
@@ -1858,8 +1858,10 @@ function renderGlBody(){
       if(!allGames.length) return;
       totalCount+=allGames.length;
       // Section header
+      var gradeBadgeBg={1:'var(--futsal-bg)',2:'var(--tchouk-bg)',3:'var(--volley-bg)'};
+      var gradeBadgeTxt={1:'var(--futsal-text)',2:'var(--tchouk-text)',3:'var(--volley-text)'};
       html+='<div style="margin-top:12px;margin-bottom:4px;display:flex;align-items:center;gap:6px;">'
-        +'<span style="background:'+gc.border+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">'+gradeNames[g]+'</span>'
+        +'<span style="background:'+gradeBadgeBg[g]+';color:'+gradeBadgeTxt[g]+';font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid '+gc.border+';">'+gradeNames[g]+'</span>'
         +'<span style="background:'+(sport==='dodgeball'?'var(--dodgeball-color)':'var(--futsal2-color)')+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">'+(sport==='dodgeball'?'🤾‍♂️ 피구':'⚽ 풋살')+'</span>'
         +'</div>';
       // Game rows
