@@ -578,7 +578,7 @@ function saveOverviewEdit(){
 }
 
 /* ── 달력 ── */
-let calYear=2026,calMonth=4;
+const _today=new Date();let calYear=_today.getFullYear(),calMonth=_today.getMonth();
 let calManualEvents=[{id:1,date:'2026-06-13',title:'한수컵 시상식',type:'ev-special',note:'강당',auto:false}];
 let nextCalId=20;
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
