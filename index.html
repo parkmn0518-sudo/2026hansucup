@@ -1592,8 +1592,8 @@ function renderHome(){
           +'<span style="font-size:11px;color:var(--text2);">:</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
           +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
-          +(dts?'<span style="font-size:10px;color:var(--text2);white-space:nowrap;">'+dts+'</span>':'')
-          +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
+          +(dts?'<span style="margin-left:auto;margin-right:auto;font-size:10px;color:var(--text2);white-space:nowrap;">'+dts+'</span>':'')
+          +(winnerNm?'<span style="'+(dts?'':'margin-left:auto;')+'font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
           +'</div>';
       }).join('');
       return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
@@ -1875,8 +1875,8 @@ function renderGlBody(){
             +'<span style="font-size:11px;color:var(--text2);">:</span>'
             +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
             +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
-            +(dts2?'<span style="font-size:10px;color:var(--text2);white-space:nowrap;">'+dts2+'</span>':'')
-            +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
+            +(dts2?'<span style="margin-left:auto;margin-right:auto;font-size:10px;color:var(--text2);white-space:nowrap;">'+dts2+'</span>':'')
+            +(winnerNm?'<span style="'+(dts2?'':'margin-left:auto;')+'font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
           +'</div>';
         });
       });
