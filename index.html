@@ -483,7 +483,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <input type="hidden" id="sgGrade"><input type="hidden" id="sgSport"><input type="hidden" id="sgRoundIdx"><input type="hidden" id="sgGameIdx">
   <label>라운드</label><select id="sgRoundName"><option>1라운드</option><option>8강</option><option>4강</option><option>결승전</option></select>
   <label>날짜</label><input type="date" id="sgDate">
-  <label>교시</label><select id="sgTime"><option value="">선택</option><option>1교시</option><option>2교시</option><option>3교시</option><option>4교시</option><option>점심시간</option><option>5교시</option><option>6교시</option><option>7교시</option></select>
+  <label>교시</label><select id="sgTime"><option value="">— 선택 —</option><option>1교시</option><option>2교시</option><option>3교시</option><option>4교시</option><option>5교시</option><option>6교시</option><option>7교시</option></select>
   <label>홈팀 (예: 3반)</label><input type="text" id="sgHome" placeholder="3반">
   <label>원정팀 (예: 7반)</label><input type="text" id="sgAway" placeholder="7반">
   <label>메모</label><input type="text" id="sgNote" placeholder="비고">
@@ -1320,8 +1320,11 @@ function matchNodeHTML2(m, g, sport){
     '<div class="edit-row"><span class="edit-label">원정</span><input class="team-inp" type="text" id="an2_'+m.id+'" value="'+(aNm==='TBD'?'':aNm)+'" placeholder="예) 7반"></div>'+
     '<div class="edit-divider">날짜 / 교시 / 교사 / 심판</div>'+
     '<div class="edit-row"><span class="edit-label">날짜</span><input class="date-inp" type="date" id="dt2_'+m.id+'" value="'+(m.date||'')+'"></div>'+
-    '<div class="edit-row"><span class="edit-label">교시</span><input class="team-inp" type="text" id="tm2_'+m.id+'" value="'+(m.time||'')+'">'+
-    '</div>'+
+    '<div class="edit-row"><span class="edit-label">교시</span>'+
+    '<select class="st-sel" id="tm2_'+m.id+'">'+
+    '<option value="">— 선택 —</option>'+
+    ['1교시','2교시','3교시','4교시','5교시','6교시','7교시'].map(function(p){return '<option value="'+p+'"'+(m.time===p?' selected':'')+'>'+p+'</option>';}).join('')+
+    '</select></div>'+
     '<div class="edit-row"><span class="edit-label">교사</span><input class="team-inp" type="text" id="tc2_'+m.id+'" value="'+(m.teacher||'')+'"></div>'+
     '<div class="edit-row"><span class="edit-label">심판</span><input class="team-inp" type="text" id="rf2_'+m.id+'" value="'+(m.referee||'')+'"></div>'+
     '<div class="edit-divider">점수 / 상태</div>'+
@@ -1584,16 +1587,18 @@ function renderHome(){
         var gbg=d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)';
         var gtxt=d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)';
         var gbd=d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)';
-        return '<div style="display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:1px solid var(--border);">'
-          +'<span style="font-size:10px;background:'+gbg+';color:'+gtxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gbd+';white-space:nowrap;">'+gradeInfo[d.g].name+'</span>'
-          +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
+        return '<div style="display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">'
+          +'<div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">'
+          +'<span style="font-size:10px;background:'+gbg+';color:'+gtxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gbd+';white-space:nowrap;flex-shrink:0;">'+gradeInfo[d.g].name+'</span>'
+          +'<span style="font-size:11px;flex-shrink:0;">'+sportIcon[d.sport]+'</span>'
           +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
           +'<span style="font-size:11px;color:var(--text2);">:</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
           +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
-          +(dts?'<span style="margin-left:auto;margin-right:auto;font-size:10px;color:var(--text2);white-space:nowrap;">'+dts+'</span>':'')
-          +(winnerNm?'<span style="'+(dts?'':'margin-left:auto;')+'font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
+          +'</div>'
+          +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:100px;text-align:center;flex-shrink:0;">'+dts+'</span>'
+          +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
           +'</div>';
       }).join('');
       return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
@@ -1866,17 +1871,19 @@ function renderGlBody(){
           var as_=(gm.awayScore!=null)?gm.awayScore:'-';
           var winnerNm=hwin?gm.home:awin?gm.away:'';
           var dts2=(gm.date?fmtDate(gm.date):'')+(gm.time?' '+gm.time:'');
-          html+='<div style="display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid var(--border);">'
-            +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;">'+gradeNames[g]+'</span>'
-            +'<span style="font-size:11px;">'+sportIcon[sport]+'</span>'
-            +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;">'+rnd.roundName+'</span>'
+          html+='<div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">'
+            +'<div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">'
+            +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;flex-shrink:0;">'+gradeNames[g]+'</span>'
+            +'<span style="font-size:11px;flex-shrink:0;">'+sportIcon[sport]+'</span>'
+            +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;flex-shrink:0;">'+rnd.roundName+'</span>'
             +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
             +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
             +'<span style="font-size:11px;color:var(--text2);">:</span>'
             +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
             +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
-            +(dts2?'<span style="margin-left:auto;margin-right:auto;font-size:10px;color:var(--text2);white-space:nowrap;">'+dts2+'</span>':'')
-            +(winnerNm?'<span style="'+(dts2?'':'margin-left:auto;')+'font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
+            +'</div>'
+            +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:100px;text-align:center;flex-shrink:0;">'+dts2+'</span>'
+            +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
           +'</div>';
         });
       });
