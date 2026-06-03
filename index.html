@@ -1264,7 +1264,13 @@ function syncSchedToBracket2(g, sport, gm, ri, gi){
   if(gm.homeScore!==null&&gm.homeScore!==undefined){
     bm.homeScore=+gm.homeScore; bm.awayScore=+gm.awayScore;
     bm.status=gm.status==='완료'?'done':'scheduled';
-    if(bm.status==='done'){bm.winner=bm.homeScore>bm.awayScore?bm.home:(bm.awayScore>bm.homeScore?bm.away:null);}
+    if(bm.status==='done'){
+      if(gm.winner){
+        bm.winner=(bm.home&&gm.winner===bm.home.name)?bm.home:(bm.away&&gm.winner===bm.away.name)?bm.away:null;
+      } else {
+        bm.winner=bm.homeScore>bm.awayScore?bm.home:(bm.awayScore>bm.homeScore?bm.away:null);
+      }
+    }
     else{bm.winner=null;}
     propagate2(g,sport);
   }else{bm.homeScore=null;bm.awayScore=null;bm.status='scheduled';bm.winner=null;}
@@ -1724,7 +1730,7 @@ function matchBox(x,y,m,color,nodeBg,num){
     +'<rect x="'+(x+1)+'" y="'+(y+1)+'" width="'+(BW-2)+'" height="'+(dateH-1)+'" rx="5" fill="'+color+'" opacity="0.12"/>'
     +(num?'<rect x="'+(x+4)+'" y="'+(y+3)+'" width="14" height="12" rx="3" fill="'+color+'" opacity="0.85"/><text x="'+(x+11)+'" y="'+(y+12)+'" font-size="8" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans KR,sans-serif">'+num+'</text>':'')
     +'<text x="'+(x+(num?20:7))+'" y="'+(y+12)+'" font-size="8.5" font-weight="700" fill="'+color+'" font-family="Noto Sans KR,sans-serif">'+dateStr+'</text>'
-    +(infoStr?'<text x="'+(x+BW-7)+'" y="'+(y+12)+'" font-size="7.5" fill="'+color+'" text-anchor="end" font-family="Noto Sans KR,sans-serif">'+infoStr+'</text>':'')
+    // 날짜 행에 교사/심판 표시 제거 (아래 회색 행에 표시)
     +'<rect x="'+(x+BW-32)+'" y="'+(y+3)+'" width="28" height="12" rx="4" fill="'+sBg+'"/>'
     +'<text x="'+(x+BW-18)+'" y="'+(y+12)+'" font-size="8" fill="'+sCol+'" text-anchor="middle" font-weight="700" font-family="Noto Sans KR,sans-serif">'+sTxt+'</text>'
     +'<line x1="'+(x+1)+'" y1="'+div1+'" x2="'+(x+BW-1)+'" y2="'+div1+'" stroke="'+color+'" stroke-width="0.8" opacity="0.3"/>'
