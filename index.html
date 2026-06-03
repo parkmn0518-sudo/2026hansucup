@@ -606,7 +606,7 @@ function getAllCalEvents(){
             else if(Number(gm.awayScore)>Number(gm.homeScore))winnerLabel=' ['+gm.away+' 승]';
             else winnerLabel=' [무승부]';
           }
-          var label=gradeLabel+' '+sportLabel+' '+(gm.time?gm.time+' ':'')+gm.home+'vs'+gm.away+winnerLabel;
+          var label=(gm.time?gm.time+' ':'')+gradeLabel+' '+sportLabel+' '+gm.home+'vs'+gm.away+winnerLabel;
           auto.push({id:'b_'+g+'_'+sport+'_'+ri+'_'+gi,date:gm.date,title:label,type:evType,note:sportLabel,auto:true,g:g,sport:sport,ri:ri,gi:gi});
         });
       });
@@ -995,14 +995,14 @@ function initTournament(g){
   const t=makeTeams(g);
   return{teams:t,rounds:{
     r1:[
-      {id:g+'_r1_1',round:'1라운드',home:t[6],away:t[9],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:g+'_r1_1',round:'1라운드',home:t[2],away:t[3],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:g+'_r1_2',round:'1라운드',home:t[7],away:t[8],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
     qf:[
-      {id:g+'_qf_1',round:'8강',home:t[0],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:g+'_qf_1',round:'8강',home:t[0],away:t[1],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:g+'_qf_2',round:'8강',home:t[1],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:g+'_qf_3',round:'8강',home:t[2],away:t[5],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
-      {id:g+'_qf_4',round:'8강',home:t[3],away:t[4],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
+      {id:g+'_qf_4',round:'8강',home:t[3],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
     sf:[
       {id:g+'_sf_1',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
@@ -1179,14 +1179,14 @@ function initTournament2(g, sport) {
   var t = makeTeams(g);
   return {teams:t, rounds:{
     r1:[
-      {id:prefix+'r1_1',round:'1라운드',home:t[6],away:t[9],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:prefix+'r1_1',round:'1라운드',home:t[2],away:t[3],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
       {id:prefix+'r1_2',round:'1라운드',home:t[7],away:t[8],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
     qf:[
-      {id:prefix+'qf_1',round:'8강',home:t[0],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
-      {id:prefix+'qf_2',round:'8강',home:t[1],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
-      {id:prefix+'qf_3',round:'8강',home:t[2],away:t[5],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
-      {id:prefix+'qf_4',round:'8강',home:t[3],away:t[4],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
+      {id:prefix+'qf_1',round:'8강',home:t[0],away:t[1],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:prefix+'qf_2',round:'8강',home:t[4],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:prefix+'qf_3',round:'8강',home:t[5],away:t[6],homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
+      {id:prefix+'qf_4',round:'8강',home:t[9],away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''}
     ],
     sf:[
       {id:prefix+'sf_1',round:'4강',home:null,away:null,homeScore:null,awayScore:null,status:'scheduled',winner:null,date:'',teacher:'',referee:'',time:''},
@@ -1199,8 +1199,8 @@ function initTournament2(g, sport) {
 
 function propagate2(g, sport) {
   var R = tournaments2[g][sport].rounds;
-  R.qf[1].away=R.r1[0].winner||null;  // 1라운드 1경기 승자 → 8강 4번(qf[1])
-  R.qf[3].away=R.r1[1].winner||null;  // 1라운드 2경기 승자 → 8강 6번(qf[3])
+  R.qf[1].away=R.r1[0].winner||null;  // 1라운드 1경기(3vs4) 승자 → 8강 4번(5반 away)
+  R.qf[3].away=R.r1[1].winner||null;  // 1라운드 2경기(8vs9) 승자 → 8강 6번(10반 away)
   R.sf[0].home=R.qf[0].winner||null;R.sf[0].away=R.qf[3].winner||null;
   R.sf[1].home=R.qf[1].winner||null;R.sf[1].away=R.qf[2].winner||null;
   R.final[0].home=R.sf[0].winner||null;R.final[0].away=R.sf[1].winner||null;
@@ -1216,8 +1216,8 @@ var tournaments2 = {
 /* 서브탭 schedule 데이터 */
 function mkSchedRounds(dateBase1, dateBase2, dateBase3, dateBase4, p1, p2, p3, p4) {
   return [
-    {roundName:'1라운드',status:'예정',games:[mkGame(dateBase1,p1,'7반','10반','','',''),mkGame(dateBase1,p2,'8반','9반','','','')]},
-    {roundName:'8강',status:'예정',games:[mkGame(dateBase2,p3,'1반','TBD','1R 승자','',''),mkGame(dateBase2,p4,'2반','TBD','1R 승자','',''),mkGame(dateBase2,p3,'3반','6반','','',''),mkGame(dateBase2,p4,'4반','5반','','','')]},
+    {roundName:'1라운드',status:'예정',games:[mkGame(dateBase1,p1,'3반','4반','','',''),mkGame(dateBase1,p2,'8반','9반','','','')]},
+    {roundName:'8강',status:'예정',games:[mkGame(dateBase2,p3,'1반','2반','','',''),mkGame(dateBase2,p4,'5반','TBD','1R 1경기 승자','',''),mkGame(dateBase2,p3,'6반','7반','','',''),mkGame(dateBase2,p4,'10반','TBD','1R 2경기 승자','','')]},
     {roundName:'4강',status:'예정',games:[mkGame(dateBase3,p3,'TBD','TBD','8강 승자','',''),mkGame(dateBase3,p4,'TBD','TBD','8강 승자','','')]},
     {roundName:'결승전',status:'예정',games:[mkGame(dateBase4,p4,'TBD','TBD','4강 승자','','')]},
   ];
@@ -1832,72 +1832,40 @@ function setGlFilter(f){
 }
 function renderGlBody(){
   var gradeNames={1:'1학년',2:'2학년',3:'3학년'};
-  var sportNames={dodgeball:'피구',futsal:'풋살'};
-  var sportColors={
-    dodgeball:{bg:'#fff7ed',border:'var(--dodgeball-color)',text:'var(--dodgeball-color)',badge:'#ea580c'},
-    futsal:   {bg:'#f5f3ff',border:'var(--futsal2-color)',  text:'var(--futsal2-color)',  badge:'#7c3aed'}
-  };
-  var gradeColors={
-    1:{bg:'var(--futsal-bg)',  border:'var(--futsal-text)',  text:'var(--futsal-text)'},
-    2:{bg:'var(--tchouk-bg)', border:'var(--tchouk-text)', text:'var(--tchouk-text)'},
-    3:{bg:'var(--volley-bg)', border:'var(--volley-text)', text:'var(--volley-text)'}
-  };
+  var sportIcon={dodgeball:'🤾‍♂️',futsal:'⚽'};
   var html='';
   var totalCount=0;
   [1,2,3].forEach(function(g){
     ['dodgeball','futsal'].forEach(function(sport){
       var rounds=schedules2[g][sport]||[];
-      var sc=sportColors[sport];
-      var gc=gradeColors[g];
-      var allGames=[];
+      var gradeBg=g===1?'var(--futsal-bg)':g===2?'var(--tchouk-bg)':'var(--volley-bg)';
+      var gradeTxt=g===1?'var(--futsal-text)':g===2?'var(--tchouk-text)':'var(--volley-text)';
+      var gradeBorder=g===1?'var(--futsal-border)':g===2?'var(--tchouk-border)':'var(--volley-border)';
       rounds.forEach(function(rnd){
         (rnd.games||[]).forEach(function(gm){
-          var statusOk=(_glFilter==='all')||
-            (_glFilter==='done'&&(gm.status==='완료'))||
-            (_glFilter==='sched'&&(gm.status!=='완료'));
-          if(statusOk) allGames.push({rnd:rnd,gm:gm});
+          var isDone=gm.status==='완료';
+          var statusOk=(_glFilter==='all')||(_glFilter==='done'&&isDone)||(_glFilter==='sched'&&!isDone);
+          if(!statusOk) return;
+          totalCount++;
+          var hwin=isDone&&(gm.winner?gm.winner===gm.home:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore));
+          var awin=isDone&&(gm.winner?gm.winner===gm.away:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore));
+          var hs=(gm.homeScore!=null)?gm.homeScore:'-';
+          var as_=(gm.awayScore!=null)?gm.awayScore:'-';
+          var winnerNm=hwin?gm.home:awin?gm.away:'';
+          html+='<div style="display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;">'
+            +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;">'+gradeNames[g]+'</span>'
+            +'<span style="font-size:11px;">'+sportIcon[sport]+'</span>'
+            +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;">'+rnd.roundName+'</span>'
+            +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'#e11d48':'var(--text)')+';">'+gm.home+'</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
+            +'<span style="font-size:11px;color:var(--text2);">:</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
+            +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'#e11d48':'var(--text)')+';">'+gm.away+'</span>'
+            +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>'
+              :(!isDone&&gm.time?'<span style="margin-left:auto;font-size:10px;color:var(--text2);">'+gm.time+'</span>':''))
+            +'</div>';
         });
       });
-      if(!allGames.length) return;
-      totalCount+=allGames.length;
-      // Section header
-      var gradeBadgeBg={1:'var(--futsal-bg)',2:'var(--tchouk-bg)',3:'var(--volley-bg)'};
-      var gradeBadgeTxt={1:'var(--futsal-text)',2:'var(--tchouk-text)',3:'var(--volley-text)'};
-      html+='<div style="margin-top:12px;margin-bottom:4px;display:flex;align-items:center;gap:6px;">'
-        +'<span style="background:'+gradeBadgeBg[g]+';color:'+gradeBadgeTxt[g]+';font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid '+gc.border+';">'+gradeNames[g]+'</span>'
-        +'<span style="background:'+(sport==='dodgeball'?'var(--dodgeball-color)':'var(--futsal2-color)')+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">'+(sport==='dodgeball'?'🤾‍♂️ 피구':'⚽ 풋살')+'</span>'
-        +'</div>';
-      // Game rows
-      html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2px;">';
-      allGames.forEach(function(item,idx){
-        var gm=item.gm,rnd=item.rnd;
-        var isDone=gm.status==='완료';
-        var hs=(gm.homeScore!==null&&gm.homeScore!==undefined)?gm.homeScore:null;
-        var as_=(gm.awayScore!==null&&gm.awayScore!==undefined)?gm.awayScore:null;
-        var scoreStr=(hs!==null&&as_!==null)?(hs+' : '+as_):'';
-        var bb=idx>0?'border-top:1px solid var(--border);':'';
-        var hwin=isDone&&(gm.winner?gm.winner===gm.home:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore));
-        var awin=isDone&&(gm.winner?gm.winner===gm.away:gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore));
-        var winnerBadge=hwin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 7px;border-radius:8px;font-weight:700;">'+gm.home+' 승</span>':awin?'<span style="margin-left:auto;font-size:10px;background:#f0fdf4;color:#16a34a;padding:1px 7px;border-radius:8px;font-weight:700;">'+gm.away+' 승</span>':'';
-        html+='<div style="padding:8px 10px;'+bb+'">'
-          +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
-          +'<span style="font-size:10px;font-weight:700;background:'+(isDone?'#dcfce7':'#e0e4f0')+';color:'+(isDone?'#14532d':'var(--navy)')+';padding:1px 7px;border-radius:8px;">'+(isDone?'✅ 완료':'🕐 예정')+'</span>'
-          +'<span style="font-size:10px;color:var(--text2);font-weight:600;">'+rnd.roundName+'</span>'
-          +(scoreStr?'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+scoreStr+'</span>':'')
-          +winnerBadge
-          +'</div>'
-          +'<div style="font-size:13px;font-weight:700;">'
-          +'<span style="color:'+(hwin?'#15803d':'var(--text)')+';font-weight:'+(hwin?800:700)+';">'+gm.home+'</span>'
-          +' <span style="color:var(--text2);font-weight:400;font-size:12px;">vs</span> '
-          +'<span style="color:'+(awin?'#15803d':'var(--text)')+';font-weight:'+(awin?800:700)+';">'+gm.away+'</span>'
-          +'</div>'
-          +'<div style="font-size:11px;color:var(--text2);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;">'
-          +(gm.date?'<span>📅 '+fmtDate(gm.date)+'</span>':'')
-          +(gm.time?'<span>⏰ '+gm.time+'</span>':'')
-          +'</div>'
-          +'</div>';
-      });
-      html+='</div>';
     });
   });
   if(!totalCount){
