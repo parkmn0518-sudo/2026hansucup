@@ -1580,19 +1580,20 @@ function renderHome(){
         var hwin=_w?_w===String(gm.home).trim():(gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.homeScore)>Number(gm.awayScore));
         var awin=_w?_w===String(gm.away).trim():(gm.homeScore!=null&&gm.awayScore!=null&&Number(gm.awayScore)>Number(gm.homeScore));
         var winnerNm=hwin?gm.home:awin?gm.away:'';
-        var dateInfo=(gm.date?fmtDate(gm.date):'')+(gm.time?' '+gm.time:'');
-        return '<div style="padding:5px 0;border-bottom:1px solid var(--border);">'
-          +'<div style="display:flex;align-items:center;gap:6px;">'
-          +'<span style="font-size:10px;background:'+(d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)')+';color:'+(d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)')+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+(d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)')+';">'+gradeInfo[d.g].name+'</span>'
+        var dts=(gm.date?fmtDate(gm.date):'')+(gm.time?' '+gm.time:'');
+        var gbg=d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)';
+        var gtxt=d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)';
+        var gbd=d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)';
+        return '<div style="display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:1px solid var(--border);">'
+          +'<span style="font-size:10px;background:'+gbg+';color:'+gtxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gbd+';white-space:nowrap;">'+gradeInfo[d.g].name+'</span>'
           +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
-          +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'#e11d48':'var(--text)')+'">'+gm.home+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
           +'<span style="font-size:11px;color:var(--text2);">:</span>'
           +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
-          +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'#e11d48':'var(--text)')+'">'+gm.away+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
+          +(dts?'<span style="font-size:10px;color:var(--text2);white-space:nowrap;">'+dts+'</span>':'')
           +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
-          +'</div>'
-          +(dateInfo?'<div style="font-size:10px;color:var(--text2);margin-top:2px;padding-left:2px;">'+dateInfo+'</div>':'')
           +'</div>';
       }).join('');
       return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
@@ -1864,18 +1865,19 @@ function renderGlBody(){
           var hs=(gm.homeScore!=null)?gm.homeScore:'-';
           var as_=(gm.awayScore!=null)?gm.awayScore:'-';
           var winnerNm=hwin?gm.home:awin?gm.away:'';
-          html+='<div style="display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;">'
+          var dts2=(gm.date?fmtDate(gm.date):'')+(gm.time?' '+gm.time:'');
+          html+='<div style="display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid var(--border);">'
             +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;">'+gradeNames[g]+'</span>'
             +'<span style="font-size:11px;">'+sportIcon[sport]+'</span>'
             +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;">'+rnd.roundName+'</span>'
-            +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'#e11d48':'var(--text)')+';">'+gm.home+'</span>'
+            +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
             +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
             +'<span style="font-size:11px;color:var(--text2);">:</span>'
             +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
-            +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'#e11d48':'var(--text)')+';">'+gm.away+'</span>'
-            +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>'
-              :(!isDone&&gm.time?'<span style="margin-left:auto;font-size:10px;color:var(--text2);">'+gm.time+'</span>':''))
-            +'</div>';
+            +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
+            +(dts2?'<span style="font-size:10px;color:var(--text2);white-space:nowrap;">'+dts2+'</span>':'')
+            +(winnerNm?'<span style="margin-left:auto;font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;">'+winnerNm+' 승</span>':'')
+          +'</div>';
         });
       });
     });
