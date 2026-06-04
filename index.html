@@ -1567,7 +1567,7 @@ function renderHome(){
         ['dodgeball','futsal'].forEach(function(sport){
           (schedules2[g][sport]||[]).forEach(function(rnd){
             (rnd.games||[]).forEach(function(gm){
-              if(gm.status==='완료')doneGames.push({g:g,sport:sport,gm:gm});
+              if(gm.status==='완료')doneGames.push({g:g,sport:sport,gm:gm,rnd:rnd});
             });
           });
         });
@@ -1587,18 +1587,18 @@ function renderHome(){
         var gbg=d.g===1?'var(--futsal-bg)':d.g===2?'var(--tchouk-bg)':'var(--volley-bg)';
         var gtxt=d.g===1?'var(--futsal-text)':d.g===2?'var(--tchouk-text)':'var(--volley-text)';
         var gbd=d.g===1?'var(--futsal-border)':d.g===2?'var(--tchouk-border)':'var(--volley-border)';
-        return '<div style="display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">'
-          +'<div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">'
-          +'<span style="font-size:10px;background:'+gbg+';color:'+gtxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gbd+';white-space:nowrap;flex-shrink:0;">'+gradeInfo[d.g].name+'</span>'
-          +'<span style="font-size:11px;flex-shrink:0;">'+sportIcon[d.sport]+'</span>'
-          +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
-          +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
-          +'<span style="font-size:11px;color:var(--text2);">:</span>'
-          +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
-          +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
+        var rndNm=d.rnd?d.rnd.roundName:'';
+        return '<div style="display:flex;align-items:center;padding:5px 2px;border-bottom:1px solid var(--border);gap:3px;">'
+          +'<div style="display:flex;align-items:center;gap:3px;width:78px;flex-shrink:0;">'
+          +'<span style="font-size:10px;background:'+gbg+';color:'+gtxt+';border-radius:8px;padding:1px 5px;font-weight:700;border:1px solid '+gbd+';white-space:nowrap;">'+gradeInfo[d.g].name+'</span>'
+          +'<span style="font-size:11px;">'+sportIcon[d.sport]+'</span>'
           +'</div>'
-          +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:100px;text-align:center;flex-shrink:0;">'+dts+'</span>'
-          +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
+          +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;width:46px;flex-shrink:0;">'+rndNm+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';width:44px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+gm.home+'</span>'
+          +'<span style="font-size:12px;font-weight:700;color:var(--navy);width:44px;text-align:center;flex-shrink:0;">'+hs+' : '+as_+'</span>'
+          +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';width:44px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+gm.away+'</span>'
+          +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:96px;text-align:center;flex-shrink:0;">'+dts+'</span>'
+          +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 5px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
           +'</div>';
       }).join('');
       return '<div class="section-title">최근 완료 경기</div><div class="notice-card" style="padding:6px 12px;">'+items+'<div style="text-align:right;margin-top:4px;"><span style="font-size:11px;color:var(--text2);cursor:pointer;" onclick="openGamesModal(\'done\')">전체 보기 ›</span></div></div>';
@@ -1871,19 +1871,17 @@ function renderGlBody(){
           var as_=(gm.awayScore!=null)?gm.awayScore:'-';
           var winnerNm=hwin?gm.home:awin?gm.away:'';
           var dts2=(gm.date?fmtDate(gm.date):'')+(gm.time?' '+gm.time:'');
-          html+='<div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">'
-            +'<div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">'
-            +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 6px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;flex-shrink:0;">'+gradeNames[g]+'</span>'
-            +'<span style="font-size:11px;flex-shrink:0;">'+sportIcon[sport]+'</span>'
-            +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;flex-shrink:0;">'+rnd.roundName+'</span>'
-            +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';">'+gm.home+'</span>'
-            +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+hs+'</span>'
-            +'<span style="font-size:11px;color:var(--text2);">:</span>'
-            +'<span style="font-size:12px;font-weight:700;color:var(--navy);">'+as_+'</span>'
-            +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';">'+gm.away+'</span>'
+          html+='<div style="display:flex;align-items:center;padding:6px 2px;border-bottom:1px solid var(--border);gap:3px;">'
+            +'<div style="display:flex;align-items:center;gap:3px;width:78px;flex-shrink:0;">'
+            +'<span style="font-size:10px;background:'+gradeBg+';color:'+gradeTxt+';border-radius:8px;padding:1px 5px;font-weight:700;border:1px solid '+gradeBorder+';white-space:nowrap;">'+gradeNames[g]+'</span>'
+            +'<span style="font-size:11px;">'+sportIcon[sport]+'</span>'
             +'</div>'
-            +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:100px;text-align:center;flex-shrink:0;">'+dts2+'</span>'
-            +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
+            +'<span style="font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;width:46px;flex-shrink:0;">'+rnd.roundName+'</span>'
+            +'<span style="font-size:12px;font-weight:'+(hwin?800:500)+';color:'+(hwin?'"#e11d48"':'"var(--text)"')+';width:44px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+gm.home+'</span>'
+            +'<span style="font-size:12px;font-weight:700;color:var(--navy);width:44px;text-align:center;flex-shrink:0;">'+hs+' : '+as_+'</span>'
+            +'<span style="font-size:12px;font-weight:'+(awin?800:500)+';color:'+(awin?'"#e11d48"':'"var(--text)"')+';width:44px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+gm.away+'</span>'
+            +'<span style="font-size:10px;color:var(--text2);white-space:nowrap;width:96px;text-align:center;flex-shrink:0;">'+dts2+'</span>'
+            +(winnerNm?'<span style="font-size:10px;background:#fff1f2;color:#e11d48;padding:1px 5px;border-radius:8px;font-weight:700;white-space:nowrap;width:52px;text-align:center;flex-shrink:0;">'+winnerNm+' 승</span>':'<span style="width:52px;flex-shrink:0;"></span>')
           +'</div>';
         });
       });
