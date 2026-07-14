@@ -614,25 +614,30 @@ const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10
 var CAL_SPORT_LABELS = {dodgeball:'피구', futsal:'풋살'};
 function getAllCalEvents(){
   const auto=[];
+  var rndDefs=[
+    {name:'1라운드',rKey:'r1'},{name:'8강',rKey:'qf'},{name:'4강',rKey:'sf'},
+    {name:'3·4위전',rKey:'third'},{name:'결승전',rKey:'final'}
+  ];
   [1,2,3].forEach(function(g){
     var evTypeMap={1:'ev-futsal',2:'ev-tchouk',3:'ev-volleyball'};
     var evType=evTypeMap[g];
-    // schedules2 (피구/풋살 서브탭) 데이터
     ['dodgeball','futsal'].forEach(function(sport){
-      ((schedules2[g]||{})[sport]||[]).forEach(function(rnd,ri){
-        (rnd.games||[]).forEach(function(gm,gi){
-          if(!gm.date)return;
-          var gradeLabel=gradeInfo[g].name;
-          var sportLabel=CAL_SPORT_LABELS[sport]||sport;
-          var isDone=gm.status==='완료';
+      var R=tournaments2[g][sport].rounds;
+      var sportLabel=CAL_SPORT_LABELS[sport]||sport;
+      var gradeLabel=gradeInfo[g].name;
+      rndDefs.forEach(function(rd){
+        (R[rd.rKey]||[]).forEach(function(m,i){
+          if(!m.date)return;
+          var hNm=m.home?m.home.name:'TBD', aNm=m.away?m.away.name:'TBD';
+          var isDone=m.status==='done';
           var winnerLabel='';
-          if(isDone&&gm.homeScore!==null&&gm.awayScore!==null){
-            if(Number(gm.homeScore)>Number(gm.awayScore))winnerLabel=' ['+gm.home+' 승]';
-            else if(Number(gm.awayScore)>Number(gm.homeScore))winnerLabel=' ['+gm.away+' 승]';
+          if(isDone&&m.homeScore!=null&&m.awayScore!=null){
+            if(m.homeScore>m.awayScore)winnerLabel=' ['+hNm+' 승]';
+            else if(m.awayScore>m.homeScore)winnerLabel=' ['+aNm+' 승]';
             else winnerLabel=' [무승부]';
           }
-          var label=(gm.time?gm.time+' ':'')+gradeLabel+' '+sportLabel+' '+gm.home+'vs'+gm.away+winnerLabel;
-          auto.push({id:'b_'+g+'_'+sport+'_'+ri+'_'+gi,date:gm.date,title:label,type:evType,note:sportLabel,auto:true,g:g,sport:sport,ri:ri,gi:gi});
+          var label=(m.time?m.time+' ':'')+gradeLabel+' '+sportLabel+' '+rd.name+' '+hNm+'vs'+aNm+winnerLabel;
+          auto.push({id:'t2_'+g+'_'+sport+'_'+rd.rKey+'_'+i,date:m.date,title:label,type:evType,note:sportLabel,auto:true});
         });
       });
     });
