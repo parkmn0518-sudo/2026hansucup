@@ -1923,12 +1923,9 @@ function renderHome(){
         });
       });
       if(!doneGames.length)return '';
-      doneGames.sort(function(a,b){
-        var da=a.m.date||'9999', db=b.m.date||'9999';
-        if(da!==db)return da<db?-1:1;
-        var ta=a.m.time||'', tb=b.m.time||'';
-        return ta<tb?-1:ta>tb?1:0;
-      });
+      function _dn(m){if(!m.date)return 99999999;var p=m.date.split('-');return p.length<3?99999999:(+p[0])*10000+(+p[1])*100+(+p[2]);}
+      function _tn(m){var n=parseInt(m.time);return isNaN(n)?99:n;}
+      doneGames.sort(function(a,b){var dd=_dn(a.m)-_dn(b.m);return dd!==0?dd:_tn(a.m)-_tn(b.m);});
       var sportIcon={dodgeball:'🤾\u200d♂️',futsal:'⚽'};
       var items=doneGames.slice(-5).reverse().map(function(d){
         var m=d.m;
@@ -2239,12 +2236,22 @@ function renderGlBody(){
     });
   });
 
-  // 날짜 오름차순 정렬 (날짜 없으면 맨 뒤)
+  // 날짜 정렬용 숫자 변환 (YYYY-M-D / YYYY-MM-DD 모두 처리)
+  function dateNum(m){
+    if(!m.date)return 99999999;
+    var p=m.date.split('-');
+    if(p.length<3)return 99999999;
+    return (+p[0])*10000+(+p[1])*100+(+p[2]);
+  }
+  function timeNum(m){
+    if(!m.time)return 99;
+    var n=parseInt(m.time);
+    return isNaN(n)?99:n;
+  }
   items.sort(function(a,b){
-    var da=a.m.date||'9999', db=b.m.date||'9999';
-    if(da!==db)return da<db?-1:1;
-    var ta=a.m.time||'', tb=b.m.time||'';
-    return ta<tb?-1:ta>tb?1:0;
+    var da=dateNum(a.m), db=dateNum(b.m);
+    if(da!==db)return da-db;
+    return timeNum(a.m)-timeNum(b.m);
   });
 
   var html='';
