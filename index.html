@@ -2253,6 +2253,7 @@ function renderGlBody(){
     if(da!==db)return da-db;
     return timeNum(a.m)-timeNum(b.m);
   });
+  console.log('[Sort v3] 정렬 결과 상위 5개:',items.slice(0,5).map(function(it){return it.m.date+' '+it.m.time;}));
 
   var html='';
   items.forEach(function(it){
